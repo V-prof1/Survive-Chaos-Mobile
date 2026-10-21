@@ -51,4 +51,4 @@ if (s.includes(oldIntro)) s = s.replace(oldIntro, newIntro);
 fs.writeFileSync(path, s);
 console.log('Survive Chaos Mobile patch applied.');
 console.log('Infinite horde formula: 16 × 1.24^(minute-1), plus exponential normal spawn pressure.');
-// Build-validation marker: no gameplay change.
+// Stable-signing verification build: no gameplay change.
