@@ -1,0 +1,152 @@
+name: Build Survive Chaos Mobile APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/**'
+      - 'package.json'
+      - 'capacitor.config.json'
+      - '.github/workflows/build-apk.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  android-debug:
+    name: Android Mobile APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Baixar repositório Mobile
+        uses: actions/checkout@v4
+        with:
+          path: mobile
+
+      - name: Baixar base do jogo de navegador
+        uses: actions/checkout@v4
+        with:
+          repository: V-prof1/Survive-Chaos
+          ref: main
+          path: browser
+
+      - name: Montar código Mobile e aplicar diferenças
+        shell: bash
+        run: |
+          rm -rf mobile/www
+          cp -a browser/www mobile/www
+          cd mobile
+          node scripts/apply-mobile-patches.js
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Preparar Android SDK 36
+        shell: bash
+        run: |
+          SDKMANAGER="${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then SDKMANAGER="$(command -v sdkmanager)"; fi
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platforms;android-36" "build-tools;35.0.0"
+
+      - name: Restaurar assinatura fixa da Beta Mobile
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: survive-chaos-mobile-debug-keystore-v1
+
+      - name: Instalar Capacitor e gerador de ícones
+        shell: bash
+        working-directory: mobile
+        run: |
+          npm install --no-audit --no-fund
+          npm install --no-save @capacitor/assets@3.0.5 --no-audit --no-fund
+          python3 -m pip install pillow --quiet
+
+      - name: Criar projeto Android
+        shell: bash
+        working-directory: mobile
+        run: |
+          rm -rf android
+          npx cap add android
+
+      - name: Criar ícone do Survive Chaos
+        shell: bash
+        working-directory: mobile
+        run: |
+          mkdir -p assets
+          python3 - <<'PY'
+          from PIL import Image, ImageDraw, ImageFilter
+          src=Image.open('www/sprites/ui/ui_caveira.png').convert('RGBA')
+          if src.getbbox(): src=src.crop(src.getbbox())
+          S=1024
+          bg=Image.new('RGBA',(S,S),(10,7,32,255)); px=bg.load(); cx=cy=S/2; maxd=(2*(cx**2))**.5
+          inner=(56,44,116); outer=(10,7,32)
+          for y in range(S):
+              for x in range(S):
+                  d=(((x-cx)**2+(y-cy)**2)**.5)/maxd; t=min(1,d*1.45)
+                  px[x,y]=tuple(int(inner[i]*(1-t)+outer[i]*t) for i in range(3))+(255,)
+          draw=ImageDraw.Draw(bg)
+          draw.rounded_rectangle((118,118,906,906),radius=190,outline=(255,207,63,255),width=26)
+          draw.rounded_rectangle((150,150,874,874),radius=165,outline=(255,90,60,110),width=10)
+          target=535; scale=min(target/src.width,target/src.height)
+          icon=src.resize((max(1,int(src.width*scale)),max(1,int(src.height*scale))),Image.Resampling.NEAREST)
+          shadow_alpha=icon.getchannel('A').filter(ImageFilter.GaussianBlur(24))
+          shadow=Image.new('RGBA',icon.size,(0,0,0,0)); shadow.putalpha(shadow_alpha.point(lambda v:int(v*.72)))
+          ix=(S-icon.width)//2; iy=(S-icon.height)//2-18
+          bg.alpha_composite(shadow,(ix+18,iy+24)); bg.alpha_composite(icon,(ix,iy))
+          draw=ImageDraw.Draw(bg)
+          draw.polygon([(184,506),(255,466),(236,518),(292,546),(215,558)],fill=(63,224,197,220))
+          draw.polygon([(840,506),(769,466),(788,518),(732,546),(809,558)],fill=(255,90,60,220))
+          bg.convert('RGB').save('assets/icon.png',quality=100)
+          PY
+          npx capacitor-assets generate --android --iconBackgroundColor '#171233' --iconBackgroundColorDark '#171233' --splashBackgroundColor '#171233' --splashBackgroundColorDark '#171233'
+          npx cap sync android
+
+      - name: Definir versão Mobile
+        shell: bash
+        working-directory: mobile
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          python3 - <<'PY'
+          import os,re
+          from pathlib import Path
+          p=Path('android/app/build.gradle')
+          s=p.read_text()
+          n=int(os.environ['RUN_NUMBER'])
+          s=re.sub(r'versionCode\s+\d+',f'versionCode {1000+n}',s)
+          s=re.sub(r'versionName\s+"[^"]+"',f'versionName "0.1.{n}-mobile"',s)
+          p.write_text(s)
+          PY
+
+      - name: Compilar APK Mobile
+        shell: bash
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Preparar APK
+        shell: bash
+        run: |
+          mkdir -p output
+          cp mobile/android/app/build/outputs/apk/debug/app-debug.apk output/Survive-Chaos-Mobile-Beta.apk
+
+      - name: Enviar APK como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: Survive-Chaos-Mobile-APK
+          path: output/Survive-Chaos-Mobile-Beta.apk
+          if-no-files-found: error
+          retention-days: 14
