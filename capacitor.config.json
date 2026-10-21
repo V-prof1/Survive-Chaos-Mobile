@@ -1,0 +1,7 @@
+{
+  "appId": "com.survivechaos.game",
+  "appName": "Survive Chaos",
+  "webDir": "www",
+  "server": {"androidScheme": "https"},
+  "android": {"backgroundColor": "#171233"}
+}
