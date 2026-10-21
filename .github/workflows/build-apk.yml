@@ -65,6 +65,23 @@ jobs:
           path: ~/.android/debug.keystore
           key: survive-chaos-mobile-debug-keystore-v1
 
+      - name: Garantir chave fixa da Beta Mobile
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.android"
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+            keytool -genkeypair -v \
+              -keystore "$HOME/.android/debug.keystore" \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -dname "CN=Survive Chaos Mobile Beta,O=V-prof1,C=BR" \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000
+          fi
+          keytool -list -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey | grep 'SHA256:'
+
       - name: Instalar Capacitor e gerador de ícones
         shell: bash
         working-directory: mobile
