@@ -97,6 +97,13 @@ jobs:
           rm -rf android
           npx cap add android
 
+      - name: Forçar assinatura fixa no projeto Android
+        shell: bash
+        working-directory: mobile
+        run: |
+          cp "$HOME/.android/debug.keystore" android/app/debug.keystore
+          keytool -list -v -keystore android/app/debug.keystore -storepass android -alias androiddebugkey | grep 'SHA256:'
+
       - name: Criar ícone do Survive Chaos
         shell: bash
         working-directory: mobile
