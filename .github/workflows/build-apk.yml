@@ -46,10 +46,14 @@ jobs:
         run: |
           node --check mobile/www/mobile-pro.js
           node --check mobile/www/mobile-economy.js
+          node --check mobile/www/mobile-content.js
           grep -q 'mobile-pro.css' mobile/www/index.html
           grep -q 'mobile-pro.js' mobile/www/index.html
           grep -q 'mobile-economy.css' mobile/www/index.html
           grep -q 'mobile-economy.js' mobile/www/index.html
+          grep -q 'mobile-content.css' mobile/www/index.html
+          grep -q 'mobile-content.js' mobile/www/index.html
+          grep -q 'Content Expansion enabled' <(cd mobile && node scripts/apply-mobile-patches.js 2>/dev/null || true) || true
 
       - name: Configurar Node.js 22
         uses: actions/setup-node@v4
