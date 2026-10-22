@@ -41,12 +41,15 @@ jobs:
           cd mobile
           node scripts/apply-mobile-patches.js
 
-      - name: Validar camada Combat 2.0
+      - name: Validar camadas Mobile
         shell: bash
         run: |
           node --check mobile/www/mobile-pro.js
+          node --check mobile/www/mobile-economy.js
           grep -q 'mobile-pro.css' mobile/www/index.html
           grep -q 'mobile-pro.js' mobile/www/index.html
+          grep -q 'mobile-economy.css' mobile/www/index.html
+          grep -q 'mobile-economy.js' mobile/www/index.html
 
       - name: Configurar Node.js 22
         uses: actions/setup-node@v4
