@@ -54,7 +54,8 @@ for (const file of [
   'mobile-pro.js','mobile-pro.css',
   'mobile-economy.js','mobile-economy.css',
   'mobile-content.js','mobile-content.css',
-  'mobile-legacy.js','mobile-legacy.css'
+  'mobile-legacy.js','mobile-legacy.css',
+  'mobile-saveguard.js'
 ]) {
   fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
 }
@@ -64,7 +65,7 @@ let html = fs.readFileSync(indexPath, 'utf8');
 for (const css of ['mobile-pro.css','mobile-economy.css','mobile-content.css','mobile-legacy.css']) {
   if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
 }
-for (const js of ['mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js']) {
+for (const js of ['mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js']) {
   if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
 }
 fs.writeFileSync(indexPath, html);
@@ -75,3 +76,4 @@ console.log('Combat 2.0 enabled: Flow rewards, Near Miss, Perfect Dash, boss pha
 console.log('Economy endgame enabled: Chaos Core permanent sink + Black Market repeatable contracts.');
 console.log('Content Expansion enabled: 8 enemies + 10 upgrades + 12 relics + 5 elite mutations + 8 chaos events.');
 console.log('Legacy Expansion enabled: weapon mastery + run mutators + Nemesis hunts + cursed relics + Apex elites + challenges + Chaos Tiers.');
+console.log('SaveGuard enabled: throttled gameplay save writes for extreme horde performance.');
