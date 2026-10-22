@@ -53,19 +53,20 @@ fs.writeFileSync(path, s);
 for (const file of [
   'mobile-pro.js','mobile-pro.css',
   'mobile-economy.js','mobile-economy.css',
-  'mobile-content.js','mobile-content.css'
+  'mobile-content.js','mobile-content.css',
+  'mobile-legacy.js','mobile-legacy.css'
 ]) {
   fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
 }
 
 const indexPath = 'www/index.html';
 let html = fs.readFileSync(indexPath, 'utf8');
-if (!html.includes('mobile-pro.css')) html = html.replace('</head>', '<link rel="stylesheet" href="mobile-pro.css"></head>');
-if (!html.includes('mobile-economy.css')) html = html.replace('</head>', '<link rel="stylesheet" href="mobile-economy.css"></head>');
-if (!html.includes('mobile-content.css')) html = html.replace('</head>', '<link rel="stylesheet" href="mobile-content.css"></head>');
-if (!html.includes('mobile-pro.js')) html = html.replace('</body>', '<script src="mobile-pro.js"></script></body>');
-if (!html.includes('mobile-economy.js')) html = html.replace('</body>', '<script src="mobile-economy.js"></script></body>');
-if (!html.includes('mobile-content.js')) html = html.replace('</body>', '<script src="mobile-content.js"></script></body>');
+for (const css of ['mobile-pro.css','mobile-economy.css','mobile-content.css','mobile-legacy.css']) {
+  if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
+}
+for (const js of ['mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js']) {
+  if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
+}
 fs.writeFileSync(indexPath, html);
 
 console.log('Survive Chaos Mobile patch applied.');
@@ -73,3 +74,4 @@ console.log('Infinite horde formula: 16 × 1.24^(minute-1), plus exponential nor
 console.log('Combat 2.0 enabled: Flow rewards, Near Miss, Perfect Dash, boss phases and Chaos Director.');
 console.log('Economy endgame enabled: Chaos Core permanent sink + Black Market repeatable contracts.');
 console.log('Content Expansion enabled: 8 enemies + 10 upgrades + 12 relics + 5 elite mutations + 8 chaos events.');
+console.log('Legacy Expansion enabled: weapon mastery + run mutators + Nemesis hunts + cursed relics + Apex elites + challenges + Chaos Tiers.');
