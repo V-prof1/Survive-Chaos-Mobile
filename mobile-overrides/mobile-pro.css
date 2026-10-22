@@ -1,0 +1,34 @@
+/* Survive Chaos Mobile — Combat 2.0 */
+#proCombat{position:fixed;z-index:28;left:50%;top:calc(env(safe-area-inset-top,0px) + 72px);width:min(330px,62vw);transform:translate(-50%,-8px) scale(.96);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;filter:drop-shadow(0 8px 20px rgba(0,0,0,.45))}
+#proCombat.on{opacity:1;transform:translate(-50%,0) scale(1)}
+.proCombatTop{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;padding:7px 10px 6px;border:1px solid rgba(255,255,255,.13);border-bottom:0;border-radius:12px 12px 5px 5px;background:linear-gradient(180deg,rgba(13,10,36,.92),rgba(8,7,24,.84));backdrop-filter:blur(7px)}
+#proGrade{display:grid;place-items:center;height:28px;border-radius:8px;font:900 18px/1 "Lilita One",system-ui,sans-serif;letter-spacing:.04em;color:#0d0a20;background:#9aa0ad;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2),0 0 16px rgba(255,255,255,.08)}
+#proCombo{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:900 13px/1 "Nunito",system-ui,sans-serif;letter-spacing:.08em;color:#f6f3ff;text-shadow:0 2px 8px #000}
+#proMulti{font:900 12px/1 "Nunito",system-ui,sans-serif;color:#d7d1ea}
+.proMeter{position:relative;height:6px;overflow:hidden;border-radius:0 0 8px 8px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.1);border-top:0}
+#proMeterFill{display:block;width:0;height:100%;background:linear-gradient(90deg,#4fe0e8,#ffc94a,#ff5a6f);box-shadow:0 0 15px rgba(255,201,74,.5);transition:width .12s linear}
+#proNear{width:max-content;max-width:100%;margin:5px auto 0;padding:3px 8px;opacity:0;transform:translateY(-4px);border-radius:999px;background:rgba(8,7,24,.82);border:1px solid rgba(79,224,232,.38);color:#8ff7ff;font:900 10px/1 "Nunito",system-ui,sans-serif;letter-spacing:.1em;transition:.15s ease}
+#proNear.on{opacity:1;transform:none}
+#proCombat[data-rank="C"] #proGrade{background:#70e3f0}
+#proCombat[data-rank="B"] #proGrade{background:#ffd45a}
+#proCombat[data-rank="A"] #proGrade{background:#ff875f}
+#proCombat[data-rank="S"] #proGrade{color:#fff;background:linear-gradient(135deg,#ff416c,#ffbd45,#8f55ff);animation:proGradePulse .75s ease-in-out infinite alternate}
+@keyframes proGradePulse{to{filter:brightness(1.28);box-shadow:0 0 22px rgba(255,90,120,.55)}}
+#proBossPhase{position:fixed;z-index:27;top:calc(env(safe-area-inset-top,0px) + 61px);right:max(12px,env(safe-area-inset-right,0px));padding:5px 9px;opacity:0;transform:translateY(-5px);border-radius:7px;pointer-events:none;background:rgba(12,8,28,.88);border:1px solid rgba(255,255,255,.14);color:#e8e5ef;font:900 10px/1 "Nunito",system-ui,sans-serif;letter-spacing:.12em;transition:.18s ease}
+#proBossPhase.on{opacity:1;transform:none}
+#proBossPhase.p2{color:#ffd45a;border-color:rgba(255,212,90,.46)}
+#proBossPhase.p3{color:#ff7185;border-color:rgba(255,75,105,.56);animation:proBossPulse .65s ease-in-out infinite alternate}
+@keyframes proBossPulse{to{box-shadow:0 0 18px rgba(255,75,105,.32);filter:brightness(1.18)}}
+#proAnnouncer{position:fixed;z-index:80;left:50%;top:22%;width:min(520px,84vw);transform:translate(-50%,-12px) scale(.96);opacity:0;pointer-events:none;text-align:center;transition:opacity .18s ease,transform .22s cubic-bezier(.2,.8,.2,1);text-shadow:0 3px 14px rgba(0,0,0,.9)}
+#proAnnouncer.on{opacity:1;transform:translate(-50%,0) scale(1)}
+#proAnnouncer b{display:block;font:900 clamp(22px,5.2vmin,40px)/.95 "Lilita One",system-ui,sans-serif;letter-spacing:.055em;color:#fff;text-transform:uppercase}
+#proAnnouncer span{display:block;margin-top:7px;font:900 clamp(10px,2vmin,13px)/1.2 "Nunito",system-ui,sans-serif;letter-spacing:.08em;color:#cbc6dc;text-transform:uppercase}
+#proAnnouncer.good b{color:#82f4ef}
+#proAnnouncer.boss b{color:#ffd45a}
+#proAnnouncer.danger b{color:#ff657d}
+#proAnnouncer.on::before,#proAnnouncer.on::after{content:"";display:inline-block;vertical-align:middle;width:min(120px,18vw);height:1px;margin:0 10px 8px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5))}
+#proAnnouncer.on::after{transform:scaleX(-1)}
+#dash:active,#ult:active,#dash1:active,#ult1:active{transform:scale(.92)!important;filter:brightness(1.22)}
+#ult.rdy,#ult1.rdy{box-shadow:0 0 0 2px rgba(255,212,90,.25),0 0 24px rgba(255,212,90,.38)!important}
+@media (max-width:700px){#proCombat{top:calc(env(safe-area-inset-top,0px) + 62px);width:min(280px,58vw)}.proCombatTop{padding:5px 8px;grid-template-columns:34px 1fr auto}#proGrade{height:24px;font-size:15px}#proCombo{font-size:11px}#proMulti{font-size:10px}#proBossPhase{top:calc(env(safe-area-inset-top,0px) + 52px);font-size:9px}}
+@media (max-height:500px){#proCombat{top:calc(env(safe-area-inset-top,0px) + 45px);width:min(260px,46vw)}#proBossPhase{top:calc(env(safe-area-inset-top,0px) + 42px)}#proAnnouncer{top:17%}}
