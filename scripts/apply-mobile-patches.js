@@ -49,6 +49,21 @@ const newIntro = `Modo infinito: a partida não termina, os bosses se repetem, o
 if (s.includes(oldIntro)) s = s.replace(oldIntro, newIntro);
 
 fs.writeFileSync(path, s);
+
+for (const file of ['mobile-pro.js', 'mobile-pro.css']) {
+  fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
+}
+
+const indexPath = 'www/index.html';
+let html = fs.readFileSync(indexPath, 'utf8');
+if (!html.includes('mobile-pro.css')) {
+  html = html.replace('</head>', '<link rel="stylesheet" href="mobile-pro.css"></head>');
+}
+if (!html.includes('mobile-pro.js')) {
+  html = html.replace('</body>', '<script src="mobile-pro.js"></script></body>');
+}
+fs.writeFileSync(indexPath, html);
+
 console.log('Survive Chaos Mobile patch applied.');
 console.log('Infinite horde formula: 16 × 1.24^(minute-1), plus exponential normal spawn pressure.');
-// Stable-signing verification build: no gameplay change.
+console.log('Combat 2.0 enabled: Flow rewards, Near Miss, Perfect Dash, boss phases and Chaos Director.');
