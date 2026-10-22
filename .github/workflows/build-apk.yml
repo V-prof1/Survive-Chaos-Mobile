@@ -48,6 +48,7 @@ jobs:
           node --check mobile/www/mobile-economy.js
           node --check mobile/www/mobile-content.js
           node --check mobile/www/mobile-legacy.js
+          node --check mobile/www/mobile-saveguard.js
           grep -q 'mobile-pro.css' mobile/www/index.html
           grep -q 'mobile-pro.js' mobile/www/index.html
           grep -q 'mobile-economy.css' mobile/www/index.html
@@ -56,6 +57,7 @@ jobs:
           grep -q 'mobile-content.js' mobile/www/index.html
           grep -q 'mobile-legacy.css' mobile/www/index.html
           grep -q 'mobile-legacy.js' mobile/www/index.html
+          grep -q 'mobile-saveguard.js' mobile/www/index.html
 
       - name: Configurar Node.js 22
         uses: actions/setup-node@v4
