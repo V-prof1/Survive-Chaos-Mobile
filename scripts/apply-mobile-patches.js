@@ -55,17 +55,18 @@ for (const file of [
   'mobile-economy.js','mobile-economy.css',
   'mobile-content.js','mobile-content.css',
   'mobile-legacy.js','mobile-legacy.css',
-  'mobile-saveguard.js'
+  'mobile-saveguard.js',
+  'mobile-menu-fix.css','mobile-upgrade-icons.js'
 ]) {
   fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
 }
 
 const indexPath = 'www/index.html';
 let html = fs.readFileSync(indexPath, 'utf8');
-for (const css of ['mobile-pro.css','mobile-economy.css','mobile-content.css','mobile-legacy.css']) {
+for (const css of ['mobile-pro.css','mobile-economy.css','mobile-content.css','mobile-legacy.css','mobile-menu-fix.css']) {
   if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
 }
-for (const js of ['mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js']) {
+for (const js of ['mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js','mobile-upgrade-icons.js']) {
   if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
 }
 fs.writeFileSync(indexPath, html);
@@ -77,3 +78,4 @@ console.log('Economy endgame enabled: Chaos Core permanent sink + Black Market r
 console.log('Content Expansion enabled: 8 enemies + 10 upgrades + 12 relics + 5 elite mutations + 8 chaos events.');
 console.log('Legacy Expansion enabled: weapon mastery + run mutators + Nemesis hunts + cursed relics + Apex elites + challenges + Chaos Tiers.');
 console.log('SaveGuard enabled: throttled gameplay save writes for extreme horde performance.');
+console.log('Mini hotfix enabled: custom art + fallback icons for Mobile upgrades and unified menu buttons.');
