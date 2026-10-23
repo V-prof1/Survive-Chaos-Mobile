@@ -3,7 +3,6 @@ const path = 'www/game.js';
 let s = fs.readFileSync(path, 'utf8');
 
 const oldSpawn = `function spawn(k,px,py,el){const d=EN[k],m=T/60;if(E.length>300)return;const e={k,x:px,y:py,vx:0,vy:0,hp:d[1]*(1+m*.22)*HM()*(el?5:1),r:d[3]*(el?1.4:1),sp:d[2],dmg:d[4]*(1+m*.04),xp:d[5]*(el?5:1),col:d[6],ai:d[9],el,t1:R()*2,t2:0,oc:0,fl:0};e.mh=e.hp;E.push(e);return e}`;
-
 const newSpawn = `let INF_LAST_MIN=0;
 function mobileEnemyCap(){
   if(!CF.i)return 300;
@@ -13,12 +12,10 @@ function mobileEnemyCap(){
   return Math.max(300,Math.min(1200,Math.floor(raw*perf)));
 }
 function spawn(k,px,py,el){const d=EN[k],m=T/60;if(E.length>=mobileEnemyCap())return;const e={k,x:px,y:py,vx:0,vy:0,hp:d[1]*(1+m*.22)*HM()*(el?5:1),r:d[3]*(el?1.4:1),sp:d[2],dmg:d[4]*(1+m*.04),xp:d[5]*(el?5:1),col:d[6],ai:d[9],el,t1:R()*2,t2:0,oc:0,fl:0};e.mh=e.hp;E.push(e);return e}`;
-
 if (!s.includes(oldSpawn)) throw new Error('Mobile patch failed: spawn() signature changed upstream.');
 s = s.replace(oldSpawn, newSpawn);
 
 const oldLoop = `if(silence<=0&&CF.g!=2){bk-=dt;const gap=Math.max(.1,.85-T/60*.035)/(horde>0?3:1)/MZ[3]*(CF.g==5?3:1)/(CF.g==3?1.5:1)/(PL.length>1?1.5:1);if(bk<=0){bk=gap;const[a,b]=edge();spawn(pick(),a,b,T>180&&R()<.03)}}`;
-
 const newLoop = `if(silence<=0&&CF.g!=2){
   bk-=dt;
   const im=Math.max(0,Math.floor(T/60));
@@ -40,7 +37,6 @@ const newLoop = `if(silence<=0&&CF.g!=2){
     if(wave>0){ring(wave);ban('HORDA INFINITA: '+wave+' INIMIGOS — MINUTO '+im);shake=Math.min(18,6+im*.45)}
   }
 }`;
-
 if (!s.includes(oldLoop)) throw new Error('Mobile patch failed: main spawn loop changed upstream.');
 s = s.replace(oldLoop, newLoop);
 
@@ -48,20 +44,31 @@ const oldIntro = `Modo infinito: a partida não termina, os bosses se repetem e 
 const newIntro = `Modo infinito: a partida não termina, os bosses se repetem, o bioma muda a cada vitória e as hordas crescem exponencialmente a cada minuto.`;
 if (s.includes(oldIntro)) s = s.replace(oldIntro, newIntro);
 
-// Fail closed if upstream rendering changes: visuals must never change weapon statistics.
 function replaceRequired(before, after) {
-  if (!s.includes(before)) throw new Error('Ghoul integration changed upstream: '+before.slice(0,70));
+  if (!s.includes(before)) throw new Error('Mobile integration changed upstream: '+before.slice(0,80));
   s=s.replace(before,after);
 }
-replaceRequired("sfx('shoot');puff(P.x+Math.cos(P.a)*18,P.y+Math.sin(P.a)*18,'#ffe9a0',3,90);",
-  "if(window.SCGhoul&&SCGhoul.active(P)){SCGhoul.shot(P);sfx('shoot')}else{sfx('shoot');puff(P.x+Math.cos(P.a)*18,P.y+Math.sin(P.a)*18,'#ffe9a0',3,90)}");
-// All player bullets, including backwards shots/turrets, keep their original physics and damage.
-s=s.replace(/\bB\.push\(\{x:/g, 'B.push({kg:window.SCGhoul&&SCGhoul.active(P)?CF.w:null,x:');
-replaceRequired("for(const b of B){const bk=", "for(const b of B){if(window.SCGhoul&&SCGhoul.bullet(x,b))continue;const bk=");
-replaceRequired('drawPW();devFX();','drawPW();devFX();if(window.SCGhoul)SCGhoul.world(x);');
-replaceRequired("if(dbg){x.fillStyle=", "if(window.SCGhoul)SCGhoul.screen(x);if(dbg){x.fillStyle=");
+
+// ===== Economy / score rebalance in the Mobile build only =====
+replaceRequired("const scoreNow=()=>Math.round((kills*10+RUN.boss*500+Math.floor(T)*3)*MZ[4]);",
+  "const scoreNow=()=>Math.round((kills*4+RUN.boss*750+Math.floor(T)*2)*MZ[4]);");
+replaceRequired("pm=1+(S.perm&&S.perm.coin||0)*.1", "pm=1+(S.perm&&S.perm.coin||0)*.04");
+replaceRequired("(kills/6+t/12+(win?400:0))", "(kills/14+t/30+(win?120:0))");
+replaceRequired("(win?Math.round(2000*MZ[4]):0)", "(win?Math.round(1200*MZ[4]):0)");
+replaceRequired("bonus=Math.floor(sc/80*rk[2]*pm)", "bonus=Math.floor(sc/260*rk[2]*pm)");
+replaceRequired("earned+=Math.ceil(v*P.xpm*1.5);", "earned+=Math.ceil(v*P.xpm*.35);");
+s=s.replace(/earned\+=25/g,'earned+=8');
+replaceRequired("else{earned+=5;sfx('coin')}", "else{earned+=2;sfx('coin')}");
+replaceRequired("if(e.boss){if(e.helper){earned+=60;", "if(e.boss){if(e.helper){earned+=20;");
+replaceRequired("bossDown();earned+=150;", "bossDown();earned+=50;");
+replaceRequired("for(let i=0;i<8;i++)G.push({x:P.x+R()*60-30,y:P.y+R()*60-30,v:1,k:2});", "for(let i=0;i<2;i++)G.push({x:P.x+R()*60-30,y:P.y+R()*60-30,v:1,k:2});");
+
+// ===== Skin arsenal hooks: cosmetic only, never changes weapon stats =====
+s=s.replace(/\bB\.push\(\{x:/g, 'B.push({sk:(P&&P.sk!=null?P.sk:S.skin),wt:CF.w,x:');
+replaceRequired("for(const b of B){const bk=", "for(const b of B){if(window.SCArsenal&&SCArsenal.bullet(x,b))continue;const bk=");
 replaceRequired("const a=q.oa+i/q.orb*PI*2;x.fillStyle='#d8e4ff';",
- "const a=q.oa+i/q.orb*PI*2;if(window.SCGhoul&&SCGhoul.orbital(x,q,a))continue;x.fillStyle='#d8e4ff';");
+  "const a=q.oa+i/q.orb*PI*2;if(window.SCArsenal&&SCArsenal.orbital(x,q,a))continue;x.fillStyle='#d8e4ff';");
+
 fs.writeFileSync(path, s);
 
 for (const file of [
@@ -71,32 +78,27 @@ for (const file of [
   'mobile-legacy.js','mobile-legacy.css',
   'mobile-saveguard.js',
   'mobile-menu-fix.css','mobile-upgrade-icons.js',
-  'mobile-kaneki.js','mobile-kaneki.css',
   'mobile-admin-plus.js','mobile-admin-plus.css',
-  'mobile-kaneki-v2.js','mobile-kaneki-v2.css'
-]) {
-  fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
-}
+  'mobile-arsenal-skins.js','mobile-arsenal-skins.css',
+  'mobile-rebalance.js','mobile-rebalance.css'
+]) fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
 
 const indexPath = 'www/index.html';
 let html = fs.readFileSync(indexPath, 'utf8');
-for (const css of ['mobile-pro.css','mobile-economy.css','mobile-content.css','mobile-legacy.css','mobile-menu-fix.css','mobile-kaneki.css','mobile-admin-plus.css','mobile-kaneki-v2.css']) {
-  if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
-}
-for (const js of ['mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js','mobile-upgrade-icons.js','mobile-kaneki.js','mobile-admin-plus.js','mobile-kaneki-v2.js']) {
-  if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
-}
+for (const css of [
+  'mobile-pro.css','mobile-economy.css','mobile-content.css','mobile-legacy.css','mobile-menu-fix.css',
+  'mobile-admin-plus.css','mobile-arsenal-skins.css','mobile-rebalance.css'
+]) if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
+for (const js of [
+  'mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js','mobile-upgrade-icons.js',
+  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js'
+]) if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
 fs.writeFileSync(indexPath, html);
 
 console.log('Survive Chaos Mobile patch applied.');
-console.log('Infinite horde formula: 16 × 1.24^(minute-1), plus exponential normal spawn pressure.');
-console.log('Combat 2.0 enabled: Flow rewards, Near Miss, Perfect Dash, boss phases and Chaos Director.');
-console.log('Economy endgame enabled: Chaos Core permanent sink + Black Market repeatable contracts.');
-console.log('Content Expansion enabled: 8 enemies + 10 upgrades + 12 relics + 5 elite mutations + 8 chaos events.');
-console.log('Legacy Expansion enabled: weapon mastery + run mutators + Nemesis hunts + cursed relics + Apex elites + challenges + Chaos Tiers.');
-console.log('SaveGuard enabled: throttled gameplay save writes for extreme horde performance.');
-console.log('Mini hotfix enabled: custom art + fallback icons for Mobile upgrades and unified menu buttons.');
-console.log('Premium skin enabled: Kaneki · Ghoul, 5,000,000 coins, pixel-art cut-in and exclusive Kagune ULT.');
-console.log('Admin Plus enabled: arbitrary coin grants with presets.');
-console.log('Kaneki V2 enabled: detailed hero art, organic Kagune, new activation and reworked ULT visuals.');
-console.log('Base skins restored: using original Survive Chaos player skin renderer.');
+console.log('Infinite horde formula retained with performance-aware enemy cap.');
+console.log('Combat 2.0, Economy, Content Expansion, Legacy and SaveGuard retained.');
+console.log('Kaneki removed from runtime; invalid Kaneki save slot is migrated/refunded once.');
+console.log('Skin Arsenal enabled: every base skin themes weapons/projectiles; Golden Reaper = gold, ADMIN = glitch.');
+console.log('Rebalance 2.0 enabled: difficulty/economy/score/upgrades/biomes/modes/bosses/DEV retuned.');
+console.log('Five stackable Mobile extra modes + random mode added.');
