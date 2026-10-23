@@ -87,18 +87,19 @@ for (const file of [
   'mobile-menu-fix.css','mobile-upgrade-icons.js',
   'mobile-admin-plus.js','mobile-admin-plus.css',
   'mobile-arsenal-skins.js','mobile-arsenal-skins.css',
-  'mobile-rebalance.js','mobile-rebalance.css'
+  'mobile-rebalance.js','mobile-rebalance.css',
+  'mobile-hud-responsive.js','mobile-hud-responsive.css'
 ]) fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
 
 const indexPath = 'www/index.html';
 let html = fs.readFileSync(indexPath, 'utf8');
 for (const css of [
   'mobile-pro.css','mobile-economy.css','mobile-content.css','mobile-legacy.css','mobile-menu-fix.css',
-  'mobile-admin-plus.css','mobile-arsenal-skins.css','mobile-rebalance.css'
+  'mobile-admin-plus.css','mobile-arsenal-skins.css','mobile-rebalance.css','mobile-hud-responsive.css'
 ]) if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
 for (const js of [
   'mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js','mobile-upgrade-icons.js',
-  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js'
+  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js','mobile-hud-responsive.js'
 ]) if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
 fs.writeFileSync(indexPath, html);
 
@@ -109,4 +110,5 @@ console.log('Kaneki removed from runtime; invalid Kaneki save slot is migrated/r
 console.log('Skin Arsenal enabled: every base skin themes weapons/projectiles; Golden Reaper = gold, ADMIN = glitch.');
 console.log('Rebalance 2.0 enabled: difficulty/economy/score/upgrades/biomes/modes/bosses/DEV retuned.');
 console.log('DEV raw reward reduced from 25,000 to 2,500 coins.');
+console.log('Responsive portrait HUD enabled: split kills/score chips and isolated combo lane.');
 console.log('Five stackable Mobile extra modes + random mode added.');
