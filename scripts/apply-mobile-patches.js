@@ -71,6 +71,13 @@ replaceRequired("const a=q.oa+i/q.orb*PI*2;x.fillStyle='#d8e4ff';",
 
 fs.writeFileSync(path, s);
 
+// DEV used to grant 25,000 raw coins on top of the normal end-of-run economy.
+const devPath='www/dev.js';
+let ds=fs.readFileSync(devPath,'utf8');
+if(!ds.includes('earned+=25000')) throw new Error('DEV reward signature changed upstream.');
+ds=ds.replace('earned+=25000','earned+=2500');
+fs.writeFileSync(devPath,ds);
+
 for (const file of [
   'mobile-pro.js','mobile-pro.css',
   'mobile-economy.js','mobile-economy.css',
@@ -101,4 +108,5 @@ console.log('Combat 2.0, Economy, Content Expansion, Legacy and SaveGuard retain
 console.log('Kaneki removed from runtime; invalid Kaneki save slot is migrated/refunded once.');
 console.log('Skin Arsenal enabled: every base skin themes weapons/projectiles; Golden Reaper = gold, ADMIN = glitch.');
 console.log('Rebalance 2.0 enabled: difficulty/economy/score/upgrades/biomes/modes/bosses/DEV retuned.');
+console.log('DEV raw reward reduced from 25,000 to 2,500 coins.');
 console.log('Five stackable Mobile extra modes + random mode added.');
