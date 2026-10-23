@@ -1,0 +1,26 @@
+const fs=require('fs');
+const assert=require('assert');
+const read=p=>fs.readFileSync(p,'utf8');
+const game=read('www/game.js');
+const index=read('www/index.html');
+const arsenal=read('www/mobile-arsenal-skins.js');
+const balance=read('www/mobile-rebalance.js');
+
+assert(!index.includes('mobile-kaneki.js'),'Kaneki runtime JS must not be injected');
+assert(!index.includes('mobile-kaneki-v2.js'),'Kaneki V2 runtime JS must not be injected');
+assert(!index.includes('mobile-kaneki.css'),'Kaneki CSS must not be injected');
+assert(index.includes('mobile-arsenal-skins.js'),'Skin arsenal layer missing');
+assert(index.includes('mobile-rebalance.js'),'Rebalance layer missing');
+assert(game.includes('SCArsenal.bullet(x,b)'),'Projectile skin hook missing');
+assert(game.includes('SCArsenal.orbital(x,q,a)'),'Orbital skin hook missing');
+assert(game.includes('RUN.boss*750'),'New score formula missing');
+assert(game.includes("earned+=Math.ceil(v*P.xpm*.35)"),'Max-level XP conversion was not reduced');
+assert(game.includes("earned+=2;sfx('coin')"),'Coin pickup value was not reduced');
+assert(arsenal.includes("n:'Dourado'"),'Golden Reaper arsenal theme missing');
+assert(arsenal.includes("n:'GLITCH'"),'ADMIN glitch arsenal theme missing');
+assert(arsenal.includes('5000000'),'Retired Kaneki refund missing');
+assert(balance.includes('Dupla Ameaça'),'New double-boss mode missing');
+assert(balance.includes('Caçada de Elite'),'New elite hunt mode missing');
+assert(balance.includes('DEV // LIMITADORES REMOVIDOS'),'DEV rebalance missing');
+assert(balance.includes("['Pesadelo',2.80,2.25,2.05,1.05,.72,.62,1.85]"),'Nightmare rebalance missing');
+console.log('Mobile arsenal/rebalance static regression checks passed.');
