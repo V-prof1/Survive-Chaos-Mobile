@@ -49,6 +49,8 @@ jobs:
           node --check mobile/www/mobile-content.js
           node --check mobile/www/mobile-legacy.js
           node --check mobile/www/mobile-saveguard.js
+          node --check mobile/www/mobile-upgrade-icons.js
+          node --check mobile/www/mobile-kaneki.js
           grep -q 'mobile-pro.css' mobile/www/index.html
           grep -q 'mobile-pro.js' mobile/www/index.html
           grep -q 'mobile-economy.css' mobile/www/index.html
@@ -58,6 +60,12 @@ jobs:
           grep -q 'mobile-legacy.css' mobile/www/index.html
           grep -q 'mobile-legacy.js' mobile/www/index.html
           grep -q 'mobile-saveguard.js' mobile/www/index.html
+          grep -q 'mobile-menu-fix.css' mobile/www/index.html
+          grep -q 'mobile-upgrade-icons.js' mobile/www/index.html
+          grep -q 'mobile-kaneki.css' mobile/www/index.html
+          grep -q 'mobile-kaneki.js' mobile/www/index.html
+          grep -q 'Kaneki · Ghoul' mobile/www/mobile-kaneki.js
+          grep -q '5000000' mobile/www/mobile-kaneki.js
 
       - name: Configurar Node.js 22
         uses: actions/setup-node@v4
@@ -208,12 +216,12 @@ jobs:
         shell: bash
         run: |
           mkdir -p output
-          cp mobile/android/app/build/outputs/apk/debug/app-debug.apk output/Survive-Chaos-Mobile-Beta.apk
+          cp mobile/android/app/build/outputs/apk/debug/app-debug.apk output/Survive-Chaos-Mobile.apk
 
       - name: Enviar APK como artefato
         uses: actions/upload-artifact@v4
         with:
           name: Survive-Chaos-Mobile-APK
-          path: output/Survive-Chaos-Mobile-Beta.apk
+          path: output/Survive-Chaos-Mobile.apk
           if-no-files-found: error
           retention-days: 14
