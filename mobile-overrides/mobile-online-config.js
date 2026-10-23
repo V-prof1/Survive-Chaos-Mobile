@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  // Public client configuration only. NEVER put service_role/database passwords here.
+  // Public client configuration only. NEVER put private server credentials or database passwords here.
   window.SC_ONLINE_CONFIG=Object.freeze({
     enabled:false,
     supabaseUrl:'',
