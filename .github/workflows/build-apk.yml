@@ -8,6 +8,7 @@ on:
       - 'tests/**'
       - 'scripts/**'
       - 'mobile-overrides/**'
+      - 'online/**'
       - 'package.json'
       - 'capacitor.config.json'
       - '.github/workflows/build-apk.yml'
@@ -54,6 +55,9 @@ jobs:
           node --check mobile/www/mobile-admin-plus.js
           node --check mobile/www/mobile-arsenal-skins.js
           node --check mobile/www/mobile-rebalance.js
+          node --check mobile/www/mobile-hud-responsive.js
+          node --check mobile/www/mobile-online-config.js
+          node --check mobile/www/mobile-online.js
           grep -q 'mobile-pro.css' mobile/www/index.html
           grep -q 'mobile-economy.js' mobile/www/index.html
           grep -q 'mobile-content.js' mobile/www/index.html
@@ -62,11 +66,16 @@ jobs:
           grep -q 'mobile-admin-plus.js' mobile/www/index.html
           grep -q 'mobile-arsenal-skins.js' mobile/www/index.html
           grep -q 'mobile-rebalance.js' mobile/www/index.html
-          grep -q 'mobile-arsenal-skins.css' mobile/www/index.html
-          grep -q 'mobile-rebalance.css' mobile/www/index.html
+          grep -q 'mobile-hud-responsive.js' mobile/www/index.html
+          grep -q 'mobile-online-config.js' mobile/www/index.html
+          grep -q 'mobile-online.js' mobile/www/index.html
+          grep -q 'mobile-online.css' mobile/www/index.html
           grep -q 'Dar moedas' mobile/www/mobile-admin-plus.js
           grep -q 'Skin Arsenal enabled' mobile/www/mobile-arsenal-skins.js
           grep -q 'Rebalance 2.0 enabled' mobile/www/mobile-rebalance.js
+          grep -q 'sc.online.v1' mobile/www/mobile-online.js
+          grep -q 'survivechaos://auth/callback' mobile/www/mobile-online-config.js
+          ! grep -q 'service_role' mobile/www/mobile-online-config.js
           ! grep -q 'mobile-kaneki.js' mobile/www/index.html
           ! grep -q 'mobile-kaneki-v2.js' mobile/www/index.html
           ! grep -q 'mobile-kaneki.css' mobile/www/index.html
@@ -131,6 +140,37 @@ jobs:
           rm -rf android
           npx cap add android
 
+      - name: Preparar callback OAuth Android
+        shell: bash
+        working-directory: mobile
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          p=Path('android/app/src/main/AndroidManifest.xml')
+          ET.register_namespace('android','http://schemas.android.com/apk/res/android')
+          ns='{http://schemas.android.com/apk/res/android}'
+          tree=ET.parse(p); root=tree.getroot(); app=root.find('application')
+          if app is None: raise SystemExit('Android application node not found')
+          activity=None
+          for a in app.findall('activity'):
+              if a.get(ns+'name') in ('.MainActivity','com.survivechaos.game.MainActivity'):
+                  activity=a; break
+          if activity is None: raise SystemExit('MainActivity not found')
+          exists=False
+          for f in activity.findall('intent-filter'):
+              for d in f.findall('data'):
+                  if d.get(ns+'scheme')=='survivechaos' and d.get(ns+'host')=='auth': exists=True
+          if not exists:
+              f=ET.SubElement(activity,'intent-filter')
+              ET.SubElement(f,'action',{ns+'name':'android.intent.action.VIEW'})
+              ET.SubElement(f,'category',{ns+'name':'android.intent.category.DEFAULT'})
+              ET.SubElement(f,'category',{ns+'name':'android.intent.category.BROWSABLE'})
+              ET.SubElement(f,'data',{ns+'scheme':'survivechaos',ns+'host':'auth',ns+'pathPrefix':'/callback'})
+          tree.write(p,encoding='utf-8',xml_declaration=True)
+          PY
+          grep -q 'survivechaos' android/app/src/main/AndroidManifest.xml
+
       - name: Travar assinatura Mobile no Gradle
         shell: bash
         working-directory: mobile
@@ -189,6 +229,7 @@ jobs:
           PY
           npx capacitor-assets generate --android --iconBackgroundColor '#171233' --iconBackgroundColorDark '#171233' --splashBackgroundColor '#171233' --splashBackgroundColorDark '#171233'
           npx cap sync android
+          grep -q 'survivechaos' android/app/src/main/AndroidManifest.xml
 
       - name: Definir versão Mobile
         shell: bash
