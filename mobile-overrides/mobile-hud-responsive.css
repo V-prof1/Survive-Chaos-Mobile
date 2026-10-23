@@ -1,0 +1,153 @@
+/* Survive Chaos Mobile — responsive gameplay HUD
+   Keeps landscape familiar while making portrait readable. */
+#scPortraitStats{display:none}
+
+@media (orientation:portrait){
+  /* Top-left: health/progression gets its own lane. */
+  #hud .top{
+    left:max(8px,env(safe-area-inset-left,0px));
+    right:auto;
+    top:calc(12px + env(safe-area-inset-top,0px));
+    width:min(57vw,235px);
+    gap:5px;
+  }
+  #hud .pl{width:100%;gap:4px}
+  #hud .hp{width:100%;max-width:235px;height:20px;border-width:2px;box-shadow:2px 2px 0 rgba(0,0,0,.42)}
+  #hud .hp2{height:16px}
+  #hud #hpt{font-size:10px}
+  #hud #hpt2{font-size:9px}
+  #hud .lvl{max-width:100%;padding:2px 6px;font-size:10px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #hud #gc{font-size:10px;line-height:1.15;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* Top-right: time only. The old mixed kill/score/combo string is hidden. */
+  #hud .mid{
+    position:absolute;
+    top:calc(12px + env(safe-area-inset-top,0px));
+    right:calc(50px + env(safe-area-inset-right,0px));
+    left:auto;
+    width:min(34vw,138px);
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:5px;
+    pointer-events:none;
+  }
+  #hud #tm{
+    min-width:78px;
+    padding:4px 8px;
+    font-size:16px;
+    line-height:1;
+    border-width:1px;
+    box-shadow:2px 2px 0 rgba(0,0,0,.38);
+    pointer-events:auto;
+  }
+  #hud #kl{display:none!important}
+  #hud #pz{
+    position:absolute;
+    top:calc(12px + env(safe-area-inset-top,0px));
+    right:max(8px,env(safe-area-inset-right,0px));
+    width:36px;height:32px;
+    z-index:8;
+  }
+
+  /* New portrait scoreboard: kills and score are distinct, never share the combo row. */
+  #scPortraitStats{
+    position:absolute;
+    z-index:7;
+    top:calc(52px + env(safe-area-inset-top,0px));
+    right:max(8px,env(safe-area-inset-right,0px));
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:4px;
+    pointer-events:none;
+  }
+  #scPortraitStats span{
+    display:block;
+    max-width:42vw;
+    padding:4px 7px;
+    border:1px solid rgba(119,105,202,.55);
+    border-radius:7px;
+    background:linear-gradient(180deg,rgba(15,12,36,.90),rgba(8,7,23,.88));
+    box-shadow:2px 2px 0 rgba(0,0,0,.32);
+    color:#eeeaff;
+    font:900 9px/1.1 "Nunito",system-ui,sans-serif;
+    letter-spacing:.04em;
+    white-space:nowrap;
+  }
+  #scPortraitStats .scps-score{color:#ffe177;border-color:rgba(255,207,63,.42)}
+
+  /* Combo has an exclusive lane below the top stats instead of colliding with them. */
+  #proCombat{
+    top:calc(106px + env(safe-area-inset-top,0px));
+    width:min(290px,74vw);
+    filter:drop-shadow(0 5px 13px rgba(0,0,0,.4));
+  }
+  #proCombat .proCombatTop{grid-template-columns:32px 1fr auto;padding:4px 7px;gap:6px}
+  #proCombat #proGrade{height:22px;font-size:14px}
+  #proCombat #proCombo{font-size:10px;letter-spacing:.07em}
+  #proCombat #proMulti{font-size:9px}
+  #proCombat .proMeter{height:4px}
+  #proCombat #proNear{margin-top:3px;padding:3px 7px;font-size:8px}
+
+  /* Mission and boss information have their own vertical band below combo. */
+  #hud #ms{
+    top:calc(143px + env(safe-area-inset-top,0px));
+    max-width:82vw;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:10px;
+    padding:2px 7px;
+  }
+  #hud #boss{
+    top:calc(171px + env(safe-area-inset-top,0px));
+    width:min(88vw,430px);
+    padding:6px 8px 8px;
+  }
+  #hud #boss span{font-size:12px}
+  #hud #boss div{height:12px;margin-top:4px}
+  #proBossPhase{
+    top:calc(145px + env(safe-area-inset-top,0px));
+    right:max(8px,env(safe-area-inset-right,0px));
+    font-size:8px;
+    padding:4px 6px;
+  }
+
+  /* Announcements and legacy banners intentionally use different vertical zones. */
+  #proAnnouncer{top:27%;width:min(92vw,460px)}
+  #proAnnouncer b{font-size:clamp(19px,6vw,30px)}
+  #proAnnouncer span{font-size:9px;margin-top:5px}
+  #ban{top:40%;padding:0 12px;font-size:clamp(18px,5.8vw,29px);line-height:1.25}
+
+  /* Touch actions stay below gameplay information and get slightly smaller on narrow portrait screens. */
+  #dash,#ult{width:72px;height:72px;bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+  #dash{right:calc(14px + env(safe-area-inset-right,0px))}
+  #ult{right:calc(96px + env(safe-area-inset-right,0px))}
+  #dash small,#ult small{font-size:9px}
+}
+
+@media (orientation:portrait) and (max-width:380px){
+  #hud .top{width:55vw}
+  #hud .mid{width:31vw}
+  #scPortraitStats span{font-size:8px;padding:3px 6px}
+  #proCombat{top:calc(101px + env(safe-area-inset-top,0px));width:70vw}
+  #hud #ms{top:calc(136px + env(safe-area-inset-top,0px))}
+  #hud #boss{top:calc(162px + env(safe-area-inset-top,0px))}
+}
+
+@media (orientation:portrait) and (max-height:650px){
+  #proCombat{top:calc(94px + env(safe-area-inset-top,0px))}
+  #hud #ms{top:calc(128px + env(safe-area-inset-top,0px))}
+  #hud #boss{top:calc(153px + env(safe-area-inset-top,0px));padding:4px 7px 6px}
+  #proAnnouncer{top:25%}
+  #ban{top:38%}
+  #dash,#ult{width:66px;height:66px}
+  #ult{right:calc(89px + env(safe-area-inset-right,0px))}
+}
+
+/* Landscape only gets tiny breathing-room tweaks; its current layout stays familiar. */
+@media (orientation:landscape) and (max-height:500px){
+  #proCombat{width:min(250px,42vw)}
+  #proAnnouncer{top:18%}
+  #ban{top:38%}
+}
