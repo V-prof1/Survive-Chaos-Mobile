@@ -1,5 +1,6 @@
 const fs=require('fs');
 const assert=require('assert');
+const cp=require('child_process');
 const read=p=>fs.readFileSync(p,'utf8');
 const game=read('www/game.js');
 const index=read('www/index.html');
@@ -15,6 +16,7 @@ const onlineSocket=read('www/mobile-online-socket.js');
 const onlineCss=read('www/mobile-online.css');
 const ults=read('www/mobile-skin-ults.js');
 const ultsCss=read('www/mobile-skin-ults.css');
+cp.execFileSync(process.execPath,['--check','www/mobile-skin-ults.js'],{stdio:'inherit'});
 
 assert(!index.includes('mobile-kaneki.js'),'Kaneki runtime JS must not be injected');
 assert(!index.includes('mobile-kaneki-v2.js'),'Kaneki V2 runtime JS must not be injected');
