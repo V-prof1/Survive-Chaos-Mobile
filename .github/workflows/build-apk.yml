@@ -51,6 +51,8 @@ jobs:
           node --check mobile/www/mobile-saveguard.js
           node --check mobile/www/mobile-upgrade-icons.js
           node --check mobile/www/mobile-kaneki.js
+          node --check mobile/www/mobile-admin-plus.js
+          node --check mobile/www/mobile-kaneki-v2.js
           grep -q 'mobile-pro.css' mobile/www/index.html
           grep -q 'mobile-pro.js' mobile/www/index.html
           grep -q 'mobile-economy.css' mobile/www/index.html
@@ -64,8 +66,14 @@ jobs:
           grep -q 'mobile-upgrade-icons.js' mobile/www/index.html
           grep -q 'mobile-kaneki.css' mobile/www/index.html
           grep -q 'mobile-kaneki.js' mobile/www/index.html
+          grep -q 'mobile-admin-plus.css' mobile/www/index.html
+          grep -q 'mobile-admin-plus.js' mobile/www/index.html
+          grep -q 'mobile-kaneki-v2.css' mobile/www/index.html
+          grep -q 'mobile-kaneki-v2.js' mobile/www/index.html
           grep -q 'Kaneki · Ghoul' mobile/www/mobile-kaneki.js
           grep -q '5000000' mobile/www/mobile-kaneki.js
+          grep -q 'Dar moedas' mobile/www/mobile-admin-plus.js
+          grep -q 'Kaneki V2 visual' mobile/www/mobile-kaneki-v2.js
 
       - name: Configurar Node.js 22
         uses: actions/setup-node@v4
