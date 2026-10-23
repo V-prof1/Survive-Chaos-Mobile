@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 try{
-  if(typeof SK==='undefined'||typeof S==='undefined'||typeof hero!=='function')return;
+  if(typeof SK==='undefined'||typeof S==='undefined')return;
 
   const THEMES=[
     {n:'Padrão',p:'#2b2f3a',a:'#ffb340',t:'#ffe9a0',k:'std'},
@@ -37,7 +37,6 @@ try{
   try{sv()}catch(_){ }
 
   const theme=i=>THEMES[Math.max(0,Math.min(THEMES.length-1,i|0))]||THEMES[0];
-  const skinIndex=(sk,q)=>q&&q.sk!=null?q.sk:Math.max(0,SK.indexOf(sk));
 
   function glow(c,col,r,alpha=.35){
     c.save();c.globalCompositeOperation='lighter';c.globalAlpha=alpha;c.fillStyle=col;c.beginPath();c.arc(0,0,r,0,Math.PI*2);c.fill();c.restore();
@@ -53,8 +52,7 @@ try{
 
   function weaponShape(c,r,w,t,accentOverride){
     const a=accentOverride||t.a, main=t.p, ink=t.k==='bone'?'#4a4339':'#0a0b10';
-    const ox=r*.48;
-    c.translate(ox,0);
+    const ox=r*.48;c.translate(ox,0);
     if(w===0){
       outlineRect(c,0,-r*.15,r*.98,r*.30,r,ink,main);
       poly(c,a,[r*.18,r*.13,r*.47,r*.13,r*.34,r*.56,r*.08,r*.53]);
@@ -80,25 +78,18 @@ try{
       c.save();c.translate(r*1.48,-r*.38);glow(c,t.t,r*.42,t.k==='gold'||t.k==='cyber'?0.36:.22);c.fillStyle=t.t;c.beginPath();c.arc(0,0,r*.20,0,Math.PI*2);c.fill();c.strokeStyle=a;c.lineWidth=Math.max(1,r*.06);c.beginPath();c.arc(0,0,r*.31,0,Math.PI*2);c.stroke();c.restore();
     }
     if(t.k==='gold'){c.strokeStyle='#fff2a7';c.lineWidth=Math.max(1,r*.045);c.beginPath();c.moveTo(r*.12,-r*.06);c.lineTo(r*(w===2?1.45:1.1),-r*.06);c.stroke()}
-    if(t.k==='dragon'){c.fillStyle='#b8ff9e';for(let i=0;i<3;i++)poly(c,'#66c87a',[r*(.35+i*.3),-r*.15,r*(.47+i*.3),-r*.34,r*(.56+i*.3),-r*.12])}
-    if(t.k==='ninja'||t.k==='samurai'){c.fillStyle=a;poly(c,a,[r*.55,-r*.16,r*.72,-r*.34,r*.76,-r*.13])}
+    if(t.k==='dragon')for(let i=0;i<3;i++)poly(c,'#66c87a',[r*(.35+i*.3),-r*.15,r*(.47+i*.3),-r*.34,r*(.56+i*.3),-r*.12]);
+    if(t.k==='ninja'||t.k==='samurai')poly(c,a,[r*.55,-r*.16,r*.72,-r*.34,r*.76,-r*.13]);
   }
 
+  // Called by the native SPR.hero draw order so aiming upward still puts the weapon behind the character.
   function drawWeapon(c,px,py,r,idx,a,q){
-    if(idx<=0||idx>=THEMES.length)return;
+    if(idx<=0||idx>=THEMES.length)return false;
     const t=theme(idx),w=typeof CF!=='undefined'?CF.w||0:0;
     c.save();c.translate(px,py);c.rotate(a||0);
-    if(t.k==='glitch')glitchEcho(c,col=>weaponShape(c,r,w,t,col),r);
-    else weaponShape(c,r,w,t);
-    c.restore();
+    if(t.k==='glitch')glitchEcho(c,col=>weaponShape(c,r,w,t,col),r);else weaponShape(c,r,w,t);
+    c.restore();return true;
   }
-
-  const baseHero=hero;
-  hero=function(c,px,py,r,sk,a,z,q){
-    const out=baseHero.apply(this,arguments),idx=skinIndex(sk,q);
-    drawWeapon(c,px,py,r,idx,a,q);
-    return out;
-  };
 
   function projectileShape(c,b,t,w){
     const ang=Math.atan2(b.vy||0,b.vx||1),spd=Math.hypot(b.vx||0,b.vy||0),s=w===3?1.35:w===2?1.18:1;
@@ -110,17 +101,13 @@ try{
     else if(w===2)poly(c,t.t,[-10,0,-4,-1.7,12,0,-4,1.7]);
     else if(w===3){c.fillStyle=t.p;c.fillRect(-11,-1.5,20,3);poly(c,t.t,[12,0,5,-4,6,4])}
     else{c.fillStyle=t.t;c.beginPath();c.arc(0,0,4.5,0,Math.PI*2);c.fill();c.strokeStyle=t.a;c.lineWidth=2;c.beginPath();c.arc(0,0,8+Math.sin((typeof tm!=='undefined'?tm:0)*9)*1.5,0,Math.PI*2);c.stroke()}
-    if(t.k==='glitch'){
-      c.globalCompositeOperation='lighter';c.globalAlpha=.7;c.fillStyle='#ff2bd6';c.fillRect(-2,-4,6,1);c.fillStyle='#28f2ff';c.fillRect(-5,3,8,1);
-    }
+    if(t.k==='glitch'){c.globalCompositeOperation='lighter';c.globalAlpha=.7;c.fillStyle='#ff2bd6';c.fillRect(-2,-4,6,1);c.fillStyle='#28f2ff';c.fillRect(-5,3,8,1)}
     c.restore();
   }
 
   function bullet(c,b){
-    const idx=Number.isInteger(b.sk)?b.sk:0;
-    if(idx<=0||idx>=THEMES.length)return false;
-    projectileShape(c,b,theme(idx),Number.isInteger(b.wt)?b.wt:(typeof CF!=='undefined'?CF.w||0:0));
-    return true;
+    const idx=Number.isInteger(b.sk)?b.sk:0;if(idx<=0||idx>=THEMES.length)return false;
+    projectileShape(c,b,theme(idx),Number.isInteger(b.wt)?b.wt:(typeof CF!=='undefined'?CF.w||0:0));return true;
   }
 
   function orbital(c,q,a){
@@ -132,15 +119,11 @@ try{
 
   function polishShop(){
     const cards=[...document.querySelectorAll('#sg .sk')];
-    cards.forEach((card,i)=>{
-      if(i>=SK.length||card.querySelector('.arsenal-skin-tag'))return;
-      const s=document.createElement('small');s.className='arsenal-skin-tag';s.textContent='ARSENAL: '+theme(i).n.toUpperCase();card.appendChild(s);
-    });
+    cards.forEach((card,i)=>{if(i>=SK.length||card.querySelector('.arsenal-skin-tag'))return;const s=document.createElement('small');s.className='arsenal-skin-tag';s.textContent='ARSENAL: '+theme(i).n.toUpperCase();card.appendChild(s)});
   }
-  const obs=document.getElementById('sg');if(obs)new MutationObserver(polishShop).observe(obs,{childList:true,subtree:true});
-  setTimeout(polishShop,0);
+  const obs=document.getElementById('sg');if(obs)new MutationObserver(polishShop).observe(obs,{childList:true,subtree:true});setTimeout(polishShop,0);
 
   window.SCArsenal={theme,bullet,orbital,drawWeapon,themes:THEMES};
-  console.log('[Mobile] Skin Arsenal enabled: 21 player skins now recolor weapons/projectiles; Kaneki retired');
+  console.log('[Mobile] Skin Arsenal enabled: 21 player skins replace weapon/projectile visuals; Kaneki retired');
 }catch(err){console.warn('[Mobile Skin Arsenal]',err)}
 })();
