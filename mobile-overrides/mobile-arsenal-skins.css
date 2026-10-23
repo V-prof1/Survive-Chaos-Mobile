@@ -1,0 +1,5 @@
+/* Survive Chaos Mobile — skin arsenal labels */
+#shop .sk{position:relative}
+#shop .arsenal-skin-tag{display:block;margin-top:6px;font:900 9px/1.25 Nunito,system-ui,sans-serif;letter-spacing:.08em;color:#b9b7d0;opacity:.9;text-transform:uppercase}
+#shop .sk:nth-child(20) .arsenal-skin-tag{color:#ffd86d;text-shadow:0 0 8px rgba(255,200,61,.35)}
+#shop .sk:nth-child(21) .arsenal-skin-tag{color:#73f7ff;text-shadow:1px 0 #ff2bd6,-1px 0 #23efff}
