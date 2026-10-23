@@ -48,6 +48,20 @@ const oldIntro = `Modo infinito: a partida não termina, os bosses se repetem e 
 const newIntro = `Modo infinito: a partida não termina, os bosses se repetem, o bioma muda a cada vitória e as hordas crescem exponencialmente a cada minuto.`;
 if (s.includes(oldIntro)) s = s.replace(oldIntro, newIntro);
 
+// Fail closed if upstream rendering changes: visuals must never change weapon statistics.
+function replaceRequired(before, after) {
+  if (!s.includes(before)) throw new Error('Ghoul integration changed upstream: '+before.slice(0,70));
+  s=s.replace(before,after);
+}
+replaceRequired("sfx('shoot');puff(P.x+Math.cos(P.a)*18,P.y+Math.sin(P.a)*18,'#ffe9a0',3,90);",
+  "if(window.SCGhoul&&SCGhoul.active(P)){SCGhoul.shot(P);sfx('shoot')}else{sfx('shoot');puff(P.x+Math.cos(P.a)*18,P.y+Math.sin(P.a)*18,'#ffe9a0',3,90)}");
+// All player bullets, including backwards shots/turrets, keep their original physics and damage.
+s=s.replace(/\bB\.push\(\{x:/g, 'B.push({kg:window.SCGhoul&&SCGhoul.active(P)?CF.w:null,x:');
+replaceRequired("for(const b of B){const bk=", "for(const b of B){if(window.SCGhoul&&SCGhoul.bullet(x,b))continue;const bk=");
+replaceRequired('drawPW();devFX();','drawPW();devFX();if(window.SCGhoul)SCGhoul.world(x);');
+replaceRequired("if(dbg){x.fillStyle=", "if(window.SCGhoul)SCGhoul.screen(x);if(dbg){x.fillStyle=");
+replaceRequired("const a=q.oa+i/q.orb*PI*2;x.fillStyle='#d8e4ff';",
+ "const a=q.oa+i/q.orb*PI*2;if(window.SCGhoul&&SCGhoul.orbital(x,q,a))continue;x.fillStyle='#d8e4ff';");
 fs.writeFileSync(path, s);
 
 for (const file of [

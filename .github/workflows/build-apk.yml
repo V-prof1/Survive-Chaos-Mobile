@@ -5,6 +5,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - 'tests/**'
       - 'scripts/**'
       - 'mobile-overrides/**'
       - 'package.json'
@@ -30,7 +31,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: V-prof1/Survive-Chaos
-          ref: main
+          ref: 17adf0a8c3422200fcd6021d39a14689b35ae2b2
           path: browser
 
       - name: Montar código Mobile e aplicar diferenças
@@ -107,16 +108,12 @@ jobs:
         run: |
           mkdir -p "$HOME/.android"
           if [ ! -f "$HOME/.android/debug.keystore" ]; then
-            keytool -genkeypair -v \
-              -keystore "$HOME/.android/debug.keystore" \
-              -storepass android \
-              -alias androiddebugkey \
-              -keypass android \
-              -dname "CN=Survive Chaos Mobile Beta,O=V-prof1,C=BR" \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000
+            echo "Fixed Beta signing key unavailable; refusing an incompatible APK."
+            exit 1
           fi
+          EXPECTED="BC:1C:BE:0C:09:5A:9A:92:9E:61:14:26:86:0F:92:1C:0F:FF:58:8B:4F:59:24:C9:30:52:CE:C2:D7:2C:F1:1B"
+          ACTUAL=$(keytool -list -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey | awk '/SHA256:/{print $2}')
+          test "$ACTUAL" = "$EXPECTED"
           keytool -list -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey | grep 'SHA256:'
 
       - name: Instalar Capacitor e gerador de ícones
@@ -126,6 +123,20 @@ jobs:
           npm install --no-audit --no-fund
           npm install --no-save @capacitor/assets@3.0.5 --no-audit --no-fund
           python3 -m pip install pillow --quiet
+
+      - name: Testar compra, save, armas, ULT e resoluções Mobile
+        working-directory: mobile
+        run: |
+          npx playwright install --with-deps chromium
+          node tests/kaneki.spec.cjs
+
+      - name: Guardar evidências dos testes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Kaneki-QA
+          path: mobile/output/qa
+          if-no-files-found: warn
 
       - name: Criar projeto Android
         shell: bash
@@ -220,7 +231,11 @@ jobs:
       - name: Verificar assinatura do APK
         shell: bash
         run: |
-          "${ANDROID_HOME}/build-tools/35.0.0/apksigner" verify --print-certs mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          APK=mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          "${ANDROID_HOME}/build-tools/35.0.0/apksigner" verify --print-certs "$APK" | tee certificate.txt
+          grep -q 'bc1cbe0c095a9a929e611426860f921c0fff588b4f5924c93052cec2d72cf11b' certificate.txt
+          "${ANDROID_HOME}/build-tools/35.0.0/aapt" dump badging "$APK" | head -1 | tee package.txt
+          grep -q "name='com.survivechaos.game'" package.txt
 
       - name: Preparar APK
         shell: bash

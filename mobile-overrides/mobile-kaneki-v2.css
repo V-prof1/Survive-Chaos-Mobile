@@ -1,19 +1,6 @@
-#kanekiUltCutin{display:none!important}
-#kanekiV2Cut{position:fixed;inset:0;z-index:100020;display:none;place-items:center;pointer-events:none;overflow:hidden;background:radial-gradient(circle at 50% 48%,rgba(118,0,27,.34),rgba(3,2,8,.94) 64%);backdrop-filter:blur(2px)}
-#kanekiV2Cut.on{display:grid;animation:kv2Fade 1.25s steps(8,end) both}
-#kanekiV2Cut canvas{width:min(88vw,470px);height:min(88vw,470px);image-rendering:pixelated;image-rendering:crisp-edges;filter:drop-shadow(0 0 16px #a30028) drop-shadow(0 0 38px #3d000e);transform:scale(.84)}
-#kanekiV2Cut.on canvas{animation:kv2Zoom 1.2s cubic-bezier(.12,.78,.16,1) both}
-#kanekiV2Cut::before,#kanekiV2Cut::after{content:'';position:absolute;left:-10%;width:120%;height:5px;background:linear-gradient(90deg,transparent,#6d0019 14%,#ff315d 48%,#fff 50%,#ff315d 52%,#6d0019 86%,transparent);box-shadow:0 0 18px #ff174f;opacity:.8}
-#kanekiV2Cut::before{top:38%;transform:rotate(15deg)}
-#kanekiV2Cut::after{top:61%;transform:rotate(-13deg)}
-.kv2-title{position:absolute;left:50%;bottom:10%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-family:'Lilita One',system-ui,sans-serif;letter-spacing:.11em;text-shadow:0 3px 0 #120108,0 0 14px #ff194a;white-space:nowrap}
-.kv2-title b{font-size:clamp(34px,10vw,60px);line-height:.9;color:#ff315d}
-.kv2-title span{font-size:clamp(14px,4vw,23px);color:#f7f1f3}
-.kv2-noise{position:absolute;inset:0;opacity:.12;background-image:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.08) 4px);mix-blend-mode:screen}
-#shop .sk.kaneki-v2-card{border:2px solid #d51c48!important;background:radial-gradient(circle at 50% 28%,rgba(105,0,27,.35),transparent 35%),linear-gradient(155deg,#2a0712,#100d18 72%)!important;box-shadow:inset 0 0 0 1px rgba(255,100,130,.18),0 0 24px rgba(215,15,63,.30)!important}
-#shop .sk.kaneki-v2-card::before{content:'SSS';color:#ffe9ee!important;border-color:#ff315d!important;background:linear-gradient(#7a0925,#2a030d)!important;box-shadow:0 0 10px rgba(255,31,80,.45)}
-#shop .sk.kaneki-v2-card canvas{filter:drop-shadow(0 0 10px rgba(255,24,68,.52))}
-#shop .sk.kaneki-v2-card .kaneki-tag{color:#ff6f8f!important;text-shadow:0 0 8px rgba(255,31,80,.35)}
-@keyframes kv2Fade{0%{opacity:0}8%{opacity:1}78%{opacity:1}100%{opacity:0}}
-@keyframes kv2Zoom{0%{transform:scale(.55) translateY(7%)}22%{transform:scale(1.06)}60%{transform:scale(.98)}100%{transform:scale(1.13)}}
-@media(max-width:560px){#kanekiV2Cut canvas{width:min(96vw,430px);height:min(96vw,430px)}.kv2-title{bottom:7%}}
+/* Store only: no expensive CSS filters or backdrop blur in gameplay. */
+#kanekiUltCutin,#kanekiV2Cut{display:none!important}
+#shop .sk.kaneki-v2-card{border:2px solid #c93555!important;background:linear-gradient(150deg,#321220,#100e1a 70%)!important;box-shadow:inset 0 0 0 1px #6c2a40!important}
+#shop .sk.kaneki-v2-card::before{content:'SSS';color:#ffe9ee!important;border-color:#d94b6b!important;background:#51182b!important}
+#shop .sk.kaneki-v2-card canvas{filter:none!important;image-rendering:pixelated}
+#shop .sk.kaneki-v2-card .kaneki-tag{color:#e6a1b3!important;font-size:11px;line-height:1.5;display:block;text-shadow:none!important;padding:2px 4px}

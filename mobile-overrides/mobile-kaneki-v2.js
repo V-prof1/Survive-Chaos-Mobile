@@ -1,151 +1,212 @@
+/* Kaneki V2 visual rework: native pixel grid, bounded Canvas geometry, no gameplay timers. */
 (() => {
 'use strict';
-try{
-  if(typeof SPR==='undefined'||typeof S==='undefined'||typeof window.SC_KANEKI_INDEX==='undefined')return;
-  const IDX=window.SC_KANEKI_INDEX,TAU=Math.PI*2;
-  const K2={activeUntil:0,poseUntil:0,cutUntil:0,start:0};
-  const now=()=>performance.now();
-  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-  const poly=(c,p,col)=>{c.fillStyle=col;c.beginPath();c.moveTo(p[0][0],p[0][1]);for(let i=1;i<p.length;i++)c.lineTo(p[i][0],p[i][1]);c.closePath();c.fill()};
-  const rect=(c,x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))};
-
-  function tentaclePoints(r,ang,len,power,seed){
-    const pts=[],t=now()/1000;
-    for(let j=0;j<=11;j++){
-      const u=j/11,d=len*u*power,w=Math.sin(u*4.7+seed*1.71+t*3.4)*r*(.22+u*1.12)*power;
-      const a=ang+Math.sin(t*1.7+seed)*.045;
-      pts.push([Math.cos(a)*d+Math.cos(a+Math.PI/2)*w,Math.sin(a)*d+Math.sin(a+Math.PI/2)*w+r*.22]);
-    }
-    return pts;
+const IDX=window.SC_KANEKI_INDEX,TAU=Math.PI*2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const active=q=>!!q&&(q.sk==null?S.skin:q.sk)===IDX;
+const K={age:-1,owner:null,wave:0,clock:0,shot:0,weapon:0,angle:0,hitstop:0};
+// Reused typed buffers: 17 center samples + left/right tapered silhouette.
+const N=17,px=new Float32Array(N),py=new Float32Array(N),nx=new Float32Array(N),ny=new Float32Array(N),width=new Float32Array(N);
+function rect(c,x,y,w,h,col){c.fillStyle=col;c.fillRect(x,y,w,h)}
+function polygon(c,col,coords){c.fillStyle=col;c.beginPath();c.moveTo(coords[0],coords[1]);for(let i=2;i<coords.length;i+=2)c.lineTo(coords[i],coords[i+1]);c.closePath();c.fill()}
+// Atlas uses the exact same 96px cell, anchor (48,87), scale and directions as SPR.hero.
+const atlas={};
+function body(direction,frame,pose){
+  const key=direction+':'+frame+':'+pose;if(atlas[key])return atlas[key];
+  const cv=document.createElement('canvas');cv.width=cv.height=96;const c=cv.getContext('2d');c.scale(3,3);
+  const side=direction==='side',back=direction==='up',step=frame?Math.round(Math.sin(frame/6*TAU)*1.25):0;
+  // Body silhouette matches hero_0 / hero_5: x 7..25; feet y29; head x9..23 y4..15.
+  const ink='#100e1b',deep='#191723',coat='#292735',edge='#45414e',red='#6f2035',skin='#d9c9c5';
+  rect(c,11,24,5,5+step,ink);rect(c,17,24,5,5-step,ink);
+  rect(c,12,24,3,3+step,'#292633');rect(c,18,24,3,3-step,'#211e2c');
+  rect(c,10,28+step,6,2,ink);rect(c,17,28-step,6,2,ink);
+  rect(c,11,28+step,4,1,'#51454d');rect(c,18,28-step,4,1,'#423d49');
+  polygon(c,ink,[10,16,22,16,24,24,21,27,17,26,16,24,15,27,10,26,8,24]);
+  polygon(c,coat,[11,16,21,16,22,24,19,25,16,23,14,25,10,24]);
+  rect(c,11,18,2,5,edge);rect(c,20,18,1,6,deep);rect(c,15,18,1,7,'#83717a');
+  rect(c,16,18,1,7,deep);rect(c,10,23,4,1,red);rect(c,18,24,3,1,red);
+  rect(c,11,22,10,1,ink);rect(c,15,22,2,1,'#92858a');
+  // Same arm length as base (y17..25). Gloves and sleeve seams.
+  rect(c,7,17,4,8,ink);rect(c,22,17,4,8,ink);
+  rect(c,8,18,2,5,coat);rect(c,23,18,2,5,coat);
+  rect(c,8,20,2,1,red);rect(c,23,20,2,1,red);
+  rect(c,8,24,2,1,'#a8a0a4');rect(c,23,24,2,1,'#a8a0a4');
+  // Profile torso is narrower in the original atlas too. Resample cached art with nearest pixels.
+  if(side){
+    const profile=document.createElement('canvas');profile.width=96;profile.height=96;
+    profile.getContext('2d').drawImage(cv,0,0);c.save();c.setTransform(1,0,0,1,0,0);
+    c.clearRect(0,48,96,48);c.imageSmoothingEnabled=false;
+    c.drawImage(profile,21,48,57,42,30,48,39,42);c.restore();
   }
-  function strokeTentacle(c,pts,r){
-    c.lineCap='round';c.lineJoin='round';
-    for(let layer=0;layer<3;layer++){
-      for(let i=0;i<pts.length-1;i++){
-        const u=i/(pts.length-1),w=r*((.82*(1-u)+.15)*(layer===0?1:layer===1?.60:.14));
-        c.strokeStyle=layer===0?'#23000c':layer===1?'#9c0730':'#ff4569';
-        c.lineWidth=Math.max(1,w);c.beginPath();c.moveTo(pts[i][0],pts[i][1]);c.lineTo(pts[i+1][0],pts[i+1][1]);c.stroke();
-      }
-    }
-    // dark muscle bands + pointed organic tip
-    c.strokeStyle='rgba(18,0,8,.65)';c.lineWidth=Math.max(1,r*.07);
-    for(let i=2;i<pts.length-2;i+=2){const a=pts[i-1],b=pts[i+1],m=pts[i],dx=b[0]-a[0],dy=b[1]-a[1],d=Math.hypot(dx,dy)||1,px=-dy/d,py=dx/d,s=r*(.24*(1-i/pts.length)+.08);c.beginPath();c.moveTo(m[0]-px*s,m[1]-py*s);c.lineTo(m[0]+px*s,m[1]+py*s);c.stroke()}
-    const a=pts[pts.length-2],b=pts[pts.length-1],dx=b[0]-a[0],dy=b[1]-a[1],d=Math.hypot(dx,dy)||1,px=-dy/d,py=dx/d;
-    poly(c,[[b[0]+dx/d*r*.55,b[1]+dy/d*r*.55],[b[0]+px*r*.25,b[1]+py*r*.25],[b[0]-px*r*.25,b[1]-py*r*.25]],'#d70b3f');
-    poly(c,[[b[0]+dx/d*r*.42,b[1]+dy/d*r*.42],[b[0]+px*r*.08,b[1]+py*r*.08],[b[0]-px*r*.08,b[1]-py*r*.08]],'#ff6985');
+  // Collar, face and ears: head is NOT enlarged for this skin.
+  rect(c,13,14,7,3,ink);rect(c,14,15,4,1,skin);
+  polygon(c,ink,[10,5,21,5,24,8,24,13,21,16,12,16,9,13,9,8]);
+  rect(c,10,9,2,4,'#a99298');rect(c,22,9,2,4,'#a99298');
+  polygon(c,skin,[12,7,21,7,22,9,22,13,20,15,13,15,11,12,11,9]);
+  rect(c,12,9,9,1,'#b6a5ad');
+  if(!back){
+    // Narrow normal eye under fringe, black sclera + single crimson iris.
+    rect(c,12,10,3,2,'#554550');rect(c,13,10,1,1,'#bcb2ba');
+    polygon(c,'#08080e',[17,10,22,9,21,12,17,12]);
+    rect(c,19,10,1,2,'#ef204a');rect(c,19,10,1,1,'#ff8b98');
+    rect(c,20,9,2,1,red);
+    polygon(c,'#0b0a12',[11,12,16,13,22,12,21,15,19,16,13,16,11,14]);
+    rect(c,12,13,9,1,'#514851');
+    for(let i=0;i<4;i++){rect(c,13+i*2,13,1,1,'#d3d3d7');rect(c,14+i*2,14,1,1,'#a6a6b2')}
+    rect(c,21,12,1,3,'#9c6670');
   }
-  function drawKagune(c,r,power,preview){
-    const count=preview?4:6,spin=(now()/1000)*.12;
-    for(let i=0;i<count;i++){
-      const ang=-Math.PI*.78+i*(TAU/count)+(preview?0:spin),len=r*(preview?3.5:7.2+i%2*.7);
-      strokeTentacle(c,tentaclePoints(r,ang,len,power,i+1),r);
-    }
+  // Layered locks, alternating silver shadows and pearl highlights.
+  polygon(c,'#666774',[9,8,10,4,12,4,13,3,15,4,18,3,19,4,22,3,23,6,24,8,23,11,21,10,20,8,18,10,16,8,14,12,12,10,10,12]);
+  polygon(c,'#b5bac6',[10,8,11,4,13,5,15,3,17,5,19,3,20,5,22,4,23,8,21,7,20,10,18,7,16,9,15,7,13,11,12,8,10,10]);
+  polygon(c,'#eef0ee',[11,6,12,4,14,5,15,4,17,5,19,4,20,6,22,5,22,7,20,7,19,8,18,6,16,7,15,6,14,9,13,7,11,9]);
+  rect(c,13,5,2,1,'#ffffff');rect(c,17,5,2,1,'#ffffff');rect(c,10,8,1,2,'#dedfe6');
+  if(side&&!back){rect(c,10,11,2,2,'#a295a0');rect(c,21,10,1,1,'#fb3854')}
+  if(back){polygon(c,'#a0a6b5',[10,9,13,10,15,8,17,10,20,8,23,9,22,13,20,15,13,15,11,13]);rect(c,12,11,1,2,'#d5d9dc');rect(c,17,11,1,3,'#d5d9dc');rect(c,12,17,9,1,edge);rect(c,16,18,1,6,ink);rect(c,14,23,5,2,red)}
+  if(frame===1)rect(c,11,7,1,1,'#d6dce3');
+  if(pose){
+    // Two hands meet at chest: one bends the other's index finger; feet and anatomy stay fixed.
+    rect(c,8,19,7,3,coat);rect(c,19,17,5,3,coat);
+    rect(c,14,18,5,3,skin);rect(c,18,15,2,5,skin);
+    rect(c,pose===2?16:17,pose===2?16:15,pose===2?2:1,pose===2?1:3,'#f0e1d9');rect(c,16,18,4,1,'#8b737e');rect(c,17,20,2,1,'#8b737e');
   }
-  function drawWeapon(c,r,a,q){
-    if(!q||typeof CF==='undefined'||!SPR.WEAPON)return;
-    const wp=SPR.WEAPON[CF.w||0];if(!wp)return;
-    const ca=Math.cos(a),sa=Math.sin(a),s=r*4.2/96;
-    c.save();c.translate(ca*r*.52,-r*.05+sa*r*.40);c.rotate(a);if(ca<0)c.scale(1,-1);SPR.at(c,'items',wp+'_1f',0,0,0,s);c.restore();
-  }
-  function drawKaneki(c,r,a,q,cinematic){
-    const t=now(),active=t<K2.activeUntil,preview=!q||cinematic,move=typeof mv!=='undefined'&&mv;
-    const power=preview?.58:active?clamp((t-K2.start)/420,0,1):0;
-    const bob=(move?Math.sin((typeof tm!=='undefined'?tm:0)*15)*r*.055:Math.sin(t*.006)*r*.025);
-    c.save();c.translate(0,bob);
-    if(preview||active)drawKagune(c,r,power||.58,preview&&!active);
-    // legs, deliberately proportioned like the game's normal heroes
-    rect(c,-r*.56,r*.22,r*.40,r*.72,'#15141a');rect(c,r*.16,r*.22,r*.40,r*.72,'#111117');
-    rect(c,-r*.60,r*.73,r*.46,r*.18,'#09090d');rect(c,r*.14,r*.73,r*.46,r*.18,'#09090d');
-    // long black coat with red inner seam
-    poly(c,[[-r*.78,-r*.20],[r*.78,-r*.20],[r*.64,r*.58],[r*.30,r*.70],[0,r*.51],[-r*.30,r*.70],[-r*.64,r*.58]],'#17161d');
-    poly(c,[[-r*.64,-r*.13],[0,-r*.30],[r*.64,-r*.13],[r*.42,r*.38],[0,r*.26],[-r*.42,r*.38]],'#25232c');
-    rect(c,-r*.06,-r*.24,r*.12,r*.79,'#79051f');
-    rect(c,-r*.58,r*.13,r*1.16,r*.09,'#09090d');
-    // arms; during ULT one hand rises into the finger-crack pose
-    const pose=cinematic||t<K2.poseUntil;
-    if(pose){
-      rect(c,-r*.78,-r*.05,r*.30,r*.57,'#17161d');rect(c,r*.48,-r*.28,r*.28,r*.52,'#17161d');
-      rect(c,r*.45,-r*.52,r*.24,r*.36,'#d8c5bf');rect(c,r*.28,-r*.67,r*.12,r*.34,'#e7d6d0');rect(c,r*.43,-r*.69,r*.11,r*.37,'#e7d6d0');
-    }else{
-      rect(c,-r*.82,-r*.10,r*.30,r*.62,'#17161d');rect(c,r*.52,-r*.10,r*.30,r*.62,'#17161d');
-      rect(c,-r*.82,r*.37,r*.25,r*.20,'#d6c3bc');rect(c,r*.57,r*.37,r*.25,r*.20,'#d6c3bc');
-    }
-    // neck + head
-    rect(c,-r*.20,-r*.43,r*.40,r*.22,'#d6c3bc');
-    c.fillStyle='#decac3';c.strokeStyle='#0b0a0f';c.lineWidth=Math.max(1,r*.08);c.beginPath();c.arc(0,-r*.66,r*.62,0,TAU);c.fill();c.stroke();
-    // black ghoul mask lower face
-    poly(c,[[-r*.57,-r*.69],[r*.56,-r*.68],[r*.48,-r*.33],[0,-r*.24],[-r*.48,-r*.34]],'#111015');
-    rect(c,-r*.48,-r*.54,r*.96,r*.14,'#202027');
-    // mask teeth
-    for(let i=-4;i<=4;i++)rect(c,i*r*.105-r*.035,-r*.52,r*.07,r*.12,i%2?'#d8d8d3':'#f2f0e8');
-    // ghoul eye: dark sclera, bright red iris and glow
-    c.fillStyle='#050509';c.beginPath();c.ellipse(r*.22,-r*.72,r*.20,r*.14,0,0,TAU);c.fill();
-    c.fillStyle='rgba(255,21,65,.28)';c.beginPath();c.arc(r*.22,-r*.72,r*.27,0,TAU);c.fill();
-    c.fillStyle='#f01748';c.beginPath();c.arc(r*.22,-r*.72,r*.095,0,TAU);c.fill();
-    rect(c,r*.195,-r*.76,r*.05,r*.08,'#fff0f3');
-    // opposite eye hidden by mask/patch shadow
-    poly(c,[[-r*.48,-r*.82],[-r*.05,-r*.86],[-r*.08,-r*.63],[-r*.50,-r*.60]],'#15131a');
-    // layered white hair, more detailed but same chunky language as other skins
-    const hairBack=[[-.62,-.80],[-.54,-1.15],[-.34,-1.03],[-.20,-1.30],[-.02,-1.08],[.16,-1.34],[.28,-1.08],[.49,-1.22],[.60,-.92],[.52,-.71]];
-    poly(c,hairBack.map(p=>[p[0]*r,p[1]*r]),'#b9b8c0');
-    const bangs=[[-.58,-.93],[-.42,-1.18],[-.31,-.88],[-.16,-1.19],[-.06,-.86],[.10,-1.23],[.20,-.89],[.37,-1.17],[.50,-.83],[.33,-.64],[.12,-.76],[-.03,-.60],[-.17,-.78],[-.39,-.62]];
-    poly(c,bangs.map(p=>[p[0]*r,p[1]*r]),'#eeeef2');
-    rect(c,-r*.34,-r*1.01,r*.23,r*.08,'#fff');rect(c,r*.08,-r*1.08,r*.20,r*.07,'#fff');
-    // collar and red stitches/straps
-    poly(c,[[-r*.47,-r*.22],[-r*.12,-r*.38],[0,-r*.22],[-r*.24,-r*.05]],'#08080c');
-    poly(c,[[r*.47,-r*.22],[r*.12,-r*.38],[0,-r*.22],[r*.24,-r*.05]],'#08080c');
-    rect(c,-r*.66,-r*.24,r*.10,r*.42,'#72051e');
-    c.restore();
-    if(!cinematic)drawWeapon(c,r,a,q);
-    return 1;
-  }
-
-  const priorHero=SPR.hero.bind(SPR);
-  SPR.hero=function(c,r,a,si,q){if(si===IDX)return drawKaneki(c,r,a,q,0);return priorHero(c,r,a,si,q)};
-
-  // New pixel-art activation cut-in rendered at low resolution and scaled with nearest-neighbour.
-  const cut=document.createElement('div');cut.id='kanekiV2Cut';cut.innerHTML='<div class="kv2-noise"></div><canvas width="180" height="180"></canvas><div class="kv2-title"><b>KAGUNE</b><span>DESPERTAR</span></div>';
-  document.body.appendChild(cut);const cc=cut.querySelector('canvas'),cx=cc.getContext('2d');cx.imageSmoothingEnabled=false;
-  function cutFrame(){
-    if(now()>=K2.cutUntil){cut.classList.remove('on');return}
-    const p=clamp(1-(K2.cutUntil-now())/1250,0,1);cx.clearRect(0,0,180,180);
-    const g=cx.createRadialGradient(90,92,12,90,92,100);g.addColorStop(0,'#38000e');g.addColorStop(1,'#050309');cx.fillStyle=g;cx.fillRect(0,0,180,180);
-    cx.save();cx.translate(90,111);drawKaneki(cx,31,0,null,1);cx.restore();
-    if(p>.35){cx.strokeStyle='rgba(255,35,74,'+Math.min(1,(p-.35)*2)+')';cx.lineWidth=2;for(let i=0;i<5;i++){cx.beginPath();cx.arc(90,100,34+i*10+(p*8),0,TAU);cx.stroke()}}
-    requestAnimationFrame(cutFrame);
-  }
-  function showCut(){K2.cutUntil=now()+1250;cut.classList.remove('on');void cut.offsetWidth;cut.classList.add('on');cutFrame()}
-
-  function worldCurve(cx0,cy0,ang,seed){
-    const a=[],len=430;
-    for(let j=0;j<=14;j++){const u=j/14,w=Math.sin(u*5+seed*1.3)*58*u;a.push([cx0+Math.cos(ang)*len*u+Math.cos(ang+Math.PI/2)*w,cy0+Math.sin(ang)*len*u+Math.sin(ang+Math.PI/2)*w])}return a;
-  }
-  function dseg(px,py,a,b){const vx=b[0]-a[0],vy=b[1]-a[1],wx=px-a[0],wy=py-a[1],vv=vx*vx+vy*vy,t=vv?clamp((wx*vx+wy*vy)/vv,0,1):0;return Math.hypot(px-(a[0]+vx*t),py-(a[1]+vy*t))}
-  function lashWave(rot,mul){
-    if(st!=='play'||!P)return;const base=P.dmg*dx,hitOnce=new Set();
-    for(let i=0;i<6;i++){
-      const ang=rot+i*TAU/6,pts=worldCurve(P.x,P.y,ang,i+rot*3);
-      for(let j=2;j<pts.length;j+=2)FX.push({x:pts[j][0],y:pts[j][1],r:18+j*1.4,t:.24+j*.01,ring:1});
-      for(const e of E){if(!e||e.dead||hitOnce.has(e))continue;for(let j=0;j<pts.length-1;j++)if(dseg(e.x,e.y,pts[j],pts[j+1])<(e.r||12)+30){hitOnce.add(e);try{hit(e,base*mul,P.x,P.y)}catch(_){e.hp-=base*mul;if(e.hp<=0)kill(e)}break}}
-    }
-  }
-  function kaguneV2Ult(){
-    if(st!=='play'||ult<100)return;
-    ult=0;try{ach('e_ult')}catch(_){ }
-    K2.start=now();K2.activeUntil=K2.start+2050;K2.poseUntil=K2.start+650;showCut();
-    EB.length=0;fz=1.25;shake=30;flash=.9;try{ban('🩸 KAGUNE — DESPERTAR');sfx('boss2')}catch(_){ }
-    const base=P.dmg*dx;
-    setTimeout(()=>{if(st==='play'&&P){boom(P.x,P.y,180,base*4);shake=24}},180);
-    setTimeout(()=>{lashWave(-.18,4.4);shake=22;try{sfx('boom')}catch(_){ }},420);
-    setTimeout(()=>{lashWave(Math.PI/6+.16,3.8);shake=18},720);
-    setTimeout(()=>{if(st==='play'&&P){boom(P.x,P.y,315,base*8);P.hp=Math.min(P.mhp,P.hp+P.mhp*.12);for(let i=0;i<5;i++)FX.push({x:P.x,y:P.y,r:100+i*55,t:.28+i*.035,ring:1});shake=34;flash=.75}},1080);
-  }
-  const priorUlt=fireUlt;
-  fireUlt=function(){if(S.skin===IDX)return kaguneV2Ult();return priorUlt()};
-
-  // Richer store presentation without changing purchase/save logic.
-  const polish=()=>{const card=[...document.querySelectorAll('#sg .sk')].find(e=>/Kaneki\s*·\s*Ghoul/.test(e.textContent||''));if(!card)return;card.classList.add('kaneki-v2-card');const tag=card.querySelector('.kaneki-tag');if(tag)tag.textContent='SSS • 5.000.000 moedas • Kagune: Despertar'};
-  setInterval(polish,500);polish();
-  console.log('[Mobile] Kaneki V2 visual + Kagune polish enabled');
-}catch(err){console.warn('[Mobile Kaneki V2]',err)}
+  atlas[key]=cv;return cv;
+}
+// Warm only a small finite atlas. No Canvas allocation in gameplay.
+for(const d of ['down','up','side'])for(let f=0;f<6;f++)body(d,f,0);
+for(const d of ['down','up','side'])for(const f of [0,1])for(const p of [1,2])body(d,f,p);
+function fillRibbon(c,col,factor,offset){
+ c.fillStyle=col;c.beginPath();
+ for(let i=0;i<N;i++){const w=width[i]*factor+offset,X=Math.round(px[i]+nx[i]*w),Y=Math.round(py[i]+ny[i]*w);if(!i)c.moveTo(X,Y);else c.lineTo(X,Y)}
+ for(let i=N-1;i>=0;i--){const w=width[i]*factor-offset;c.lineTo(Math.round(px[i]-nx[i]*w),Math.round(py[i]-ny[i]*w))}c.closePath();c.fill();
+}
+function tentacle(c,angle,length,thick,seed,time,bend,geometryOnly){
+ const ca=Math.cos(angle),sa=Math.sin(angle);
+ for(let i=0;i<N;i++){
+  const u=i/(N-1),sway=Math.sin(u*5.4+seed+time*(.9+seed*.035))*length*.19*u+Math.sin(u*Math.PI)*length*bend;
+  px[i]=ca*length*u-sa*sway;py[i]=sa*length*u+ca*sway;
+  width[i]=thick*Math.pow(1-u,.92)*(1+.12*Math.sin(u*26+seed));
+ }
+ for(let i=0;i<N;i++){const j=Math.max(0,i-1),k=Math.min(N-1,i+1),dx=px[k]-px[j],dy=py[k]-py[j],h=Math.hypot(dx,dy)||1;nx[i]=-dy/h;ny[i]=dx/h}
+ if(geometryOnly)return;
+ fillRibbon(c,'#210d1b',1,0);fillRibbon(c,'#67152d',.77,-thick*.06);fillRibbon(c,'#b72645',.40,-thick*.12);
+ // Asymmetric muscle plates. A few broad highlights remain readable at gameplay scale.
+ c.strokeStyle='#e14b5d';c.lineWidth=Math.max(.7,thick*.15);c.beginPath();
+ for(let i=2;i<N-2;i+=3){c.moveTo(px[i]-nx[i]*width[i]*.4,py[i]-ny[i]*width[i]*.4);c.lineTo(px[i+1]-nx[i+1]*width[i+1]*.32,py[i+1]-ny[i+1]*width[i+1]*.32)}c.stroke();
+ c.strokeStyle='#3e1025';c.lineWidth=Math.max(.8,thick*.19);c.beginPath();
+ for(let i=3;i<N-2;i+=3){c.moveTo(px[i]+nx[i]*width[i]*.8,py[i]+ny[i]*width[i]*.8);c.lineTo(px[i+1]-nx[i+1]*width[i+1]*.48,py[i+1]-ny[i+1]*width[i+1]*.48)}c.stroke();
+}
+function hero(c,r,a,q,cinema){
+ const ca=Math.cos(a),sa=Math.sin(a),direction=cinema?'down':Math.abs(sa)>Math.abs(ca)*1.1?(sa>0?'down':'up'):'side';
+ const t=tm||0,move=q?Math.hypot(q.ddx||0,q.ddy||0)>0&&mv:0,frame=move?Math.floor(t*12)%6:Math.floor(t*2)%2;
+ const own=q&&K.owner===q,age=own?K.age:-1,pose=cinema||(age>=0&&age<.75);
+ const growth=age<0?0:age<.7?clamp((age-.4)/.3,0,1):age<2.4?1:clamp((3.4-age),0,1);
+ const shot=own?K.shot:0,w=q?CF.w:0,preview=!q&&!cinema;
+ const charge=w===3&&q?clamp(1-q.cd/Math.max(.01,q.rate),0,1):0;
+ c.save();c.translate(0,r*.10); // roots below waist, not shoulders
+ const trail=q?clamp((q.ddx||0)*.24,-.24,.24):0;
+ for(let i=0;i<(growth>.3?6:4);i++){
+   const ang=[-2.2,-.94,-3.35,.18,-1.5,1.5][i]+Math.sin(t*.8+i)*.09-trail;
+   const hitArm=shot>0&&(w===1||i===((K.weapon+1)%4));
+   const attack=hitArm?Math.sin(clamp(shot/.24,0,1)*Math.PI):0;
+   tentacle(c,hitArm?a+(i-1.5)*(w===1?.32:.07):ang,r*(preview?2.05:3.0)*(1+growth*2.7+attack*(w===2?1.7:1.05))*(w===3&&!hitArm?1-charge*.18:1),r*(.32+growth*.12),i+1,t,.18*(i%2?1:-1)-trail);
+ }
+ if(w===4&&q)for(let i=0;i<3;i++){const an=t*1.5+i*TAU/3;c.save();c.translate(Math.cos(an)*r*2.5,Math.sin(an)*r*1.4-r*.4);c.rotate(an+.7);shard(c,4,0,false);c.restore()}
+ c.restore();
+ const scale=r*4.2/96,gy=r*.9,bob=move?Math.abs(Math.sin(t*12))*r*.035:Math.sin(t*2)*r*.014;
+ c.save();c.translate(0,bob);if(direction==='side'&&ca<0)c.scale(-1,1);
+ // Subtle attack squash uses feet as pivot.
+ if(shot>0)c.transform(1,0,0,1-Math.sin(shot/.24*Math.PI)*.025,0,0);
+ c.drawImage(body(direction,frame,pose?(K.age>.36?2:1):0),-48*scale,gy-87*scale,96*scale,96*scale);
+ // Kakugan ignition, single pixel pulse instead of an oversized glow.
+ if(!cinema&&age>=.38&&age<.7&&direction!=='up')rect(c,9*scale,gy-57*scale,3*scale,3*scale,'#ff7889');
+ c.restore();return 1;
+}
+const originalHero=SPR.hero.bind(SPR);
+SPR.hero=function(c,r,a,si,q){return si===IDX?hero(c,r,a,q,false):originalHero(c,r,a,si,q)};
+function shard(c,w,t,crit){
+ const col=crit?'#f68c9d':'#d64259';
+ if(w===0){polygon(c,'#491326',[-8,0,-3,-3,7,0,-3,2]);polygon(c,col,[-4,-1,7,0,-3,0])}
+ else if(w===1){polygon(c,'#57162c',[-6,3,-3,-3,5,-2,2,1,-1,4]);polygon(c,col,[-3,-2,5,-2,0,1])}
+ else if(w===2){polygon(c,'#58172c',[-13,0,-5,-2,13,0,-5,2]);polygon(c,col,[-7,-1,13,0,-4,0])}
+ else if(w===3){polygon(c,'#320d21',[-16,1,-8,-5,4,-3,17,0,0,5,-8,4]);polygon(c,'#90233d',[-13,1,-5,-3,17,0,-1,3]);polygon(c,col,[-5,-2,17,0,0,0]);rect(c,-7,0,2,2,'#e36a79')}
+ else {c.rotate(Math.sin(t*5)*.25);polygon(c,'#421126',[-8,1,-4,-5,3,-3,7,0,1,5,-5,4]);polygon(c,col,[-4,-3,2,-2,6,0,0,1,-3,3]);rect(c,-1,-1,2,2,'#ef8a93')}
+}
+function bullet(c,b){
+ if(b.kg==null)return false;
+ c.save();c.translate(b.x,b.y);c.rotate(Math.atan2(b.vy,b.vx));
+ // Two batched strokes, no particle objects or gradients per bullet.
+ c.strokeStyle='#731b3c80';c.lineWidth=b.kg===3?3:1.5;c.beginPath();c.moveTo(-7,0);c.lineTo(b.kg===2?-24:-17,Math.sin(K.clock*13+b.x)*1.2);c.stroke();
+ shard(c,b.kg,K.clock,b.c);c.restore();return true;
+}
+function shot(q){if(!active(q))return;K.owner=K.age>=0?K.owner:q;K.shot=.24;K.weapon=CF.w;K.angle=q.a}
+function dist(x,y,ax,ay,bx,by){const vx=bx-ax,vy=by-ay,u=clamp(((x-ax)*vx+(y-ay)*vy)/(vx*vx+vy*vy||1),0,1);return Math.hypot(x-ax-u*vx,y-ay-u*vy)}
+const rotations=[0,Math.PI/4,Math.PI*.75,0];
+function lashes(stage){
+ const q=K.owner;if(!q)return;
+ const count=stage===2?6:stage===3?8:2,rot=rotations[stage],damage=q.dmg*dx*(stage===3?6:2.7);
+ const already=new Set();
+ // Damage follows the exact same sampled ribbons drawn by world(), once per enemy per wave.
+ for(let i=0;i<count;i++){
+  tentacle(x,rot+i*TAU/count,stage===3?310:420,22,i+stage,stage*.24,.25*(i%2?1:-1),true);
+  for(const e of E){if(e.dead||already.has(e))continue;for(let j=1;j<N;j++)if(dist(e.x-q.x,e.y-q.y,px[j-1],py[j-1],px[j],py[j])<e.r+width[j]+8){already.add(e);hit(e,damage,q.x,q.y);break}}
+ }
+ if(stage===3){q.hp=Math.min(q.mhp,q.hp+q.mhp*.12);flash=.45;shake=20}else shake=12;
+ K.hitstop=.035;sfx(stage===3?'boss2':'boom');
+}
+function cancel(){K.age=-1;K.owner=null;K.wave=0;K.shot=0;K.hitstop=0}
+function step(dt){
+ K.clock+=dt;K.shot=Math.max(0,K.shot-dt);
+ if(K.age<0)return 1;
+ if(!K.owner||K.owner.dead||!PL.includes(K.owner)||!active(K.owner)){cancel();return 1}
+ K.age+=dt;
+ const schedule=[.85,1.15,1.48,1.96];
+ while(K.wave<4&&K.age>=schedule[K.wave])lashes(K.wave++);
+ if(K.age>3.4){cancel();return 1}
+ if(K.hitstop>0){K.hitstop-=dt;return .08}
+ return K.age<.22?.12:K.age<.68?.4:1;
+}
+const baseUpd=upd;
+upd=function(dt){const factor=step(dt);return baseUpd(dt*factor)};
+const baseStart=start;start=function(){cancel();return baseStart.apply(this,arguments)};
+const baseUlt=fireUlt;
+fireUlt=function(){
+ if(!active(P))return baseUlt.apply(this,arguments);
+ if(st!=='play'||P.dead||ult<100||K.age>=0)return;
+ ult=0;ach('e_ult');K.age=0;K.wave=0;K.owner=P;EB.length=0;flash=.28;shake=7;sfx('boss2');
+};
+function world(c){
+ if(K.age<.68||!K.owner)return;
+ const t=K.age,q=K.owner;c.save();c.translate(q.x,q.y);
+ const stage=Math.max(0,K.wave-1),since=t-[.85,1.15,1.48,1.96][stage];
+ if(since>=0&&since<.28){
+  const count=stage===2?6:stage===3?8:2;c.globalAlpha=clamp(1-since/.28,0,1);
+  const grow=Math.min(1,since/.055+.35);
+  for(let i=0;i<count;i++)tentacle(c,rotations[stage]+i*TAU/count, (stage===3?310:420)*grow,22,i+stage,stage*.24,.25*(i%2?1:-1));
+ }
+ c.restore();
+}
+function orbital(c,q,a){if(!active(q))return false;c.save();c.translate(q.x+Math.cos(a)*(52+(q.orr||0)),q.y+Math.sin(a)*(52+(q.orr||0)));c.rotate(a+Math.PI/2);shard(c,4,K.clock,false);c.restore();return true}
+const cutCanvas=document.createElement('canvas');cutCanvas.width=cutCanvas.height=180;const cc=cutCanvas.getContext('2d');cc.imageSmoothingEnabled=false;
+function screen(c){
+ if(K.age<0)return;
+ const age=K.age;
+ if(age<.78){
+  c.save();c.fillStyle=age<.18?'rgba(12,3,12,.65)':'rgba(12,3,12,.87)';c.fillRect(0,0,W,H);
+  cc.clearRect(0,0,180,180);cc.save();cc.translate(90,123);hero(cc,27,.6,null,true);cc.restore();
+  if(age>.38){rect(cc,95,80,3,2,'#ff4b68');rect(cc,93,81,9,1,'#9c263d')}
+  const size=Math.min(W*.88,H*.78,400),xx=(W-size)/2,yy=(H-size)/2-12;
+  c.imageSmoothingEnabled=false;c.drawImage(cutCanvas,xx,yy,size,size);
+  c.textAlign='center';c.fillStyle='#f34c69';c.font='900 '+Math.min(38,W*.09)+'px system-ui';c.fillText('KAGUNE',W/2,H*.83);
+  c.fillStyle='#eee3e7';c.font='700 14px system-ui';c.fillText('DESPERTAR',W/2,H*.83+23);c.restore();
+ }
+}
+// Duck both music and effects, then restore through normal audio mixing; no extra timers.
+if(typeof AUD!=='undefined'){
+ const tick=AUD.tick.bind(AUD);AUD.tick=function(){tick();const duck=K.age>=0&&K.age<.68?.28:1;
+ for(const n in AUD.els){const a=AUD.els[n];if(duck<1)a.volume=Math.min(a.volume,(AUD.vol[n]||.5)*duck)}
+ if(typeof GS!=='undefined'&&GS&&typeof AC!=='undefined'&&AC)GS.gain.setTargetAtTime(S.mute?0:.6*duck,AC.currentTime,.045);
+ };
+}
+window.SCGhoul={active,shot,bullet,world,screen,orbital,hero,step,cancel,state:K,atlas};
+console.log('[Mobile] Kaneki V2 visual rework: shared proportions, organic arms, five weapon forms');
 })();
