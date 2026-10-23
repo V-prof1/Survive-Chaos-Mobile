@@ -89,18 +89,19 @@ for (const file of [
   'mobile-arsenal-skins.js','mobile-arsenal-skins.css',
   'mobile-rebalance.js','mobile-rebalance.css',
   'mobile-hud-responsive.js','mobile-hud-responsive.css',
-  'mobile-online-config.js','mobile-online.js','mobile-online-socket.js','mobile-online.css'
+  'mobile-online-config.js','mobile-online.js','mobile-online-socket.js','mobile-online.css',
+  'mobile-skin-ults.js','mobile-skin-ults.css'
 ]) fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
 
 const indexPath = 'www/index.html';
 let html = fs.readFileSync(indexPath, 'utf8');
 for (const css of [
   'mobile-pro.css','mobile-economy.css','mobile-content.css','mobile-legacy.css','mobile-menu-fix.css',
-  'mobile-admin-plus.css','mobile-arsenal-skins.css','mobile-rebalance.css','mobile-hud-responsive.css','mobile-online.css'
+  'mobile-admin-plus.css','mobile-arsenal-skins.css','mobile-rebalance.css','mobile-hud-responsive.css','mobile-online.css','mobile-skin-ults.css'
 ]) if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
 for (const js of [
   'mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js','mobile-upgrade-icons.js',
-  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js','mobile-hud-responsive.js','mobile-online-config.js','mobile-online.js','mobile-online-socket.js'
+  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js','mobile-hud-responsive.js','mobile-online-config.js','mobile-online.js','mobile-online-socket.js','mobile-skin-ults.js'
 ]) if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
 fs.writeFileSync(indexPath, html);
 
@@ -109,6 +110,7 @@ console.log('Infinite horde formula retained with performance-aware enemy cap.')
 console.log('Combat 2.0, Economy, Content Expansion, Legacy and SaveGuard retained.');
 console.log('Kaneki removed from runtime; invalid Kaneki save slot is migrated/refunded once.');
 console.log('Skin Arsenal enabled: every base skin themes weapons/projectiles; Golden Reaper = gold, ADMIN = glitch.');
+console.log('Skin ULT v1 enabled: 21 unique animated ultimates; price scales power; ADMIN is apex.');
 console.log('Rebalance 2.0 enabled: difficulty/economy/score/upgrades/biomes/modes/bosses/DEV retuned.');
 console.log('DEV raw reward reduced from 25,000 to 2,500 coins.');
 console.log('Responsive portrait HUD enabled: split kills/score chips and isolated combo lane.');
