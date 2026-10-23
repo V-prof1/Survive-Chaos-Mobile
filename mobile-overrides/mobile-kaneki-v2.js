@@ -9,71 +9,119 @@ const K={age:-1,owner:null,wave:0,clock:0,shot:0,weapon:0,angle:0,hitstop:0};
 const N=17,px=new Float32Array(N),py=new Float32Array(N),nx=new Float32Array(N),ny=new Float32Array(N),width=new Float32Array(N);
 function rect(c,x,y,w,h,col){c.fillStyle=col;c.fillRect(x,y,w,h)}
 function polygon(c,col,coords){c.fillStyle=col;c.beginPath();c.moveTo(coords[0],coords[1]);for(let i=2;i<coords.length;i+=2)c.lineTo(coords[i],coords[i+1]);c.closePath();c.fill()}
-// Atlas uses the exact same 96px cell, anchor (48,87), scale and directions as SPR.hero.
-const atlas={};
-function body(direction,frame,pose){
-  const key=direction+':'+frame+':'+pose;if(atlas[key])return atlas[key];
-  const cv=document.createElement('canvas');cv.width=cv.height=96;const c=cv.getContext('2d');c.scale(3,3);
-  const side=direction==='side',back=direction==='up',step=frame?Math.round(Math.sin(frame/6*TAU)*1.25):0;
-  // Body silhouette matches hero_0 / hero_5: x 7..25; feet y29; head x9..23 y4..15.
-  const ink='#100e1b',deep='#191723',coat='#292735',edge='#45414e',red='#6f2035',skin='#d9c9c5';
-  rect(c,11,24,5,5+step,ink);rect(c,17,24,5,5-step,ink);
-  rect(c,12,24,3,3+step,'#292633');rect(c,18,24,3,3-step,'#211e2c');
-  rect(c,10,28+step,6,2,ink);rect(c,17,28-step,6,2,ink);
-  rect(c,11,28+step,4,1,'#51454d');rect(c,18,28-step,4,1,'#423d49');
-  polygon(c,ink,[10,16,22,16,24,24,21,27,17,26,16,24,15,27,10,26,8,24]);
-  polygon(c,coat,[11,16,21,16,22,24,19,25,16,23,14,25,10,24]);
-  rect(c,11,18,2,5,edge);rect(c,20,18,1,6,deep);rect(c,15,18,1,7,'#83717a');
-  rect(c,16,18,1,7,deep);rect(c,10,23,4,1,red);rect(c,18,24,3,1,red);
-  rect(c,11,22,10,1,ink);rect(c,15,22,2,1,'#92858a');
-  // Same arm length as base (y17..25). Gloves and sleeve seams.
-  rect(c,7,17,4,8,ink);rect(c,22,17,4,8,ink);
-  rect(c,8,18,2,5,coat);rect(c,23,18,2,5,coat);
-  rect(c,8,20,2,1,red);rect(c,23,20,2,1,red);
-  rect(c,8,24,2,1,'#a8a0a4');rect(c,23,24,2,1,'#a8a0a4');
-  // Profile torso is narrower in the original atlas too. Resample cached art with nearest pixels.
-  if(side){
-    const profile=document.createElement('canvas');profile.width=96;profile.height=96;
-    profile.getContext('2d').drawImage(cv,0,0);c.save();c.setTransform(1,0,0,1,0,0);
-    c.clearRect(0,48,96,48);c.imageSmoothingEnabled=false;
-    c.drawImage(profile,21,48,57,42,30,48,39,42);c.restore();
-  }
-  // Collar, face and ears: head is NOT enlarged for this skin.
-  rect(c,13,14,7,3,ink);rect(c,14,15,4,1,skin);
-  polygon(c,ink,[10,5,21,5,24,8,24,13,21,16,12,16,9,13,9,8]);
-  rect(c,10,9,2,4,'#a99298');rect(c,22,9,2,4,'#a99298');
-  polygon(c,skin,[12,7,21,7,22,9,22,13,20,15,13,15,11,12,11,9]);
-  rect(c,12,9,9,1,'#b6a5ad');
-  if(!back){
-    // Narrow normal eye under fringe, black sclera + single crimson iris.
-    rect(c,12,10,3,2,'#554550');rect(c,13,10,1,1,'#bcb2ba');
-    polygon(c,'#08080e',[17,10,22,9,21,12,17,12]);
-    rect(c,19,10,1,2,'#ef204a');rect(c,19,10,1,1,'#ff8b98');
-    rect(c,20,9,2,1,red);
-    polygon(c,'#0b0a12',[11,12,16,13,22,12,21,15,19,16,13,16,11,14]);
-    rect(c,12,13,9,1,'#514851');
-    for(let i=0;i<4;i++){rect(c,13+i*2,13,1,1,'#d3d3d7');rect(c,14+i*2,14,1,1,'#a6a6b2')}
-    rect(c,21,12,1,3,'#9c6670');
-  }
-  // Layered locks, alternating silver shadows and pearl highlights.
-  polygon(c,'#666774',[9,8,10,4,12,4,13,3,15,4,18,3,19,4,22,3,23,6,24,8,23,11,21,10,20,8,18,10,16,8,14,12,12,10,10,12]);
-  polygon(c,'#b5bac6',[10,8,11,4,13,5,15,3,17,5,19,3,20,5,22,4,23,8,21,7,20,10,18,7,16,9,15,7,13,11,12,8,10,10]);
-  polygon(c,'#eef0ee',[11,6,12,4,14,5,15,4,17,5,19,4,20,6,22,5,22,7,20,7,19,8,18,6,16,7,15,6,14,9,13,7,11,9]);
-  rect(c,13,5,2,1,'#ffffff');rect(c,17,5,2,1,'#ffffff');rect(c,10,8,1,2,'#dedfe6');
-  if(side&&!back){rect(c,10,11,2,2,'#a295a0');rect(c,21,10,1,1,'#fb3854')}
-  if(back){polygon(c,'#a0a6b5',[10,9,13,10,15,8,17,10,20,8,23,9,22,13,20,15,13,15,11,13]);rect(c,12,11,1,2,'#d5d9dc');rect(c,17,11,1,3,'#d5d9dc');rect(c,12,17,9,1,edge);rect(c,16,18,1,6,ink);rect(c,14,23,5,2,red)}
-  if(frame===1)rect(c,11,7,1,1,'#d6dce3');
-  if(pose){
-    // Two hands meet at chest: one bends the other's index finger; feet and anatomy stay fixed.
-    rect(c,8,19,7,3,coat);rect(c,19,17,5,3,coat);
-    rect(c,14,18,5,3,skin);rect(c,18,15,2,5,skin);
-    rect(c,pose===2?16:17,pose===2?16:15,pose===2?2:1,pose===2?1:3,'#f0e1d9');rect(c,16,18,4,1,'#8b737e');rect(c,17,20,2,1,'#8b737e');
-  }
-  atlas[key]=cv;return cv;
+// Same directional thresholds and mirroring as the original SPR.hero.
+function facing(a){const ca=Math.cos(a),sa=Math.sin(a);return {direction:Math.abs(sa)>Math.abs(ca)*1.1?(sa>0?'down':'up'):'side',flip:Math.abs(sa)<=Math.abs(ca)*1.1&&ca<0}}
+function frameState(a,q,cinema){
+ const f=cinema?{direction:'down',flip:false}:facing(a);
+ const pose=cinema||(q===K.owner&&K.age>=0&&K.age<.75);
+ const mode=pose?'pose':q&&q.dT>0?'dash':mv?'walk':'idle';
+ const count=mode==='dash'?3:mode==='walk'?6:4;
+ const frame=mode==='pose'?0:mode==='dash'?Math.min(2,Math.max(0,Math.floor((1-q.dT/.18)*3))):Math.floor(Math.max(0,tm)*(mode==='walk'?12:6))%count;
+ return {...f,mode,frame,pose:pose?(K.age>.36?2:1):0};
 }
-// Warm only a small finite atlas. No Canvas allocation in gameplay.
-for(const d of ['down','up','side'])for(let f=0;f<6;f++)body(d,f,0);
-for(const d of ['down','up','side'])for(const f of [0,1])for(const p of [1,2])body(d,f,p);
+const atlas={};
+function body(direction,frame,pose,mode='idle'){
+ const key=direction+':'+mode+':'+frame+':'+pose;if(atlas[key])return atlas[key];
+ const cv=document.createElement('canvas');cv.width=cv.height=96;const c=cv.getContext('2d');c.scale(3,3);
+ const side=direction==='side',back=direction==='up',walk=mode==='walk',dash=mode==='dash';
+ const stride=walk?[0,1,1,0,-1,-1][frame]:0,breath=mode==='idle'&&frame===2?1:0;
+ const ink='#0d0d18',black='#15151f',coat='#24232e',edge='#3a3946',wine='#592334',skin='#d9cacc';
+ // The feet retain the base anchor. Profile has two genuinely overlapping legs.
+ if(side){
+  rect(c,13-stride,24,4,5,ink);rect(c,12-stride,28,6,2,ink);
+  rect(c,14-stride,25,2,3,coat);rect(c,13-stride,28,4,1,'#45414c');
+  rect(c,17+stride,24,4,5,black);rect(c,17+stride,28,6,2,ink);
+  rect(c,18+stride,25,2,3,edge);rect(c,18+stride,28,4,1,'#68606a');
+ }else{
+  rect(c,11,24,5,5-(stride>0?1:0),ink);rect(c,17,24,5,5-(stride<0?1:0),ink);
+  rect(c,12,24,3,3,coat);rect(c,18,24,3,3,black);
+  rect(c,10,28-(stride>0?1:0),6,2,ink);rect(c,17,28-(stride<0?1:0),6,2,ink);
+  rect(c,11,28-(stride>0?1:0),4,1,'#46414b');rect(c,18,28-(stride<0?1:0),4,1,'#514952');
+ }
+ // Coats are drawn separately for front, profile and back; no frontal art is squashed sideways.
+ if(side){
+  polygon(c,ink,[13,16,20,16,22,19,21,24,19,26,13,25,12,22]);
+  polygon(c,black,[14,17,19,17,20,23,18,25,14,24]);
+  rect(c,14,18,2,5,coat);rect(c,19,19,1,4,edge);rect(c,13,24,5,1,wine);
+  rect(c,13,22,7,1,ink);rect(c,18,22,2,1,'#8b747b');
+  // Far sleeve first, near sleeve follows the walk cycle independently.
+  rect(c,12-stride,17+breath,3,7,ink);rect(c,13-stride,18+breath,1,4,coat);
+  rect(c,19+stride,17+breath,4,7,ink);rect(c,20+stride,18+breath,2,4,coat);
+  rect(c,20+stride,21+breath,2,1,wine);rect(c,20+stride,24+breath,2,1,'#9d8c98');
+  rect(c,15,15,5,2,ink);rect(c,18,15,2,1,skin);
+ }else{
+  polygon(c,ink,[10,16,22,16,24,24,21,26,18,26,16,24,14,26,10,26,8,24]);
+  polygon(c,black,[11,17,21,17,22,24,19,25,16,23,13,25,10,24]);
+  rect(c,11,18,2,5,coat);rect(c,20,18,1,5,edge);
+  rect(c,15,18,1,6,back?ink:'#70636e');rect(c,16,18,1,6,ink);
+  rect(c,10,24,4,1,wine);rect(c,19,24,3,1,wine);rect(c,11,22,10,1,ink);
+  if(back){rect(c,12,17,9,1,edge);rect(c,14,23,5,2,'#4f1c30');rect(c,16,18,1,5,'#45404c')}
+  else{polygon(c,'#34323d',[12,17,15,16,16,18,14,20]);polygon(c,ink,[20,17,17,16,16,18,18,20]);rect(c,15,22,2,1,'#8b747b')}
+  rect(c,7,17+stride+breath,4,7,ink);rect(c,22,17-stride+breath,4,7,ink);
+  rect(c,8,18+stride+breath,2,4,coat);rect(c,23,18-stride+breath,2,4,coat);
+  rect(c,8,21+stride+breath,2,1,wine);rect(c,23,21-stride+breath,2,1,wine);
+  rect(c,8,24+stride+breath,2,1,'#9d8c98');rect(c,23,24-stride+breath,2,1,'#9d8c98');
+  rect(c,13,15,7,2,ink);rect(c,15,15,3,1,back?black:skin);
+ }
+ // Keep head at the base skin height. Head, fringe, ear, nose and mask differ by view.
+ c.save();c.translate(dash&&side?frame:0,breath+(dash&&frame===1?1:0));
+ if(side){
+  // True right-facing silhouette: rear skull on left, one eye, protruding nose and pointed jaw on right.
+  polygon(c,ink,[11,5,16,3,21,4,23,6,23,9,25,11,24,12,23,12,23,14,20,16,14,15,11,12,10,8]);
+  polygon(c,'#ab9ca8',[15,7,21,7,22,9,22,10,24,11,22,12,22,14,20,15,15,13]);
+  polygon(c,skin,[17,8,21,8,22,10,24,11,22,11,22,13,20,14,17,12]);
+  rect(c,13,10,3,3,'#b4a3ad');rect(c,14,11,1,1,'#786877');
+  polygon(c,'#080912',[19,9,23,9,22,11,19,11]);
+  rect(c,21,9,1,2,'#d31d42');rect(c,21,9,1,1,'#ff6679');
+  rect(c,20,8,3,1,'#65505f');
+  // Mask hugs the profile jaw; a short zipper plate replaces a frontal grinning mouth.
+  polygon(c,'#10101a',[16,12,20,12,24,11,23,14,20,16,16,14]);
+  rect(c,17,12,6,1,'#4e4756');rect(c,18,13,5,1,'#a0a2af');
+  rect(c,19,13,1,1,'#e5e5e4');rect(c,21,13,1,1,'#e5e5e4');
+  rect(c,16,12,1,2,'#746471');rect(c,14,12,2,1,ink);
+  polygon(c,'#686e81',[10,7,11,4,14,4,16,3,19,3,22,4,23,6,23,9,21,8,20,10,18,8,16,11,13,10,12,12,11,10]);
+  polygon(c,'#a9b3c4',[11,7,12,4,15,5,17,3,20,4,22,5,22,7,20,7,19,9,17,7,15,10,14,8,12,10]);
+  polygon(c,'#e2e9ed',[12,6,13,4,15,5,17,4,20,5,21,6,19,6,18,8,17,6,15,8,14,7,12,9]);
+  rect(c,15,4,2,1,'#ffffff');rect(c,19,5,2,1,'#ffffff');rect(c,11,8,1,2,'#c2cad7');
+ }else if(back){
+  polygon(c,ink,[10,5,13,3,21,3,24,6,24,11,22,14,19,16,13,15,10,12,9,8]);
+  // Back is all layered hair and nape: never draw eyes, mask or teeth through the head.
+  polygon(c,'#687083',[10,7,11,4,14,4,16,3,19,4,22,3,23,6,24,8,23,12,21,14,19,14,18,16,16,14,13,15,12,12,10,12]);
+  polygon(c,'#a5b1c3',[11,7,12,4,15,5,17,3,19,5,21,4,23,7,22,11,20,10,20,13,18,12,17,14,15,12,13,13,12,10,11,11]);
+  polygon(c,'#dbe3e9',[12,6,13,4,15,5,17,4,19,5,21,5,22,7,20,9,19,7,17,10,16,7,14,10,13,8,12,10]);
+  rect(c,14,5,2,1,'#ffffff');rect(c,18,5,2,1,'#f2f7f5');rect(c,14,14,5,1,'#423643');
+ }else{
+  polygon(c,ink,[10,6,12,4,21,4,23,7,24,11,22,14,19,16,13,16,10,13,9,9]);
+  rect(c,10,10,2,3,'#a798a5');rect(c,22,10,2,3,'#a798a5');
+  polygon(c,skin,[12,7,21,7,22,10,22,13,20,15,13,15,11,12,11,9]);
+  rect(c,12,9,9,1,'#b2a2ae');
+  rect(c,12,10,3,1,'#4f4558');rect(c,13,10,1,1,'#b8b5c3');
+  polygon(c,'#080912',[17,9,22,9,21,11,17,11]);rect(c,19,9,1,2,'#d31d42');rect(c,19,9,1,1,'#ff6679');
+  rect(c,20,8,2,1,'#65505f');
+  polygon(c,'#10101a',[11,12,16,12,22,11,21,14,19,16,14,16,11,14]);
+  rect(c,12,12,9,1,'#474451');rect(c,13,13,7,1,'#a0a2af');
+  for(let i=0;i<3;i++)rect(c,14+i*2,13,1,1,'#e5e5e4');
+  rect(c,12,13,1,2,'#746471');rect(c,21,12,1,2,'#746471');
+  polygon(c,'#686e81',[9,8,10,5,12,4,14,3,17,4,19,3,22,4,23,6,24,8,23,10,21,9,20,7,18,9,16,8,14,12,12,10,10,12]);
+  polygon(c,'#a9b3c4',[10,8,11,5,13,5,15,3,17,5,19,4,21,5,23,7,21,7,20,9,18,7,16,9,15,7,13,11,12,8,10,10]);
+  polygon(c,'#e2e9ed',[11,6,12,5,14,5,15,4,17,5,19,5,21,6,22,7,20,7,19,8,18,6,16,7,15,6,14,9,13,7,11,9]);
+  rect(c,13,5,2,1,'#ffffff');rect(c,17,5,2,1,'#ffffff');
+ }
+ if(mode==='idle'&&frame===3)rect(c,side?12:11,7,1,1,'#e8edf1');
+ c.restore();
+ if(pose&&!back){
+  rect(c,side?13:8,19,side?5:7,3,coat);rect(c,19,17,4,3,coat);
+  rect(c,15,18,4,3,skin);rect(c,18,15,2,5,skin);
+  rect(c,pose===2?16:17,pose===2?16:15,pose===2?2:1,pose===2?1:3,'#efe1dc');
+  rect(c,16,18,4,1,'#897580');rect(c,17,20,2,1,'#897580');
+ }
+ atlas[key]=cv;return cv;
+}
+// Finite original-style cycles: 4 idle, 6 walk and 3 dash frames per direction, plus ULT poses.
+for(const d of ['down','up','side']){
+ for(const [mode,count] of [['idle',4],['walk',6],['dash',3]])for(let f=0;f<count;f++)body(d,f,0,mode);
+ for(const p of [1,2])body(d,0,p,'pose');
+}
 function fillRibbon(c,col,factor,offset){
  c.fillStyle=col;c.beginPath();
  for(let i=0;i<N;i++){const w=width[i]*factor+offset,X=Math.round(px[i]+nx[i]*w),Y=Math.round(py[i]+ny[i]*w);if(!i)c.moveTo(X,Y);else c.lineTo(X,Y)}
@@ -96,8 +144,8 @@ function tentacle(c,angle,length,thick,seed,time,bend,geometryOnly){
  for(let i=3;i<N-2;i+=3){c.moveTo(px[i]+nx[i]*width[i]*.8,py[i]+ny[i]*width[i]*.8);c.lineTo(px[i+1]-nx[i+1]*width[i+1]*.48,py[i+1]-ny[i+1]*width[i+1]*.48)}c.stroke();
 }
 function hero(c,r,a,q,cinema){
- const ca=Math.cos(a),sa=Math.sin(a),direction=cinema?'down':Math.abs(sa)>Math.abs(ca)*1.1?(sa>0?'down':'up'):'side';
- const t=tm||0,move=q?Math.hypot(q.ddx||0,q.ddy||0)>0&&mv:0,frame=move?Math.floor(t*12)%6:Math.floor(t*2)%2;
+ const view=frameState(a,q,cinema),{direction,flip,mode,frame}=view;
+ const t=tm||0,move=mode==='walk';
  const own=q&&K.owner===q,age=own?K.age:-1,pose=cinema||(age>=0&&age<.75);
  const growth=age<0?0:age<.7?clamp((age-.4)/.3,0,1):age<2.4?1:clamp((3.4-age),0,1);
  const shot=own?K.shot:0,w=q?CF.w:0,preview=!q&&!cinema;
@@ -113,12 +161,12 @@ function hero(c,r,a,q,cinema){
  if(w===4&&q)for(let i=0;i<3;i++){const an=t*1.5+i*TAU/3;c.save();c.translate(Math.cos(an)*r*2.5,Math.sin(an)*r*1.4-r*.4);c.rotate(an+.7);shard(c,4,0,false);c.restore()}
  c.restore();
  const scale=r*4.2/96,gy=r*.9,bob=move?Math.abs(Math.sin(t*12))*r*.035:Math.sin(t*2)*r*.014;
- c.save();c.translate(0,bob);if(direction==='side'&&ca<0)c.scale(-1,1);
+ c.save();c.translate(0,bob);if(flip)c.scale(-1,1);
  // Subtle attack squash uses feet as pivot.
  if(shot>0)c.transform(1,0,0,1-Math.sin(shot/.24*Math.PI)*.025,0,0);
- c.drawImage(body(direction,frame,pose?(K.age>.36?2:1):0),-48*scale,gy-87*scale,96*scale,96*scale);
+ c.drawImage(body(direction,frame,view.pose,mode),-48*scale,gy-87*scale,96*scale,96*scale);
  // Kakugan ignition, single pixel pulse instead of an oversized glow.
- if(!cinema&&age>=.38&&age<.7&&direction!=='up')rect(c,9*scale,gy-57*scale,3*scale,3*scale,'#ff7889');
+ if(!cinema&&age>=.38&&age<.7&&direction!=='up')rect(c,(direction==='side'?15:9)*scale,gy-60*scale,3*scale,3*scale,'#ff7889');
  c.restore();return 1;
 }
 const originalHero=SPR.hero.bind(SPR);
@@ -193,7 +241,7 @@ function screen(c){
  if(age<.78){
   c.save();c.fillStyle=age<.18?'rgba(12,3,12,.65)':'rgba(12,3,12,.87)';c.fillRect(0,0,W,H);
   cc.clearRect(0,0,180,180);cc.save();cc.translate(90,123);hero(cc,27,.6,null,true);cc.restore();
-  if(age>.38){rect(cc,95,80,3,2,'#ff4b68');rect(cc,93,81,9,1,'#9c263d')}
+  if(age>.38){rect(cc,100,77,2,2,'#ff4b68');rect(cc,98,78,7,1,'#9c263d')}
   const size=Math.min(W*.88,H*.78,400),xx=(W-size)/2,yy=(H-size)/2-12;
   c.imageSmoothingEnabled=false;c.drawImage(cutCanvas,xx,yy,size,size);
   c.textAlign='center';c.fillStyle='#f34c69';c.font='900 '+Math.min(38,W*.09)+'px system-ui';c.fillText('KAGUNE',W/2,H*.83);
@@ -207,6 +255,6 @@ if(typeof AUD!=='undefined'){
  if(typeof GS!=='undefined'&&GS&&typeof AC!=='undefined'&&AC)GS.gain.setTargetAtTime(S.mute?0:.6*duck,AC.currentTime,.045);
  };
 }
-window.SCGhoul={active,shot,bullet,world,screen,orbital,hero,step,cancel,state:K,atlas};
+window.SCGhoul={active,shot,bullet,world,screen,orbital,hero,step,cancel,state:K,atlas,facing,frameState};
 console.log('[Mobile] Kaneki V2 visual rework: shared proportions, organic arms, five weapon forms');
 })();

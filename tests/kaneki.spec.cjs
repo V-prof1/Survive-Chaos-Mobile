@@ -25,6 +25,47 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
   for(let w=0;w<5;w++){const normal=run(w,0),ghoul=run(w,21);all.push({w,normal,ghoul})}return all;
  });
  for(const pair of report.weapons){assert.ok(pair.ghoul.bullets.length>0);assert.ok(pair.ghoul.bullets.every(b=>b.kg===pair.w));const strip=v=>({...v,bullets:v.bullets.map(({kg,...b})=>b)});assert.deepEqual(strip(pair.normal),strip(pair.ghoul))}
+ // Match original aim sectors, real profile pixels, back silhouette and native animation cycles.
+ report.directions=await page.evaluate(()=>{
+  SCGhoul.cancel();mv=0;tm=0;
+  const frames={},samples=[];
+  for(const d of ['down','up','side']){
+   const c=SCGhoul.atlas[d+':idle:0:0'],pixels=c.getContext('2d').getImageData(0,0,96,96).data;
+   let red=0,teeth=0;for(let i=0;i<pixels.length;i+=4){if(pixels[i]===211&&pixels[i+1]===29&&pixels[i+2]===66)red++;if(pixels[i]===229&&pixels[i+1]===229&&pixels[i+2]===228)teeth++}
+   frames[d]={image:c.toDataURL(),red,teeth};
+  }
+  for(let i=0;i<32;i++){const a=i*Math.PI/16,ca=Math.cos(a),sa=Math.sin(a),expected=Math.abs(sa)>Math.abs(ca)*1.1?(sa>0?'down':'up'):'side';samples.push({a,...SCGhoul.frameState(a,P,false),expected,expectedFlip:expected==='side'&&ca<0})}
+  const modes={};for(const [mode,count] of [['idle',4],['walk',6],['dash',3]])for(const d of ['down','up','side']){
+   const images=[];for(let f=0;f<count;f++)images.push(SCGhoul.atlas[d+':'+mode+':'+f+':0'].toDataURL());modes[d+':'+mode]={count:images.length,unique:new Set(images).size};
+  }
+  mv=1;P.dT=0;tm=.2;const walking=SCGhoul.frameState(Math.PI,P,false);P.dT=.09;const dashing=SCGhoul.frameState(-Math.PI/2,P,false);P.dT=0;mv=0;
+  return {frames,samples,modes,walking,dashing};
+ });
+ assert.notEqual(report.directions.frames.side.image,report.directions.frames.down.image);
+ assert.ok(report.directions.frames.side.red>0);assert.ok(report.directions.frames.down.red>0);
+ assert.equal(report.directions.frames.up.red,0);assert.equal(report.directions.frames.up.teeth,0);
+ assert.ok(report.directions.frames.side.teeth<report.directions.frames.down.teeth);
+ for(const s of report.directions.samples){assert.equal(s.direction,s.expected);assert.equal(s.flip,s.expectedFlip)}
+ for(const v of Object.values(report.directions.modes)){assert.ok(v.unique>=2)}
+ assert.equal(report.directions.walking.mode,'walk');assert.equal(report.directions.walking.flip,true);assert.equal(report.directions.dashing.mode,'dash');assert.equal(report.directions.dashing.direction,'up');
+ delete report.directions.frames.side.image;delete report.directions.frames.down.image;delete report.directions.frames.up.image;
+ const directionsArt=await page.evaluate(()=>{
+  SCGhoul.cancel();CF.w=0;tm=0;mv=0;
+  const c=document.createElement('canvas');c.width=960;c.height=640;const g=c.getContext('2d');g.fillStyle='#171622';g.fillRect(0,0,960,640);g.imageSmoothingEnabled=false;
+  const views=[['Direita',0],['Esquerda',Math.PI],['Frente',Math.PI/2],['Costas',-Math.PI/2]];
+  g.fillStyle='#ece8ef';g.font='bold 23px system-ui';g.fillText('KANEKI · GHOUL — DIREÇÕES REFEITAS',28,35);
+  for(let i=0;i<4;i++){
+   const [name,a]=views[i],xx=120+i*240;g.fillStyle='#b7b0c8';g.font='17px system-ui';g.fillText(name,xx-35,75);
+   g.save();g.translate(xx,207);SPR.hero(g,31,a,21,null);g.restore();
+   g.fillStyle='#b7b0c8';g.font='14px system-ui';g.fillText('Mesma escala do Clássico',xx-87,287);
+   g.save();g.translate(xx-36,368);SPR.hero(g,17,a,0,null);g.restore();g.save();g.translate(xx+36,368);SPR.hero(g,17,a,21,null);g.restore();
+   const f=SCGhoul.facing(a);for(let j=0;j<3;j++){
+    g.save();g.translate(xx-72+j*72,517);if(f.flip)g.scale(-1,1);g.drawImage(SCGhoul.atlas[f.direction+':walk:'+j+':0'],-48*.72,-87*.72,96*.72,96*.72);g.restore();
+   }
+   g.fillStyle='#9e94af';g.fillText('Quadros de caminhada',xx-76,563);
+  }
+  return c.toDataURL();
+ });fs.writeFileSync(path.join(out,'kaneki-directions.png'),Buffer.from(directionsArt.split(',')[1],'base64'));
  // Visual evidence at the same radius and anchor, plus all five projectile shapes.
  const art=await page.evaluate(()=>{
   const c=document.createElement('canvas');c.width=1000;c.height=560;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.fillStyle='#201c2a';g.fillRect(0,0,1000,560);g.fillStyle='#ece5ec';g.font='18px system-ui';
@@ -42,7 +83,7 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
  assert.equal(await page.evaluate(()=>{start();return SCGhoul.state.age}),-1);
  // Render cost with 1200 enemies and hundreds of projectiles. Relative evidence, not a phone FPS claim.
  report.performance=await page.evaluate(()=>{S.skin=21;CF.w=2;start();beginGame();god=1;E=[];for(let i=0;i<1200;i++){const e={...EN[0],k:0,x:(i%40)*24-480,y:Math.floor(i/40)*24-360,r:11,hp:100,mh:100,sp:0,col:'#576',t1:0,t2:0,oc:0,fl:0,ai:'c'};E.push(e)}B=[];for(let i=0;i<250;i++)B.push({kg:i%5,x:i%25*24-300,y:Math.floor(i/25)*24-120,vx:430,vy:0,c:false,l:1});const nodes=document.querySelectorAll('*').length;let times=[];for(let i=0;i<25;i++){const t=performance.now();draw(2000+i*16);times.push(performance.now()-t)}return {enemies:E.length,bullets:B.length,medianMs:times.sort((a,b)=>a-b)[12],nodesBefore:nodes,nodesAfter:document.querySelectorAll('*').length,atlasCount:Object.keys(SCGhoul.atlas).length}});
- assert.equal(report.performance.nodesBefore,report.performance.nodesAfter);assert.ok(report.performance.atlasCount<=40);assert.deepEqual(errors,[]);
+ assert.equal(report.performance.nodesBefore,report.performance.nodesAfter);assert.ok(report.performance.atlasCount<=48);assert.deepEqual(errors,[]);
  await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.SCGhoul,null,{polling:100});
  report.reload=await page.evaluate(()=>({skin:S.skin,owned:S.own.includes(21),best:S.best,extra:S.customPreserved}));
  assert.equal(report.reload.skin,21);assert.equal(report.reload.owned,true);assert.equal(report.reload.best,777);assert.deepEqual(report.reload.extra,{hello:42});

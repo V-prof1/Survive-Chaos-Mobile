@@ -44,6 +44,13 @@ Custom integer input with six presets (1K, 10K, 100K, 1M, 5M, 10M). Rejects blan
 
 Checks: existing ownership; one-time purchase; original metadata; persisted save after reload; all five weapons compared field-for-field with normal skin; arbitrary ADM amounts and malformed/overflow inputs; movement and dash; ULT cost, four damage waves, pause-safe age, 12% healing, retraction and new-run cancellation; portrait 390x844 and landscape 844x390; no horizontal page overflow; no page JavaScript errors; 1200 enemies + 250 projectiles without DOM growth. All assembled JS files pass node --check.
 
-Local software-rendered Chromium stress median: about 25ms per full draw over 25 frames, with 893 DOM elements before/after and 30 cached body frames. This is desktop headless evidence, not measured Android-device FPS. APK overwrite installation on a physical user's phone is not simulated by these browser tests; compatibility is checked through package ID, version and certificate.
+Local software-rendered Chromium stress median: about 25ms per full draw over 25 frames, with 893 DOM elements before/after and 45 cached body frames. This is desktop headless evidence, not measured Android-device FPS. APK overwrite installation on a physical user's phone is not simulated by these browser tests; compatibility is checked through package ID, version and certificate.
 
 Changed implementation: mobile-kaneki.js (registration/shop), mobile-kaneki-v2.js (renderer/combat presentation/ULT), mobile-kaneki-v2.css (store styling), mobile-admin-plus.js (safe grants), apply-mobile-patches.js (strict Mobile-only renderer hooks), package.json (test runner), tests/kaneki.spec.cjs (regressions) and build-apk.yml (tests, fixed source, certificate guards).
+
+
+## Directional follow-up
+
+Replaced the old frontal face and compressed profile with separately drawn front, true side and back art. Profile now has one visible Kakugan, rear ear/skull, a nose silhouette, jaw-hugging mask, overlapping sleeves and staggered legs. Back art contains only layered hair, nape, coat seams and the lower-back Kagune root. Left is mirrored from the right profile, matching the original skins.
+
+Added original-style 4-frame idle, 6-frame walk and 3-frame dash cycles in each of the three source views, plus two ULT hand poses per view: 45 cached frames total. Shared `facing` and `frameState` follow SPR.hero's exact aim thresholds and side mirroring. Tests cover 32 aim angles, both side views, distinct front/profile artwork, no eyes/teeth on the back, animation selection, and a direction contact sheet (`kaneki-directions.png`). Body rendering uses the existing 96x96 cell, (48,87) foot anchor and original scale; save IDs, purchases, weapons and Android signing configuration are unchanged.
