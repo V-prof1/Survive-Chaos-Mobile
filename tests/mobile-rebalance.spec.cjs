@@ -9,6 +9,9 @@ const admin=read('www/mobile-admin-plus.js');
 const adminCss=read('www/mobile-admin-plus.css');
 const hud=read('www/mobile-hud-responsive.js');
 const hudCss=read('www/mobile-hud-responsive.css');
+const online=read('www/mobile-online.js');
+const onlineCfg=read('www/mobile-online-config.js');
+const onlineCss=read('www/mobile-online.css');
 
 assert(!index.includes('mobile-kaneki.js'),'Kaneki runtime JS must not be injected');
 assert(!index.includes('mobile-kaneki-v2.js'),'Kaneki V2 runtime JS must not be injected');
@@ -55,4 +58,22 @@ assert(hudCss.includes('#hud #kl{display:none!important}'),'Legacy mixed kills/s
 assert(hudCss.includes('#proCombat'),'Combo lane portrait override missing');
 assert(hudCss.includes('#proAnnouncer'),'Combat announcement portrait spacing missing');
 assert(hudCss.includes('#hud #boss'),'Boss HUD portrait spacing missing');
-console.log('Mobile arsenal/rebalance/admin/portrait HUD static regression checks passed.');
+
+// Online foundation must remain backend-disabled by default and must never contain private service credentials.
+assert(index.includes('mobile-online-config.js'),'Online public config missing');
+assert(index.includes('mobile-online.js'),'Online foundation missing');
+assert(index.includes('mobile-online.css'),'Online styles missing');
+assert(onlineCfg.includes('enabled:false'),'Online backend must be disabled until configured');
+assert(onlineCfg.includes("redirectUrl:'survivechaos://auth/callback'"),'OAuth deep-link callback missing');
+assert(!onlineCfg.includes('service_role'),'Private service role must never exist in client config');
+assert(online.includes("protocol:cfg.protocol||'sc.online.v1'"),'Online protocol contract missing');
+assert(online.includes("flowType:'pkce'"),'PKCE auth flow missing');
+assert(online.includes("provider:'google'"),'Google login preparation missing');
+assert(online.includes('exchangeCodeForSession(code)'),'OAuth callback exchange missing');
+assert(online.includes("from('player_saves')"),'Cloud save table integration missing');
+assert(online.includes("send('room.create'"),'Room create contract missing');
+assert(online.includes("send('room.join'"),'Room join contract missing');
+assert(online.includes("send('room.ready'"),'Ready-state contract missing');
+assert(online.includes('SCAdminBus.setTransport'),'Admin server transport bridge missing');
+assert(onlineCss.includes('.scOnlinePanel'),'Online mobile UI styles missing');
+console.log('Mobile arsenal/rebalance/admin/portrait HUD/online foundation static regression checks passed.');
