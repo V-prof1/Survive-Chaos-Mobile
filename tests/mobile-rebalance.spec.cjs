@@ -7,6 +7,8 @@ const arsenal=read('www/mobile-arsenal-skins.js');
 const balance=read('www/mobile-rebalance.js');
 const admin=read('www/mobile-admin-plus.js');
 const adminCss=read('www/mobile-admin-plus.css');
+const hud=read('www/mobile-hud-responsive.js');
+const hudCss=read('www/mobile-hud-responsive.css');
 
 assert(!index.includes('mobile-kaneki.js'),'Kaneki runtime JS must not be injected');
 assert(!index.includes('mobile-kaneki-v2.js'),'Kaneki V2 runtime JS must not be injected');
@@ -14,6 +16,8 @@ assert(!index.includes('mobile-kaneki.css'),'Kaneki CSS must not be injected');
 assert(index.includes('mobile-arsenal-skins.js'),'Skin arsenal layer missing');
 assert(index.includes('mobile-rebalance.js'),'Rebalance layer missing');
 assert(index.includes('mobile-admin-plus.js'),'Admin command center layer missing');
+assert(index.includes('mobile-hud-responsive.js'),'Responsive portrait HUD JS missing');
+assert(index.includes('mobile-hud-responsive.css'),'Responsive portrait HUD CSS missing');
 assert(game.includes('SCArsenal.bullet(x,b)'),'Projectile skin hook missing');
 assert(game.includes('SCArsenal.orbital(x,q,a)'),'Orbital skin hook missing');
 assert(game.includes('RUN.boss*750'),'New score formula missing');
@@ -41,4 +45,14 @@ assert(admin.includes('CONFIRM_REQUIRED'),'Dangerous command confirmation missin
 assert(adminCss.includes('.admpro-nav'),'Admin mobile navigation styles missing');
 assert(adminCss.includes('.admpro-command'),'Admin command cards styles missing');
 assert(adminCss.includes('@media(max-width:760px)'),'Admin fullscreen mobile layout missing');
-console.log('Mobile arsenal/rebalance/admin static regression checks passed.');
+
+// Portrait HUD must separate persistent stats from combo information.
+assert(hud.includes('scPortraitStats'),'Portrait score container missing');
+assert(hud.includes('scPortraitKills'),'Portrait kills chip missing');
+assert(hud.includes('scPortraitScore'),'Portrait score chip missing');
+assert(hudCss.includes('@media (orientation:portrait)'),'Portrait HUD media query missing');
+assert(hudCss.includes('#hud #kl{display:none!important}'),'Legacy mixed kills/score/combo HUD must be hidden in portrait');
+assert(hudCss.includes('#proCombat'),'Combo lane portrait override missing');
+assert(hudCss.includes('#proAnnouncer'),'Combat announcement portrait spacing missing');
+assert(hudCss.includes('#hud #boss'),'Boss HUD portrait spacing missing');
+console.log('Mobile arsenal/rebalance/admin/portrait HUD static regression checks passed.');
