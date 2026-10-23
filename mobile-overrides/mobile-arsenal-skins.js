@@ -133,6 +133,16 @@ try{
     };
   }
 
+  // ADMIN is rendered by game.js before SPR.hero, so give that special renderer its glitch weapon explicitly.
+  if(typeof hero==='function'){
+    const nativeGameHero=hero;
+    hero=function(c,px,py,r,sk,a,z,q){
+      const idx=SK.indexOf(sk),out=nativeGameHero.apply(this,arguments);
+      if(idx===20&&!z)drawWeapon(c,px,py,r,20,a,q);
+      return out;
+    };
+  }
+
   function polishShop(){
     const cards=[...document.querySelectorAll('#sg .sk')];
     cards.forEach((card,i)=>{if(i>=SK.length||card.querySelector('.arsenal-skin-tag'))return;const s=document.createElement('small');s.className='arsenal-skin-tag';s.textContent='ARSENAL: '+theme(i).n.toUpperCase();card.appendChild(s)});
@@ -140,6 +150,6 @@ try{
   const obs=document.getElementById('sg');if(obs)new MutationObserver(polishShop).observe(obs,{childList:true,subtree:true});setTimeout(polishShop,0);
 
   window.SCArsenal={theme,bullet,orbital,drawWeapon,themes:THEMES};
-  console.log('[Mobile] Skin Arsenal enabled: 21 player skins replace weapon/projectile visuals; Kaneki retired');
+  console.log('[Mobile] Skin Arsenal enabled: 21 player skins replace weapon/projectile visuals; ADMIN glitch arsenal active; Kaneki retired');
 }catch(err){console.warn('[Mobile Skin Arsenal]',err)}
 })();
