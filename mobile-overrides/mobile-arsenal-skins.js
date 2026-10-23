@@ -82,7 +82,6 @@ try{
     if(t.k==='ninja'||t.k==='samurai')poly(c,a,[r*.55,-r*.16,r*.72,-r*.34,r*.76,-r*.13]);
   }
 
-  // Called by the native SPR.hero draw order so aiming upward still puts the weapon behind the character.
   function drawWeapon(c,px,py,r,idx,a,q){
     if(idx<=0||idx>=THEMES.length)return false;
     const t=theme(idx),w=typeof CF!=='undefined'?CF.w||0:0;
@@ -115,6 +114,23 @@ try{
     const t=theme(idx);c.save();c.translate(q.x+Math.cos(a)*(52+(q.orr||0)),q.y+Math.sin(a)*(52+(q.orr||0)));c.rotate(a*3);
     if(t.k==='glitch'){c.globalAlpha=.55;c.fillStyle='#28f2ff';c.fillRect(-10,-4,18,6);c.fillStyle='#ff2bd6';c.fillRect(-7,-1,18,6);c.globalAlpha=1}
     c.fillStyle=t.t;c.fillRect(-9,-3,18,6);c.fillStyle=t.a;c.fillRect(2,-2,7,4);c.restore();return true;
+  }
+
+  // Replace SPR.hero's normal weapon only for themed skins while preserving the native up/side/down layering.
+  if(typeof SPR!=='undefined'&&SPR.hero){
+    const nativeHero=SPR.hero.bind(SPR);
+    SPR.hero=function(c,r,a,si,q){
+      if(!q||si<=0||si>=THEMES.length)return nativeHero(c,r,a,si,q);
+      const sh='hero_'+si;if(!SPR.sheet(sh))return 0;
+      const ca=Math.cos(a),sa=Math.sin(a);let d='side',fl=0;if(Math.abs(sa)>Math.abs(ca)*1.1)d=sa>0?'down':'up';else fl=ca<0;
+      const s=r*4.2/96,gy=r*.9,mvg=mv?1:0;let k=(mvg?'walk_':'idle_')+d,t=tm,once=0;
+      if(q.dT>0){k='dash_'+d;t=1-q.dT/.18;once=1}
+      const drawW=()=>drawWeapon(c,0,0,r,si,a,q);
+      if(d==='up')drawW();
+      SPR.at(c,sh,k,t,0,gy,s,fl,0,once);
+      if(d!=='up')drawW();
+      return 1;
+    };
   }
 
   function polishShop(){
