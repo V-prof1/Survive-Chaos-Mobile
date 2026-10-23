@@ -1,0 +1,8 @@
+/* Survive Chaos Mobile — Rebalance 2.0 */
+#mobileExtraModes{margin-top:10px;padding:10px;border:1px solid rgba(255,86,110,.2);border-radius:14px;background:linear-gradient(180deg,rgba(74,18,38,.16),rgba(16,13,31,.16))}
+#mobileExtraModes .lbl{color:#ff8ca2}
+#mobileExtraModes .seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#mobileExtraModes .opt{min-height:46px;white-space:normal}
+#mobileExtraModes .desc{margin-top:8px}
+#mobileExtraModes .mobileBiomeRule{color:#d7d0ef;border-top:1px solid rgba(255,255,255,.08);padding-top:8px}
+@media(max-width:520px){#mobileExtraModes .seg{grid-template-columns:1fr 1fr}#mobileExtraModes .opt{font-size:12px}}
