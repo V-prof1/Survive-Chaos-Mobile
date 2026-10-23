@@ -11,6 +11,7 @@ const hud=read('www/mobile-hud-responsive.js');
 const hudCss=read('www/mobile-hud-responsive.css');
 const online=read('www/mobile-online.js');
 const onlineCfg=read('www/mobile-online-config.js');
+const onlineSocket=read('www/mobile-online-socket.js');
 const onlineCss=read('www/mobile-online.css');
 
 assert(!index.includes('mobile-kaneki.js'),'Kaneki runtime JS must not be injected');
@@ -34,7 +35,6 @@ assert(balance.includes('Caçada de Elite'),'New elite hunt mode missing');
 assert(balance.includes('DEV // LIMITADORES REMOVIDOS'),'DEV rebalance missing');
 assert(balance.includes("['Pesadelo',2.80,2.25,2.05,1.05,.72,.62,1.85]"),'Nightmare rebalance missing');
 
-// Admin Command Center v2 must stay usable offline while exposing a server-authoritative transport contract.
 assert(admin.includes("protocol:'sc.admin.v1'"),'Admin protocol version missing');
 assert(admin.includes('window.SCAdminBus=Bus'),'Public admin command bus missing');
 assert(admin.includes('setTransport(fn,meta={})'),'Future online transport hook missing');
@@ -49,7 +49,6 @@ assert(adminCss.includes('.admpro-nav'),'Admin mobile navigation styles missing'
 assert(adminCss.includes('.admpro-command'),'Admin command cards styles missing');
 assert(adminCss.includes('@media(max-width:760px)'),'Admin fullscreen mobile layout missing');
 
-// Portrait HUD must separate persistent stats from combo information.
 assert(hud.includes('scPortraitStats'),'Portrait score container missing');
 assert(hud.includes('scPortraitKills'),'Portrait kills chip missing');
 assert(hud.includes('scPortraitScore'),'Portrait score chip missing');
@@ -59,9 +58,9 @@ assert(hudCss.includes('#proCombat'),'Combo lane portrait override missing');
 assert(hudCss.includes('#proAnnouncer'),'Combat announcement portrait spacing missing');
 assert(hudCss.includes('#hud #boss'),'Boss HUD portrait spacing missing');
 
-// Online foundation must remain backend-disabled by default and must never contain private service credentials.
 assert(index.includes('mobile-online-config.js'),'Online public config missing');
 assert(index.includes('mobile-online.js'),'Online foundation missing');
+assert(index.includes('mobile-online-socket.js'),'Socket lobby adapter missing');
 assert(index.includes('mobile-online.css'),'Online styles missing');
 assert(onlineCfg.includes('enabled:false'),'Online backend must be disabled until configured');
 assert(onlineCfg.includes("redirectUrl:'survivechaos://auth/callback'"),'OAuth deep-link callback missing');
@@ -75,5 +74,8 @@ assert(online.includes("send('room.create'"),'Room create contract missing');
 assert(online.includes("send('room.join'"),'Room join contract missing');
 assert(online.includes("send('room.ready'"),'Ready-state contract missing');
 assert(online.includes('SCAdminBus.setTransport'),'Admin server transport bridge missing');
+assert(onlineSocket.includes("socket.emit('sc:request'"),'Socket request transport missing');
+assert(onlineSocket.includes("transports:['websocket','polling']"),'Socket transport fallback missing');
+assert(onlineSocket.includes('session.access_token'),'Authenticated socket token missing');
 assert(onlineCss.includes('.scOnlinePanel'),'Online mobile UI styles missing');
 console.log('Mobile arsenal/rebalance/admin/portrait HUD/online foundation static regression checks passed.');
