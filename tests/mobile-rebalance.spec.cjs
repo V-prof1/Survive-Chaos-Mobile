@@ -5,12 +5,15 @@ const game=read('www/game.js');
 const index=read('www/index.html');
 const arsenal=read('www/mobile-arsenal-skins.js');
 const balance=read('www/mobile-rebalance.js');
+const admin=read('www/mobile-admin-plus.js');
+const adminCss=read('www/mobile-admin-plus.css');
 
 assert(!index.includes('mobile-kaneki.js'),'Kaneki runtime JS must not be injected');
 assert(!index.includes('mobile-kaneki-v2.js'),'Kaneki V2 runtime JS must not be injected');
 assert(!index.includes('mobile-kaneki.css'),'Kaneki CSS must not be injected');
 assert(index.includes('mobile-arsenal-skins.js'),'Skin arsenal layer missing');
 assert(index.includes('mobile-rebalance.js'),'Rebalance layer missing');
+assert(index.includes('mobile-admin-plus.js'),'Admin command center layer missing');
 assert(game.includes('SCArsenal.bullet(x,b)'),'Projectile skin hook missing');
 assert(game.includes('SCArsenal.orbital(x,q,a)'),'Orbital skin hook missing');
 assert(game.includes('RUN.boss*750'),'New score formula missing');
@@ -23,4 +26,19 @@ assert(balance.includes('Dupla Ameaça'),'New double-boss mode missing');
 assert(balance.includes('Caçada de Elite'),'New elite hunt mode missing');
 assert(balance.includes('DEV // LIMITADORES REMOVIDOS'),'DEV rebalance missing');
 assert(balance.includes("['Pesadelo',2.80,2.25,2.05,1.05,.72,.62,1.85]"),'Nightmare rebalance missing');
-console.log('Mobile arsenal/rebalance static regression checks passed.');
+
+// Admin Command Center v2 must stay usable offline while exposing a server-authoritative transport contract.
+assert(admin.includes("protocol:'sc.admin.v1'"),'Admin protocol version missing');
+assert(admin.includes('window.SCAdminBus=Bus'),'Public admin command bus missing');
+assert(admin.includes('setTransport(fn,meta={})'),'Future online transport hook missing');
+assert(admin.includes("permission:'admin.economy'"),'Admin permission metadata missing');
+assert(admin.includes("target:{type:targetId==='all'?'all':'player',id:targetId}"),'Explicit online admin target missing');
+assert(admin.includes('requestId:'),'Admin request id missing');
+assert(admin.includes('admProSearch'),'Admin command search missing');
+assert(admin.includes('admProTarget'),'Admin target selector missing');
+assert(admin.includes('sc_admin_favs_v2'),'Admin favorites persistence missing');
+assert(admin.includes('CONFIRM_REQUIRED'),'Dangerous command confirmation missing');
+assert(adminCss.includes('.admpro-nav'),'Admin mobile navigation styles missing');
+assert(adminCss.includes('.admpro-command'),'Admin command cards styles missing');
+assert(adminCss.includes('@media(max-width:760px)'),'Admin fullscreen mobile layout missing');
+console.log('Mobile arsenal/rebalance/admin static regression checks passed.');
