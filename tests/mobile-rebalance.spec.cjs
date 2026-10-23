@@ -13,6 +13,8 @@ const online=read('www/mobile-online.js');
 const onlineCfg=read('www/mobile-online-config.js');
 const onlineSocket=read('www/mobile-online-socket.js');
 const onlineCss=read('www/mobile-online.css');
+const ults=read('www/mobile-skin-ults.js');
+const ultsCss=read('www/mobile-skin-ults.css');
 
 assert(!index.includes('mobile-kaneki.js'),'Kaneki runtime JS must not be injected');
 assert(!index.includes('mobile-kaneki-v2.js'),'Kaneki V2 runtime JS must not be injected');
@@ -22,6 +24,8 @@ assert(index.includes('mobile-rebalance.js'),'Rebalance layer missing');
 assert(index.includes('mobile-admin-plus.js'),'Admin command center layer missing');
 assert(index.includes('mobile-hud-responsive.js'),'Responsive portrait HUD JS missing');
 assert(index.includes('mobile-hud-responsive.css'),'Responsive portrait HUD CSS missing');
+assert(index.includes('mobile-skin-ults.js'),'Animated skin ULT layer missing');
+assert(index.includes('mobile-skin-ults.css'),'Animated skin ULT styles missing');
 assert(game.includes('SCArsenal.bullet(x,b)'),'Projectile skin hook missing');
 assert(game.includes('SCArsenal.orbital(x,q,a)'),'Orbital skin hook missing');
 assert(game.includes('RUN.boss*750'),'New score formula missing');
@@ -34,6 +38,17 @@ assert(balance.includes('Dupla Ameaça'),'New double-boss mode missing');
 assert(balance.includes('Caçada de Elite'),'New elite hunt mode missing');
 assert(balance.includes('DEV // LIMITADORES REMOVIDOS'),'DEV rebalance missing');
 assert(balance.includes("['Pesadelo',2.80,2.25,2.05,1.05,.72,.62,1.85]"),'Nightmare rebalance missing');
+
+assert(ults.includes("protocol:'sc.ult.v1'"),'ULT protocol contract missing');
+assert(ults.includes('SYSTEM // OVERRIDE'),'ADMIN apex ULT missing');
+assert(ults.includes('CEIFA DOURADA'),'Golden Reaper ULT missing');
+assert(ults.includes('if(idx===20)return 2.15'),'ADMIN power scaling missing');
+assert(ults.includes('Math.sqrt(Math.min(12000,price(idx))/12000)'),'Skin price power scaling missing');
+assert(ults.includes('for(let i=1;i<=6;i++)'),'ADMIN six-wave sequence missing');
+assert(ults.includes('q.iv=Math.max(q.iv||0,2.4)'),'ADMIN invulnerability missing');
+assert(ults.includes('fireUlt=function()'),'ULT override missing');
+assert(ultsCss.includes('#scUltCanvas'),'ULT visual overlay missing');
+assert(ultsCss.includes('#scUltTitle.admin'),'ADMIN ULT title style missing');
 
 assert(admin.includes("protocol:'sc.admin.v1'"),'Admin protocol version missing');
 assert(admin.includes('window.SCAdminBus=Bus'),'Public admin command bus missing');
@@ -78,4 +93,4 @@ assert(onlineSocket.includes("socket.emit('sc:request'"),'Socket request transpo
 assert(onlineSocket.includes("transports:['websocket','polling']"),'Socket transport fallback missing');
 assert(onlineSocket.includes('session.access_token'),'Authenticated socket token missing');
 assert(onlineCss.includes('.scOnlinePanel'),'Online mobile UI styles missing');
-console.log('Mobile arsenal/rebalance/admin/portrait HUD/online foundation static regression checks passed.');
+console.log('Mobile arsenal/rebalance/admin/portrait HUD/online/skin ULT static regression checks passed.');
