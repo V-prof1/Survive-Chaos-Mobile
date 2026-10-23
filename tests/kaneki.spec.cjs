@@ -53,7 +53,7 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
   SCGhoul.cancel();CF.w=0;tm=0;mv=0;
   const c=document.createElement('canvas');c.width=960;c.height=640;const g=c.getContext('2d');g.fillStyle='#171622';g.fillRect(0,0,960,640);g.imageSmoothingEnabled=false;
   const views=[['Direita',0],['Esquerda',Math.PI],['Frente',Math.PI/2],['Costas',-Math.PI/2]];
-  g.fillStyle='#ece8ef';g.font='bold 23px system-ui';g.fillText('KANEKI · GHOUL — DIREÇÕES REFEITAS',28,35);
+  g.fillStyle='#ece8ef';g.font='bold 23px system-ui';g.fillText('KANEKI · GHOUL — CONTORNOS ARREDONDADOS',28,35);
   for(let i=0;i<4;i++){
    const [name,a]=views[i],xx=120+i*240;g.fillStyle='#b7b0c8';g.font='17px system-ui';g.fillText(name,xx-35,75);
    g.save();g.translate(xx,207);SPR.hero(g,31,a,21,null);g.restore();

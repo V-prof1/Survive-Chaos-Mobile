@@ -4,7 +4,7 @@ Only V-prof1/Survive-Chaos-Mobile is modified. The read-only browser source is p
 
 ## Proportions and rendering
 
-Inspected SPR.hero and original Classic, Ninja, Knight, Samurai and Reaper sheets. Original cells are 96x96; foot anchor is (48,87); scale is r*4.2/96 and local foot position is r*.9. Classic idle_down opaque bounds are (21,9)-(78,90), Ninja (21,12)-(78,90). Kaneki uses the same cell, anchor, scale, down/up/side direction selection, side mirroring and 12fps walking cadence. His native 32px logical body uses a 3px grid, narrow profile torso, fixed feet, black coat, gloves, boots, layered silver hair, a shadowed normal eye, black sclera/crimson iris and a black metal-tooth mask. The cut-in reuses this exact atlas, including two finger-crack hand poses.
+Inspected SPR.hero and original Classic, Ninja, Knight, Samurai and Reaper sheets. Original cells are 96x96; foot anchor is (48,87); scale is r*4.2/96 and local foot position is r*.9. Classic idle_down opaque bounds are (21,9)-(78,90), Ninja (21,12)-(78,90). Kaneki uses the same cell, anchor, scale, down/up/side direction selection, side mirroring and 12fps walking cadence. His native 96px cached body uses 32 logical coordinate units, narrow profile torso, fixed feet, black coat, gloves, boots, layered silver hair, a shadowed normal eye, black sclera/crimson iris and a black metal-tooth mask. The cut-in reuses this exact atlas, including two finger-crack hand poses.
 
 Four permanent Rinkaku ribbons originate at the waist/back, with tapered polygon silhouettes, uneven muscle plates, dark internal shading and restrained highlights. Movement direction bends them behind the body. Shot recoil, rifle reach, shotgun spread and crossbow compression alter existing ribbons. Staff gets three visual organic orbitals. Only the ULT grows extra temporary extensions.
 
@@ -54,3 +54,8 @@ Changed implementation: mobile-kaneki.js (registration/shop), mobile-kaneki-v2.j
 Replaced the old frontal face and compressed profile with separately drawn front, true side and back art. Profile now has one visible Kakugan, rear ear/skull, a nose silhouette, jaw-hugging mask, overlapping sleeves and staggered legs. Back art contains only layered hair, nape, coat seams and the lower-back Kagune root. Left is mirrored from the right profile, matching the original skins.
 
 Added original-style 4-frame idle, 6-frame walk and 3-frame dash cycles in each of the three source views, plus two ULT hand poses per view: 45 cached frames total. Shared `facing` and `frameState` follow SPR.hero's exact aim thresholds and side mirroring. Tests cover 32 aim angles, both side views, distinct front/profile artwork, no eyes/teeth on the back, animation selection, and a direction contact sheet (`kaneki-directions.png`). Body rendering uses the existing 96x96 cell, (48,87) foot anchor and original scale; save IDs, purchases, weapons and Android signing configuration are unchanged.
+
+
+## Rounded silhouette follow-up
+
+Replaced the angular head and coat hulls with oval contours and rounded the cached hair locks, jaw mask, sleeves, boot ends and larger cloth details. Faces and back still use separate directional art, with the same aim sectors, scale and foot anchor. Curves are rasterized once into the existing 45-frame 96x96 cache, then sampled with nearest-neighbour rendering in gameplay. No blur filter, gameplay particle layer or per-frame shape generation was added. Direction, weapon, save and ULT regressions were rerun after the final contour changes.

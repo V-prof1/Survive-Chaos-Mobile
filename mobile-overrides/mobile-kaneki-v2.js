@@ -9,6 +9,19 @@ const K={age:-1,owner:null,wave:0,clock:0,shot:0,weapon:0,angle:0,hitstop:0};
 const N=17,px=new Float32Array(N),py=new Float32Array(N),nx=new Float32Array(N),ny=new Float32Array(N),width=new Float32Array(N);
 function rect(c,x,y,w,h,col){c.fillStyle=col;c.fillRect(x,y,w,h)}
 function polygon(c,col,coords){c.fillStyle=col;c.beginPath();c.moveTo(coords[0],coords[1]);for(let i=2;i<coords.length;i+=2)c.lineTo(coords[i],coords[i+1]);c.closePath();c.fill()}
+// Rounded native contours are cached once; the game still uses nearest-neighbour pixels.
+function contour(c,col,p){
+ const n=p.length;c.fillStyle=col;c.beginPath();c.moveTo((p[n-2]+p[0])*.5,(p[n-1]+p[1])*.5);
+ for(let i=0;i<n;i+=2){const j=(i+2)%n;c.quadraticCurveTo(p[i],p[i+1],(p[i]+p[j])*.5,(p[i+1]+p[j+1])*.5)}
+ c.closePath();c.fill();
+}
+function oval(c,x,y,rx,ry,col){c.fillStyle=col;c.beginPath();c.ellipse(x,y,rx,ry,0,0,TAU);c.fill()}
+function softRect(c,x,y,w,h,col){
+ if(w<3||h<2)return rect(c,x,y,w,h,col);
+ const r=Math.min(1.65,w*.42,h*.45);c.fillStyle=col;c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);
+ c.quadraticCurveTo(x+w,y,x+w,y+r);c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+ c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();c.fill();
+}
 // Same directional thresholds and mirroring as the original SPR.hero.
 function facing(a){const ca=Math.cos(a),sa=Math.sin(a);return {direction:Math.abs(sa)>Math.abs(ca)*1.1?(sa>0?'down':'up'):'side',flip:Math.abs(sa)<=Math.abs(ca)*1.1&&ca<0}}
 function frameState(a,q,cinema){
@@ -28,92 +41,92 @@ function body(direction,frame,pose,mode='idle'){
  const ink='#0d0d18',black='#15151f',coat='#24232e',edge='#3a3946',wine='#592334',skin='#d9cacc';
  // The feet retain the base anchor. Profile has two genuinely overlapping legs.
  if(side){
-  rect(c,13-stride,24,4,5,ink);rect(c,12-stride,28,6,2,ink);
-  rect(c,14-stride,25,2,3,coat);rect(c,13-stride,28,4,1,'#45414c');
-  rect(c,17+stride,24,4,5,black);rect(c,17+stride,28,6,2,ink);
-  rect(c,18+stride,25,2,3,edge);rect(c,18+stride,28,4,1,'#68606a');
+  softRect(c,13-stride,24,4,5,ink);softRect(c,12-stride,28,6,2,ink);
+  softRect(c,14-stride,25,2,3,coat);softRect(c,13-stride,28,4,1,'#45414c');
+  softRect(c,17+stride,24,4,5,black);softRect(c,17+stride,28,6,2,ink);
+  softRect(c,18+stride,25,2,3,edge);softRect(c,18+stride,28,4,1,'#68606a');
  }else{
-  rect(c,11,24,5,5-(stride>0?1:0),ink);rect(c,17,24,5,5-(stride<0?1:0),ink);
-  rect(c,12,24,3,3,coat);rect(c,18,24,3,3,black);
-  rect(c,10,28-(stride>0?1:0),6,2,ink);rect(c,17,28-(stride<0?1:0),6,2,ink);
-  rect(c,11,28-(stride>0?1:0),4,1,'#46414b');rect(c,18,28-(stride<0?1:0),4,1,'#514952');
+  softRect(c,11,24,5,5-(stride>0?1:0),ink);softRect(c,17,24,5,5-(stride<0?1:0),ink);
+  softRect(c,12,24,3,3,coat);softRect(c,18,24,3,3,black);
+  softRect(c,10,28-(stride>0?1:0),6,2,ink);softRect(c,17,28-(stride<0?1:0),6,2,ink);
+  softRect(c,11,28-(stride>0?1:0),4,1,'#46414b');softRect(c,18,28-(stride<0?1:0),4,1,'#514952');
  }
  // Coats are drawn separately for front, profile and back; no frontal art is squashed sideways.
  if(side){
-  polygon(c,ink,[13,16,20,16,22,19,21,24,19,26,13,25,12,22]);
-  polygon(c,black,[14,17,19,17,20,23,18,25,14,24]);
-  rect(c,14,18,2,5,coat);rect(c,19,19,1,4,edge);rect(c,13,24,5,1,wine);
-  rect(c,13,22,7,1,ink);rect(c,18,22,2,1,'#8b747b');
+  oval(c,17,20.9,4.8,5.1,ink);
+  oval(c,17,20.8,3.8,4.3,black);
+  oval(c,15,20.2,1,2.7,coat);softRect(c,19,19,1,4,edge);softRect(c,13,24,5,1,wine);
+  softRect(c,13,22,7,1,ink);softRect(c,18,22,2,1,'#8b747b');
   // Far sleeve first, near sleeve follows the walk cycle independently.
-  rect(c,12-stride,17+breath,3,7,ink);rect(c,13-stride,18+breath,1,4,coat);
-  rect(c,19+stride,17+breath,4,7,ink);rect(c,20+stride,18+breath,2,4,coat);
-  rect(c,20+stride,21+breath,2,1,wine);rect(c,20+stride,24+breath,2,1,'#9d8c98');
-  rect(c,15,15,5,2,ink);rect(c,18,15,2,1,skin);
+  softRect(c,12-stride,17+breath,3,7,ink);softRect(c,13-stride,18+breath,1,4,coat);
+  softRect(c,19+stride,17+breath,4,7,ink);softRect(c,20+stride,18+breath,2,4,coat);
+  softRect(c,20+stride,21+breath,2,1,wine);softRect(c,20+stride,24+breath,2,1,'#9d8c98');
+  softRect(c,15,15,5,2,ink);softRect(c,18,15,2,1,skin);
  }else{
-  polygon(c,ink,[10,16,22,16,24,24,21,26,18,26,16,24,14,26,10,26,8,24]);
-  polygon(c,black,[11,17,21,17,22,24,19,25,16,23,13,25,10,24]);
-  rect(c,11,18,2,5,coat);rect(c,20,18,1,5,edge);
-  rect(c,15,18,1,6,back?ink:'#70636e');rect(c,16,18,1,6,ink);
-  rect(c,10,24,4,1,wine);rect(c,19,24,3,1,wine);rect(c,11,22,10,1,ink);
-  if(back){rect(c,12,17,9,1,edge);rect(c,14,23,5,2,'#4f1c30');rect(c,16,18,1,5,'#45404c')}
-  else{polygon(c,'#34323d',[12,17,15,16,16,18,14,20]);polygon(c,ink,[20,17,17,16,16,18,18,20]);rect(c,15,22,2,1,'#8b747b')}
-  rect(c,7,17+stride+breath,4,7,ink);rect(c,22,17-stride+breath,4,7,ink);
-  rect(c,8,18+stride+breath,2,4,coat);rect(c,23,18-stride+breath,2,4,coat);
-  rect(c,8,21+stride+breath,2,1,wine);rect(c,23,21-stride+breath,2,1,wine);
-  rect(c,8,24+stride+breath,2,1,'#9d8c98');rect(c,23,24-stride+breath,2,1,'#9d8c98');
-  rect(c,13,15,7,2,ink);rect(c,15,15,3,1,back?black:skin);
+  oval(c,16,20.7,7.3,5.1,ink);
+  oval(c,16,20.7,6,4.3,black);
+  oval(c,12,20,1.25,2.7,coat);oval(c,20.2,20.4,.6,2.5,edge);
+  softRect(c,15,18,1,6,back?ink:'#70636e');softRect(c,16,18,1,6,ink);
+  softRect(c,10,24,4,1,wine);softRect(c,19,24,3,1,wine);softRect(c,11,22,10,1,ink);
+  if(back){softRect(c,12,17,9,1,edge);softRect(c,14,23,5,2,'#4f1c30');softRect(c,16,18,1,5,'#45404c')}
+  else{contour(c,'#34323d',[12,17,15,16,16,18,14,20]);contour(c,ink,[20,17,17,16,16,18,18,20]);softRect(c,15,22,2,1,'#8b747b')}
+  softRect(c,7,17+stride+breath,4,7,ink);softRect(c,22,17-stride+breath,4,7,ink);
+  softRect(c,8,18+stride+breath,2,4,coat);softRect(c,23,18-stride+breath,2,4,coat);
+  softRect(c,8,21+stride+breath,2,1,wine);softRect(c,23,21-stride+breath,2,1,wine);
+  softRect(c,8,24+stride+breath,2,1,'#9d8c98');softRect(c,23,24-stride+breath,2,1,'#9d8c98');
+  softRect(c,13,15,7,2,ink);softRect(c,15,15,3,1,back?black:skin);
  }
  // Keep head at the base skin height. Head, fringe, ear, nose and mask differ by view.
  c.save();c.translate(dash&&side?frame:0,breath+(dash&&frame===1?1:0));
  if(side){
   // True right-facing silhouette: rear skull on left, one eye, protruding nose and pointed jaw on right.
-  polygon(c,ink,[11,5,16,3,21,4,23,6,23,9,25,11,24,12,23,12,23,14,20,16,14,15,11,12,10,8]);
-  polygon(c,'#ab9ca8',[15,7,21,7,22,9,22,10,24,11,22,12,22,14,20,15,15,13]);
-  polygon(c,skin,[17,8,21,8,22,10,24,11,22,11,22,13,20,14,17,12]);
-  rect(c,13,10,3,3,'#b4a3ad');rect(c,14,11,1,1,'#786877');
-  polygon(c,'#080912',[19,9,23,9,22,11,19,11]);
-  rect(c,21,9,1,2,'#d31d42');rect(c,21,9,1,1,'#ff6679');
-  rect(c,20,8,3,1,'#65505f');
+  oval(c,17.5,9.5,7.3,6.5,ink);
+  contour(c,'#ab9ca8',[15,7,21,7,22,9,22,10,24,11,22,12,22,14,20,15,15,13]);
+  contour(c,skin,[17,8,21,8,22,10,24,11,22,11,22,13,20,14,17,12]);
+  softRect(c,13,10,3,3,'#b4a3ad');softRect(c,14,11,1,1,'#786877');
+  contour(c,'#080912',[19,9,23,9,22,11,19,11]);
+  softRect(c,21,9,1,2,'#d31d42');softRect(c,21,9,1,1,'#ff6679');
+  softRect(c,20,8,3,1,'#65505f');
   // Mask hugs the profile jaw; a short zipper plate replaces a frontal grinning mouth.
-  polygon(c,'#10101a',[16,12,20,12,24,11,23,14,20,16,16,14]);
-  rect(c,17,12,6,1,'#4e4756');rect(c,18,13,5,1,'#a0a2af');
-  rect(c,19,13,1,1,'#e5e5e4');rect(c,21,13,1,1,'#e5e5e4');
-  rect(c,16,12,1,2,'#746471');rect(c,14,12,2,1,ink);
-  polygon(c,'#686e81',[10,7,11,4,14,4,16,3,19,3,22,4,23,6,23,9,21,8,20,10,18,8,16,11,13,10,12,12,11,10]);
-  polygon(c,'#a9b3c4',[11,7,12,4,15,5,17,3,20,4,22,5,22,7,20,7,19,9,17,7,15,10,14,8,12,10]);
-  polygon(c,'#e2e9ed',[12,6,13,4,15,5,17,4,20,5,21,6,19,6,18,8,17,6,15,8,14,7,12,9]);
-  rect(c,15,4,2,1,'#ffffff');rect(c,19,5,2,1,'#ffffff');rect(c,11,8,1,2,'#c2cad7');
+  contour(c,'#10101a',[16,12,20,12,24,11,23,14,20,16,16,14]);
+  softRect(c,17,12,6,1,'#4e4756');softRect(c,18,13,5,1,'#a0a2af');
+  softRect(c,19,13,1,1,'#e5e5e4');softRect(c,21,13,1,1,'#e5e5e4');
+  softRect(c,16,12,1,2,'#746471');softRect(c,14,12,2,1,ink);
+  contour(c,'#686e81',[10,7,11,4,14,4,16,3,19,3,22,4,23,6,23,9,21,8,20,10,18,8,16,11,13,10,12,12,11,10]);
+  contour(c,'#a9b3c4',[11,7,12,4,15,5,17,3,20,4,22,5,22,7,20,7,19,9,17,7,15,10,14,8,12,10]);
+  contour(c,'#e2e9ed',[12,6,13,4,15,5,17,4,20,5,21,6,19,6,18,8,17,6,15,8,14,7,12,9]);
+  softRect(c,15,4,2,1,'#ffffff');softRect(c,19,5,2,1,'#ffffff');softRect(c,11,8,1,2,'#c2cad7');
  }else if(back){
-  polygon(c,ink,[10,5,13,3,21,3,24,6,24,11,22,14,19,16,13,15,10,12,9,8]);
+  oval(c,16.5,9.5,7.6,6.5,ink);
   // Back is all layered hair and nape: never draw eyes, mask or teeth through the head.
-  polygon(c,'#687083',[10,7,11,4,14,4,16,3,19,4,22,3,23,6,24,8,23,12,21,14,19,14,18,16,16,14,13,15,12,12,10,12]);
-  polygon(c,'#a5b1c3',[11,7,12,4,15,5,17,3,19,5,21,4,23,7,22,11,20,10,20,13,18,12,17,14,15,12,13,13,12,10,11,11]);
-  polygon(c,'#dbe3e9',[12,6,13,4,15,5,17,4,19,5,21,5,22,7,20,9,19,7,17,10,16,7,14,10,13,8,12,10]);
-  rect(c,14,5,2,1,'#ffffff');rect(c,18,5,2,1,'#f2f7f5');rect(c,14,14,5,1,'#423643');
+  contour(c,'#687083',[10,7,11,4,14,4,16,3,19,4,22,3,23,6,24,8,23,12,21,14,19,14,18,16,16,14,13,15,12,12,10,12]);
+  contour(c,'#a5b1c3',[11,7,12,4,15,5,17,3,19,5,21,4,23,7,22,11,20,10,20,13,18,12,17,14,15,12,13,13,12,10,11,11]);
+  contour(c,'#dbe3e9',[12,6,13,4,15,5,17,4,19,5,21,5,22,7,20,9,19,7,17,10,16,7,14,10,13,8,12,10]);
+  softRect(c,14,5,2,1,'#ffffff');softRect(c,18,5,2,1,'#f2f7f5');softRect(c,14,14,5,1,'#423643');
  }else{
-  polygon(c,ink,[10,6,12,4,21,4,23,7,24,11,22,14,19,16,13,16,10,13,9,9]);
-  rect(c,10,10,2,3,'#a798a5');rect(c,22,10,2,3,'#a798a5');
-  polygon(c,skin,[12,7,21,7,22,10,22,13,20,15,13,15,11,12,11,9]);
-  rect(c,12,9,9,1,'#b2a2ae');
-  rect(c,12,10,3,1,'#4f4558');rect(c,13,10,1,1,'#b8b5c3');
-  polygon(c,'#080912',[17,9,22,9,21,11,17,11]);rect(c,19,9,1,2,'#d31d42');rect(c,19,9,1,1,'#ff6679');
-  rect(c,20,8,2,1,'#65505f');
-  polygon(c,'#10101a',[11,12,16,12,22,11,21,14,19,16,14,16,11,14]);
-  rect(c,12,12,9,1,'#474451');rect(c,13,13,7,1,'#a0a2af');
-  for(let i=0;i<3;i++)rect(c,14+i*2,13,1,1,'#e5e5e4');
-  rect(c,12,13,1,2,'#746471');rect(c,21,12,1,2,'#746471');
-  polygon(c,'#686e81',[9,8,10,5,12,4,14,3,17,4,19,3,22,4,23,6,24,8,23,10,21,9,20,7,18,9,16,8,14,12,12,10,10,12]);
-  polygon(c,'#a9b3c4',[10,8,11,5,13,5,15,3,17,5,19,4,21,5,23,7,21,7,20,9,18,7,16,9,15,7,13,11,12,8,10,10]);
-  polygon(c,'#e2e9ed',[11,6,12,5,14,5,15,4,17,5,19,5,21,6,22,7,20,7,19,8,18,6,16,7,15,6,14,9,13,7,11,9]);
-  rect(c,13,5,2,1,'#ffffff');rect(c,17,5,2,1,'#ffffff');
+  oval(c,16.5,9.5,7.4,6.5,ink);
+  softRect(c,10,10,2,3,'#a798a5');softRect(c,22,10,2,3,'#a798a5');
+  contour(c,skin,[12,7,21,7,22,10,22,13,20,15,13,15,11,12,11,9]);
+  softRect(c,12,9,9,1,'#b2a2ae');
+  softRect(c,12,10,3,1,'#4f4558');softRect(c,13,10,1,1,'#b8b5c3');
+  contour(c,'#080912',[17,9,22,9,21,11,17,11]);softRect(c,19,9,1,2,'#d31d42');softRect(c,19,9,1,1,'#ff6679');
+  softRect(c,20,8,2,1,'#65505f');
+  contour(c,'#10101a',[11,12,16,12,22,11,21,14,19,16,14,16,11,14]);
+  softRect(c,12,12,9,1,'#474451');softRect(c,13,13,7,1,'#a0a2af');
+  for(let i=0;i<3;i++)softRect(c,14+i*2,13,1,1,'#e5e5e4');
+  softRect(c,12,13,1,2,'#746471');softRect(c,21,12,1,2,'#746471');
+  contour(c,'#686e81',[9,8,10,5,12,4,14,3,17,4,19,3,22,4,23,6,24,8,23,10,21,9,20,7,18,9,16,8,14,12,12,10,10,12]);
+  contour(c,'#a9b3c4',[10,8,11,5,13,5,15,3,17,5,19,4,21,5,23,7,21,7,20,9,18,7,16,9,15,7,13,11,12,8,10,10]);
+  contour(c,'#e2e9ed',[11,6,12,5,14,5,15,4,17,5,19,5,21,6,22,7,20,7,19,8,18,6,16,7,15,6,14,9,13,7,11,9]);
+  softRect(c,13,5,2,1,'#ffffff');softRect(c,17,5,2,1,'#ffffff');
  }
- if(mode==='idle'&&frame===3)rect(c,side?12:11,7,1,1,'#e8edf1');
+ if(mode==='idle'&&frame===3)softRect(c,side?12:11,7,1,1,'#e8edf1');
  c.restore();
  if(pose&&!back){
-  rect(c,side?13:8,19,side?5:7,3,coat);rect(c,19,17,4,3,coat);
-  rect(c,15,18,4,3,skin);rect(c,18,15,2,5,skin);
-  rect(c,pose===2?16:17,pose===2?16:15,pose===2?2:1,pose===2?1:3,'#efe1dc');
-  rect(c,16,18,4,1,'#897580');rect(c,17,20,2,1,'#897580');
+  softRect(c,side?13:8,19,side?5:7,3,coat);softRect(c,19,17,4,3,coat);
+  softRect(c,15,18,4,3,skin);softRect(c,18,15,2,5,skin);
+  softRect(c,pose===2?16:17,pose===2?16:15,pose===2?2:1,pose===2?1:3,'#efe1dc');
+  softRect(c,16,18,4,1,'#897580');softRect(c,17,20,2,1,'#897580');
  }
  atlas[key]=cv;return cv;
 }
