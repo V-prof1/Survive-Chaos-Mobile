@@ -57,17 +57,19 @@ for (const file of [
   'mobile-legacy.js','mobile-legacy.css',
   'mobile-saveguard.js',
   'mobile-menu-fix.css','mobile-upgrade-icons.js',
-  'mobile-kaneki.js','mobile-kaneki.css'
+  'mobile-kaneki.js','mobile-kaneki.css',
+  'mobile-admin-plus.js','mobile-admin-plus.css',
+  'mobile-kaneki-v2.js','mobile-kaneki-v2.css'
 ]) {
   fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
 }
 
 const indexPath = 'www/index.html';
 let html = fs.readFileSync(indexPath, 'utf8');
-for (const css of ['mobile-pro.css','mobile-economy.css','mobile-content.css','mobile-legacy.css','mobile-menu-fix.css','mobile-kaneki.css']) {
+for (const css of ['mobile-pro.css','mobile-economy.css','mobile-content.css','mobile-legacy.css','mobile-menu-fix.css','mobile-kaneki.css','mobile-admin-plus.css','mobile-kaneki-v2.css']) {
   if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
 }
-for (const js of ['mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js','mobile-upgrade-icons.js','mobile-kaneki.js']) {
+for (const js of ['mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js','mobile-upgrade-icons.js','mobile-kaneki.js','mobile-admin-plus.js','mobile-kaneki-v2.js']) {
   if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
 }
 fs.writeFileSync(indexPath, html);
@@ -81,3 +83,5 @@ console.log('Legacy Expansion enabled: weapon mastery + run mutators + Nemesis h
 console.log('SaveGuard enabled: throttled gameplay save writes for extreme horde performance.');
 console.log('Mini hotfix enabled: custom art + fallback icons for Mobile upgrades and unified menu buttons.');
 console.log('Premium skin enabled: Kaneki · Ghoul, 5,000,000 coins, pixel-art cut-in and exclusive Kagune ULT.');
+console.log('Admin Plus enabled: arbitrary coin grants with presets.');
+console.log('Kaneki V2 enabled: detailed hero art, organic Kagune, new activation and reworked ULT visuals.');
