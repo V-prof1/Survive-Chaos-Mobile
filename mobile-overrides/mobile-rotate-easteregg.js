@@ -5,12 +5,11 @@ try{
   const NAME='Idiota com pouco cérebro';
   const DESC='Passe 60 segundos ignorando uma instrução que literalmente manda girar o celular.';
   const ROASTS=[
-    [0,'Gira a porra do celular. É literalmente só isso.'],
-    [10,'10 segundos. Você é burro ou tá treinando? Deita o celular.'],
-    [20,'20 segundos. Caralho, até agora? Seu QI deve estar brigando pra chegar nos dois dígitos.'],
-    [30,'30 segundos. Meia porra de minuto e você ainda não girou. Parabéns, imbecil.'],
-    [40,'40 segundos. Se girar um celular exige tutorial, talvez esse jogo seja avançado demais pra você.'],
-    [50,'50 segundos. Você não tá distraído. Você só é extremamente dedicado a fazer merda.'],
+    [15,'15 segundos. Gira a porra do celular. É literalmente só isso.'],
+    [25,'25 segundos. Você é burro ou tá treinando? Deita o celular.'],
+    [35,'35 segundos. Caralho, até agora? Seu QI deve estar brigando pra chegar nos dois dígitos.'],
+    [45,'45 segundos. Você ainda não girou. Parabéns, imbecil.'],
+    [55,'55 segundos. Você não tá distraído. Você só é extremamente dedicado a fazer merda.'],
     [60,'1 minuto. Você é oficialmente burro demais pra seguir uma instrução de três palavras. Toma sua conquista, campeão.']
   ];
   let enteredAt=0,lastStep=-1,registered=false,unlockedThisSession=false;
@@ -40,7 +39,7 @@ try{
       const roast=document.createElement('div');
       roast.id='scRotateRoast';
       roast.setAttribute('aria-live','polite');
-      roast.textContent=ROASTS[0][1];
+      roast.textContent='';
       const hint=card.querySelector('.scRotateHint');
       if(hint)card.insertBefore(roast,hint);else card.appendChild(roast);
     }
@@ -52,7 +51,8 @@ try{
     }
     if(!byId('scRotateEggStyle')){
       const st=document.createElement('style');st.id='scRotateEggStyle';st.textContent=`
-#scRotateRoast{width:min(350px,100%);padding:10px 12px;border-left:3px solid #ffd34f;border-radius:8px;background:rgba(255,211,79,.07);color:#ddd5f4;font:800 11px/1.4 var(--bd,system-ui);letter-spacing:.01em}
+#scRotateRoast{display:none;width:min(350px,100%);padding:10px 12px;border-left:3px solid #ffd34f;border-radius:8px;background:rgba(255,211,79,.07);color:#ddd5f4;font:800 11px/1.4 var(--bd,system-ui);letter-spacing:.01em}
+#scRotateRoast.on{display:block}
 #scRotateAchievement{display:none;width:min(360px,100%);align-items:center;gap:10px;margin-top:3px;padding:11px 13px;border:1px solid rgba(255,211,79,.72);border-radius:12px;background:linear-gradient(180deg,rgba(83,59,14,.92),rgba(42,28,8,.96));box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 8px 24px rgba(0,0,0,.34);text-align:left}
 #scRotateAchievement.on{display:flex;animation:scEggPop .35s ease-out both}
 #scRotateAchievement>span{font-size:28px;filter:drop-shadow(0 2px 0 #000)}
@@ -67,12 +67,18 @@ try{
     return true;
   }
 
-  function currentStep(sec){let idx=0;for(let i=0;i<ROASTS.length;i++)if(sec>=ROASTS[i][0])idx=i;return idx}
+  function currentStep(sec){let idx=-1;for(let i=0;i<ROASTS.length;i++)if(sec>=ROASTS[i][0])idx=i;return idx}
 
   function showRoast(sec){
     if(!mountUI())return;
-    const step=currentStep(sec);if(step===lastStep)return;lastStep=step;
-    const el=byId('scRotateRoast');if(el)el.textContent=ROASTS[step][1];
+    const step=currentStep(sec),el=byId('scRotateRoast');
+    if(!el)return;
+    if(step<0){
+      if(lastStep!==-1){el.textContent='';el.classList.remove('on');lastStep=-1}
+      return;
+    }
+    if(step===lastStep)return;lastStep=step;
+    el.textContent=ROASTS[step][1];el.classList.add('on');
   }
 
   function unlock(){
@@ -93,7 +99,7 @@ try{
     registerAchievement();mountUI();
     if(!portrait()){
       enteredAt=0;lastStep=-1;unlockedThisSession=false;
-      const roast=byId('scRotateRoast');if(roast)roast.textContent=ROASTS[0][1];
+      const roast=byId('scRotateRoast');if(roast){roast.textContent='';roast.classList.remove('on')}
       const badge=byId('scRotateAchievement');if(badge)badge.classList.remove('on');
       return;
     }
@@ -108,6 +114,6 @@ try{
   addEventListener('orientationchange',()=>setTimeout(tick,180),{passive:true});
   setTimeout(tick,250);
   window.SCRotateEgg={id:ID,name:NAME,seconds:60,tick};
-  console.log('[Mobile] Rotate easter egg enabled: secret achievement after 60s portrait.');
+  console.log('[Mobile] Rotate easter egg enabled: first roast at 15s, secret achievement after 60s portrait.');
 }catch(err){console.warn('[Mobile Rotate Egg]',err)}
 })();
