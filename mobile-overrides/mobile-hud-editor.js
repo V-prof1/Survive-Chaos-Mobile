@@ -6,8 +6,8 @@ try{
   const PROFILE_KEY='hudLayoutV2';
   const TARGETS=[
     {key:'xp',label:'Barra de XP',sel:'#xpb',icon:'XP'},
-    {key:'vitals',label:'Vida · nível · moedas',sel:'#hud .top',icon:'♥'},
-    {key:'clock',label:'Tempo',sel:'#hud .mid',icon:'◷'},
+    {key:'vitals',label:'Vida · nível · moedas',sel:'#hud .pl',icon:'♥'},
+    {key:'clock',label:'Tempo',sel:'#tm',icon:'◷'},
     {key:'pause',label:'Pausa',sel:'#pz',icon:'Ⅱ',control:1},
     {key:'stats',label:'Abates · pontos',sel:'#scPortraitStats',icon:'★'},
     {key:'combo',label:'Combo',sel:'#proCombat',icon:'×'},
@@ -26,7 +26,7 @@ try{
   ];
   const DEFAULT_POS={
     portrait:{xp:[.5,.012],vitals:[.28,.075],clock:[.73,.055],pause:[.93,.055],stats:[.82,.13],combo:[.5,.19],mission:[.5,.25],boss:[.5,.31],phase:[.87,.25],announce:[.5,.30],banner:[.5,.40],dash:[.86,.89],ult:[.64,.89],run:[.50,.89],dash2:[.14,.89],ult2:[.36,.89],run2:[.50,.79],quick:[.08,.93]},
-    landscape:{xp:[.5,.015],vitals:[.16,.10],clock:[.50,.07],pause:[.95,.08],stats:[.82,.14],combo:[.50,.12],mission:[.50,.20],boss:[.50,.28],phase:[.88,.20],announce:[.50,.22],banner:[.50,.40],dash:[.91,.80],ult:[.79,.80],run:[.67,.80],dash2:[.09,.80],ult2:[.21,.80],run2:[.33,.80],quick:[.05,.90]}
+    landscape:{xp:[.5,.015],vitals:[.16,.10],clock:[.50,.07],pause:[.95,.08],stats:[.50,.14],combo:[.50,.12],mission:[.50,.20],boss:[.50,.28],phase:[.88,.20],announce:[.50,.22],banner:[.50,.40],dash:[.91,.80],ult:[.79,.80],run:[.67,.80],dash2:[.09,.80],ult2:[.21,.80],run2:[.33,.80],quick:[.05,.90]}
   };
   function ensureStore(){
     if(!S[PROFILE_KEY]||typeof S[PROFILE_KEY]!=='object')S[PROFILE_KEY]={portrait:{},landscape:{}};
@@ -37,11 +37,22 @@ try{
   ensureStore();
   const orient=()=>innerHeight>=innerWidth?'portrait':'landscape';
   const profile=()=>ensureStore()[orient()];
-  const getEl=t=>document.querySelector(t.sel);
+  function getEl(t){
+    if(!t)return null;
+    if(t.key==='stats')return document.getElementById(orient()==='portrait'?'scPortraitStats':'kl');
+    return document.querySelector(t.sel);
+  }
   const save=()=>{try{sv()}catch(_){}};
-  function clearCustom(el){if(!el)return;el.classList.remove('scHudCustom','scHudEditPreview','scHudSelected');for(const p of ['--sc-hud-x','--sc-hud-y','--sc-hud-scale'])el.style.removeProperty(p);delete el.dataset.scHudTemp}
+  function clearCustom(el){
+    if(!el)return;el.classList.remove('scHudCustom','scHudEditPreview','scHudSelected');
+    for(const p of ['--sc-hud-x','--sc-hud-y','--sc-hud-scale'])el.style.removeProperty(p);
+    delete el.dataset.scHudTemp;
+  }
   function applyPlacement(el,p){
-    if(!el||!p)return;el.classList.add('scHudCustom');el.style.setProperty('--sc-hud-x',(clamp(Number(p.x)||.5,.025,.975)*100).toFixed(3)+'vw');el.style.setProperty('--sc-hud-y',(clamp(Number(p.y)||.5,.025,.975)*100).toFixed(3)+'vh');el.style.setProperty('--sc-hud-scale',clamp(Number(p.s)||1,.5,1.8).toFixed(3));
+    if(!el||!p)return;el.classList.add('scHudCustom');
+    el.style.setProperty('--sc-hud-x',(clamp(Number(p.x)||.5,.025,.975)*100).toFixed(3)+'vw');
+    el.style.setProperty('--sc-hud-y',(clamp(Number(p.y)||.5,.025,.975)*100).toFixed(3)+'vh');
+    el.style.setProperty('--sc-hud-scale',clamp(Number(p.s)||1,.5,1.8).toFixed(3));
   }
   function applyAll(){
     const p=profile();
@@ -50,7 +61,8 @@ try{
   }
   function safePlacement(t,x,y,s,el){
     s=clamp(Number(s)||1,.5,1.8);let mx=.035,my=.035;
-    if(el){const r=el.getBoundingClientRect();mx=Math.min(.45,Math.max(.025,(r.width*s/2+8)/Math.max(1,innerWidth)));my=Math.min(.45,Math.max(.025,(r.height*s/2+8)/Math.max(1,innerHeight)))}
+    if(el){const r=el.getBoundingClientRect();mx=Math.min(.45,Math.max(.025,(r.width*s/2+9)/Math.max(1,innerWidth)));my=Math.min(.45,Math.max(.025,(r.height*s/2+9)/Math.max(1,innerHeight)))}
+    if(t&&t.control){mx=Math.max(mx,.045);my=Math.max(my,.045)}
     return{x:clamp(x,mx,1-mx),y:clamp(y,my,1-my),s};
   }
   function placementFromRect(t,el){
@@ -60,6 +72,10 @@ try{
   }
 
   let editor=null,selected=null,opened=false,drag=null,tag=null,raf=0;
+  function refreshTargetButtons(){
+    if(!editor)return;
+    for(const b of editor.querySelectorAll('.scHudTargetList button')){const t=TARGETS.find(q=>q.key===b.dataset.target);b.classList.toggle('missing',!getEl(t))}
+  }
   function makeEditor(){
     if(editor)return editor;
     editor=document.createElement('div');editor.id='scHudEditor';editor.innerHTML=`
@@ -87,28 +103,33 @@ try{
     editor.querySelector('#scHudMinus').onclick=()=>stepScale(-.05);
     editor.querySelector('#scHudPlus').onclick=()=>stepScale(.05);
     tag=document.createElement('div');tag.id='scHudTargetTag';document.body.appendChild(tag);
-    return editor;
+    refreshTargetButtons();return editor;
   }
   function updateOrientationUI(){
     if(!editor)return;const o=orient(),lab=editor.querySelector('#scHudOrientation');lab.textContent=o==='portrait'?'VERTICAL':'HORIZONTAL';lab.className=o;
     const hint=editor.querySelector('#scHudHint');hint.textContent=(o==='portrait'?'Perfil VERTICAL':'Perfil HORIZONTAL')+' · gire o celular para editar o outro perfil. As posições são salvas separadamente.';
+    refreshTargetButtons();
   }
   function mountPauseEntry(){
     const grid=document.querySelector('#pause .scPauseGrid');if(!grid||document.getElementById('scSetHudEditor'))return;
-    const b=document.createElement('button');b.type='button';b.id='scSetHudEditor';b.className='scPauseSetting on scHudEditorEntry';b.dataset.scButtonRefined='1';b.innerHTML='<span class="scSetIcon">✥</span><span class="scSetCopy"><small>Interface</small><b>AJUSTAR HUD</b></span><i></i>';b.onclick=()=>openEditor();grid.appendChild(b);
+    const b=document.createElement('button');b.type='button';b.id='scSetHudEditor';b.className='scPauseSetting on scHudEditorEntry';b.dataset.scButtonRefined='1';
+    b.innerHTML='<span class="scSetIcon">✥</span><span class="scSetCopy"><small>Interface</small><b>AJUSTAR HUD</b></span><i></i>';b.onclick=()=>openEditor();grid.appendChild(b);
   }
   function openEditor(){
-    makeEditor();mountPauseEntry();opened=true;document.body.classList.add('scHudEditing');editor.classList.add('on');try{hide('pause')}catch(_){};updateOrientationUI();applyAll();
-    const first=TARGETS.find(t=>getEl(t));selectTarget((selected&&selected.key)||(first&&first.key)||'vitals',true);loopTag();
+    makeEditor();mountPauseEntry();opened=true;document.body.classList.add('scHudEditing');editor.classList.add('on');try{hide('pause')}catch(_){};
+    updateOrientationUI();applyAll();const first=TARGETS.find(t=>getEl(t));selectTarget((selected&&getEl(selected)&&selected.key)||(first&&first.key)||'vitals',true);loopTag();
   }
   function closeEditor(){
-    if(!opened)return;opened=false;drag=null;document.body.classList.remove('scHudEditing');if(editor)editor.classList.remove('on');if(tag)tag.classList.remove('on');for(const t of TARGETS){const el=getEl(t);if(el)el.classList.remove('scHudEditPreview','scHudSelected')};applyAll();save();try{show('pause')}catch(_){};try{window.SCMenuRefine&&SCMenuRefine.refreshPause()}catch(_){}
+    if(!opened)return;opened=false;drag=null;document.body.classList.remove('scHudEditing');if(editor)editor.classList.remove('on');if(tag)tag.classList.remove('on');
+    for(const t of TARGETS){const el=getEl(t);if(el)el.classList.remove('scHudEditPreview','scHudSelected')}
+    applyAll();save();try{show('pause')}catch(_){};try{window.SCMenuRefine&&SCMenuRefine.refreshPause()}catch(_){}
   }
   function selectTarget(key,scroll){
     if(selected){const old=getEl(selected);if(old){old.classList.remove('scHudSelected','scHudEditPreview');if(old.dataset.scHudTemp){clearCustom(old);const p=profile()[selected.key];if(p)applyPlacement(old,p)}}}
-    const t=TARGETS.find(q=>q.key===key);if(!t)return;const el=getEl(t);if(!el){const b=editor&&editor.querySelector('[data-target="'+key+'"]');if(b)b.classList.add('missing');return}
+    const t=TARGETS.find(q=>q.key===key);if(!t)return;const el=getEl(t);
+    if(!el){const b=editor&&editor.querySelector('[data-target="'+key+'"]');if(b)b.classList.add('missing');return}
     selected=t;editor.querySelectorAll('.scHudTargetList button').forEach(b=>b.classList.toggle('on',b.dataset.target===key));el.classList.add('scHudSelected','scHudEditPreview');
-    let p=placementFromRect(t,el);const r=el.getBoundingClientRect();if(!profile()[key]&&(r.width<3||r.height<3)){el.dataset.scHudTemp='1';applyPlacement(el,p)}
+    const p=placementFromRect(t,el),r=el.getBoundingClientRect();if(!profile()[key]&&(r.width<3||r.height<3)){el.dataset.scHudTemp='1';applyPlacement(el,p)}
     updateScaleUI(p.s||1);if(scroll){const b=editor.querySelector('[data-target="'+key+'"]');if(b)b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})}
   }
   function commitPlacement(p){
@@ -118,8 +139,8 @@ try{
   function stepScale(d){if(!selected)return;const p=placementFromRect(selected,getEl(selected));setScale(clamp((p.s||1)+d,.5,1.8))}
   function updateScaleUI(s){if(!editor)return;const n=Math.round((s||1)*100);editor.querySelector('#scHudScale').value=n;editor.querySelector('#scHudScaleVal').textContent=n+'%'}
   function resetSelected(){if(!selected)return;delete profile()[selected.key];save();applyAll();selectTarget(selected.key,true);toast('ITEM RESTAURADO')}
-  function resetCurrent(){const o=orient();S[PROFILE_KEY][o]={};save();applyAll();if(selected)selectTarget(selected.key,true);toast((o==='portrait'?'HUD VERTICAL':'HUD HORIZONTAL')+' RESTAURADO')}
-  function toast(txt){if(!editor)return;const h=editor.querySelector('#scHudHint');const old=h.textContent;h.textContent=txt;h.classList.add('ok');setTimeout(()=>{h.classList.remove('ok');if(opened)updateOrientationUI()},900)}
+  function resetCurrent(){const o=orient();S[PROFILE_KEY][o]={};save();applyAll();if(selected&&getEl(selected))selectTarget(selected.key,true);toast((o==='portrait'?'HUD VERTICAL':'HUD HORIZONTAL')+' RESTAURADO')}
+  function toast(txt){if(!editor)return;const h=editor.querySelector('#scHudHint');h.textContent=txt;h.classList.add('ok');setTimeout(()=>{h.classList.remove('ok');if(opened)updateOrientationUI()},900)}
   function loopTag(){
     cancelAnimationFrame(raf);const f=()=>{if(!opened||!selected||!tag)return;const el=getEl(selected);if(el){const r=el.getBoundingClientRect();tag.textContent=selected.label+' · '+Math.round((placementFromRect(selected,el).s||1)*100)+'%';tag.style.left=clamp(r.left+r.width/2,56,innerWidth-56)+'px';tag.style.top=clamp(r.top-8,38,innerHeight-92)+'px';tag.classList.add('on')}raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f)
   }
@@ -135,9 +156,9 @@ try{
   document.addEventListener('pointerup',endDrag,true);document.addEventListener('pointercancel',endDrag,true);
   document.addEventListener('click',e=>{if(!opened||!selected)return;const el=getEl(selected);if(el&&(e.target===el||el.contains(e.target))){e.preventDefault();e.stopPropagation()}},true);
 
-  addEventListener('orientationchange',()=>setTimeout(()=>{applyAll();if(opened){updateOrientationUI();if(selected)selectTarget(selected.key,true)}},220),{passive:true});
-  addEventListener('resize',()=>setTimeout(()=>{applyAll();if(opened&&selected)selectTarget(selected.key,false)},80),{passive:true});
-  const observer=new MutationObserver(()=>{mountPauseEntry();if(!opened)applyAll()});observer.observe(document.body,{childList:true,subtree:true});
+  addEventListener('orientationchange',()=>setTimeout(()=>{applyAll();if(opened){updateOrientationUI();const keep=selected&&getEl(selected)?selected.key:(TARGETS.find(t=>getEl(t))||{}).key;if(keep)selectTarget(keep,true)}},220),{passive:true});
+  addEventListener('resize',()=>setTimeout(()=>{applyAll();if(opened&&selected&&getEl(selected))selectTarget(selected.key,false)},80),{passive:true});
+  const observer=new MutationObserver(()=>{mountPauseEntry();refreshTargetButtons();if(!opened)applyAll()});observer.observe(document.body,{childList:true,subtree:true});
   mountPauseEntry();applyAll();
   window.SCHudEditor={version:'2.0',open:openEditor,close:closeEditor,reset:resetCurrent,apply:applyAll,profiles:S[PROFILE_KEY]};
   console.log('[Mobile] HUD Editor 2.0 enabled: separate portrait/landscape layouts with safe reset.');
