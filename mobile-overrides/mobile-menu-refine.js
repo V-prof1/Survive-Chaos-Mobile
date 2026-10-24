@@ -7,15 +7,16 @@ try{
   const save=()=>{try{sv()}catch(_){}};
   const gfxModes=['auto','high','balanced','performance'];
   const gfxLabel={auto:'AUTO',high:'ALTA',balanced:'EQUILIBRADA',performance:'DESEMPENHO'};
-  function applyGraphics(){
-    const m=S.uiPrefs.gfx;
-    if(m==='high'){LQ=0;DC=1.75}
-    else if(m==='balanced'){LQ=1;DC=1.35}
-    else if(m==='performance'){LQ=3;DC=1}
-    else if(m==='auto'&&LQ>=3){LQ=1;DC=1.5}
-    try{rs()}catch(_){}
+  function applyGraphics(resetAuto=false){
+    const m=S.uiPrefs.gfx;let nl=LQ,nd=DC;
+    if(m==='high'){nl=0;nd=1.75}
+    else if(m==='balanced'){nl=1;nd=1.35}
+    else if(m==='performance'){nl=3;nd=1}
+    else if(m==='auto'){if(!resetAuto)return;nl=0;nd=1.75}
+    const changed=nl!==LQ||Math.abs(nd-DC)>.001;LQ=nl;DC=nd;
+    if(changed)try{rs()}catch(_){}
   }
-  function cycleGfx(){const i=gfxModes.indexOf(S.uiPrefs.gfx);S.uiPrefs.gfx=gfxModes[(i+1)%gfxModes.length];applyGraphics();save();refreshPause()}
+  function cycleGfx(){const i=gfxModes.indexOf(S.uiPrefs.gfx);S.uiPrefs.gfx=gfxModes[(i+1)%gfxModes.length];applyGraphics(true);save();refreshPause()}
   function toggle(key){S.uiPrefs[key]=S.uiPrefs[key]?0:1;save();applyPrefs();refreshPause()}
   function applyPrefs(){
     document.body.classList.toggle('scHudCompact',!!S.uiPrefs.compactHud);
@@ -75,8 +76,8 @@ try{
     });
   }
   const mo=new MutationObserver(()=>{decorateButtons();mountPause();refreshPause()});mo.observe(document.body,{childList:true,subtree:true});
-  decorateButtons();mountPause();applyGraphics();applyPrefs();
-  setInterval(()=>{if(S.uiPrefs.gfx!=='auto')applyGraphics();if(!S.uiPrefs.shake&&typeof shake==='number')shake=0;if(!S.uiPrefs.flash&&typeof flash==='number'&&flash>.22)flash=.22},700);
+  decorateButtons();mountPause();applyGraphics(false);applyPrefs();
+  setInterval(()=>{if(S.uiPrefs.gfx!=='auto')applyGraphics(false);if(!S.uiPrefs.shake&&typeof shake==='number')shake=0;if(!S.uiPrefs.flash&&typeof flash==='number'&&flash>.22)flash=.22},700);
   document.addEventListener('visibilitychange',()=>setTimeout(refreshPause,40));
   window.SCMenuRefine={version:'1.0',applyPrefs,refreshPause,cycleGfx};
   console.log('[Mobile] Menu controls refined and pause settings enabled.');
