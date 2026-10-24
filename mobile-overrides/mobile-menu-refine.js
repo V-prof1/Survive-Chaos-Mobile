@@ -55,9 +55,10 @@ try{
     const foot=document.createElement('div');foot.className='scPauseFoot';foot.appendChild(quit);root.appendChild(foot);
     refreshPause();
   }
-  function setNode(el,value,on=true){if(!el)return;const b=el.querySelector('.scSetCopy b');if(b)b.textContent=value;el.classList.toggle('on',!!on)}
+  function setText(el,value){if(el&&el.textContent!==value)el.textContent=value}
+  function setNode(el,value,on=true){if(!el)return;const b=el.querySelector('.scSetCopy b');setText(b,value);el.classList.toggle('on',!!on)}
   function refreshPause(){
-    const st=document.getElementById('scPauseStatus');if(st)st.textContent=statusText();
+    const st=document.getElementById('scPauseStatus');setText(st,statusText());
     setNode(nodes.sound,S.mute?'DESLIGADO':'LIGADO',!S.mute);
     setNode(nodes.music,musicName(),true);
     setNode(nodes.gfx,gfxLabel[S.uiPrefs.gfx]||'AUTO',S.uiPrefs.gfx!=='performance');
@@ -75,11 +76,26 @@ try{
       ['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,()=>b.classList.remove('scPressed'),{passive:true}));
     });
   }
-  const mo=new MutationObserver(()=>{decorateButtons();mountPause();refreshPause()});mo.observe(document.body,{childList:true,subtree:true});
+
+  // IMPORTANT: never refresh pause text from the MutationObserver itself.
+  // refreshPause() changes text nodes; observing those changes and refreshing again can
+  // create an endless microtask loop in Android WebView and starve every button tap.
+  let domQueued=0;
+  const syncDom=()=>{domQueued=0;decorateButtons();mountPause()};
+  const mo=new MutationObserver(()=>{if(!domQueued)domQueued=requestAnimationFrame(syncDom)});
+  mo.observe(document.body,{childList:true,subtree:true});
+
   decorateButtons();mountPause();applyGraphics(false);applyPrefs();
-  setInterval(()=>{if(S.uiPrefs.gfx!=='auto')applyGraphics(false);if(!S.uiPrefs.shake&&typeof shake==='number')shake=0;if(!S.uiPrefs.flash&&typeof flash==='number'&&flash>.22)flash=.22},700);
+  setInterval(()=>{
+    if(S.uiPrefs.gfx!=='auto')applyGraphics(false);
+    if(!S.uiPrefs.shake&&typeof shake==='number')shake=0;
+    if(!S.uiPrefs.flash&&typeof flash==='number'&&flash>.22)flash=.22;
+    const pause=document.getElementById('pause');
+    if(pause&&(pause.classList.contains('on')||getComputedStyle(pause).display!=='none'))refreshPause();
+  },700);
   document.addEventListener('visibilitychange',()=>setTimeout(refreshPause,40));
-  window.SCMenuRefine={version:'1.0',applyPrefs,refreshPause,cycleGfx};
-  console.log('[Mobile] Menu controls refined and pause settings enabled.');
+  document.addEventListener('pointerdown',e=>{if(e.target&&e.target.closest&&e.target.closest('#pz'))setTimeout(refreshPause,0)},{passive:true,capture:true});
+  window.SCMenuRefine={version:'1.1',applyPrefs,refreshPause,cycleGfx};
+  console.log('[Mobile] Menu controls refined and pause settings enabled · touch-loop fix 1.1.');
 }catch(err){console.warn('[Mobile Menu Refine]',err)}
 })();
