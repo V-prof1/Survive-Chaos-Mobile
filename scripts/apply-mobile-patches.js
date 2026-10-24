@@ -94,7 +94,8 @@ for (const file of [
   'mobile-skin-ults.js','mobile-skin-ults.css',
   'mobile-menu-refine.js','mobile-menu-refine.css',
   'mobile-hud-editor.js','mobile-hud-editor.css',
-  'mobile-main-menu.js','mobile-main-menu.css'
+  'mobile-main-menu.js','mobile-main-menu.css',
+  'mobile-rotate-easteregg.js'
 ]) fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
 
 const indexPath = 'www/index.html';
@@ -105,7 +106,7 @@ for (const css of [
 ]) if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
 for (const js of [
   'mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js','mobile-upgrade-icons.js',
-  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js','mobile-difficulty-plus.js','mobile-hud-responsive.js','mobile-online-config.js','mobile-online.js','mobile-online-socket.js','mobile-skin-ults.js','mobile-menu-refine.js','mobile-hud-editor.js','mobile-main-menu.js'
+  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js','mobile-difficulty-plus.js','mobile-hud-responsive.js','mobile-online-config.js','mobile-online.js','mobile-online-socket.js','mobile-skin-ults.js','mobile-menu-refine.js','mobile-hud-editor.js','mobile-main-menu.js','mobile-rotate-easteregg.js'
 ]) if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
 fs.writeFileSync(indexPath, html);
 
@@ -119,7 +120,8 @@ console.log('Rebalance 2.0 enabled: difficulty/economy/score/upgrades/biomes/mod
 console.log('Difficulty 3.0 enabled: Easy safety net, Hard elite hunters, Nightmare ruptures and stronger bosses.');
 console.log('Menu refinement enabled: polished menu buttons and in-run pause settings; combat controls untouched.');
 console.log('HUD Editor 2.0 enabled: independent portrait/landscape positions and sizes with safe reset.');
-console.log('Main Menu 2.1 enabled: compact portrait hub and two-column landscape dashboard.');
+console.log('Main Menu 2.1 enabled: landscape-only gameplay with portrait rotation lock.');
+console.log('Rotate easter egg enabled: secret IQ achievement after 60 seconds in portrait.');
 console.log('DEV raw reward reduced from 25,000 to 2,500 coins.');
 console.log('Responsive portrait HUD enabled: split kills/score chips and isolated combo lane.');
 console.log('Online foundation enabled: account/cloud-save UI, PKCE callback and Socket.IO lobby transport are backend-disabled by default.');
