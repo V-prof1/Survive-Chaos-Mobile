@@ -4,6 +4,35 @@ try{
   const byId=id=>document.getElementById(id);
   let queued=0;
 
+  function injectIconStyles(){
+    if(byId('scMenuIconStyles'))return;
+    const st=document.createElement('style');
+    st.id='scMenuIconStyles';
+    st.textContent=`
+#menu.scMenuV2 [data-sc-icon-only="1"]{font-size:0!important;letter-spacing:0!important;padding:4px!important}
+#menu.scMenuV2 [data-sc-icon-only="1"]::before{content:attr(data-sc-menu-icon)!important;margin:0!important;font-family:system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif!important;line-height:1!important}
+#menu.scMenuV2 #achb[data-sc-icon-only="1"]::before{font-size:23px!important;filter:drop-shadow(0 2px 0 rgba(0,0,0,.35))}
+#menu.scMenuV2 #snd[data-sc-icon-only="1"]::before{font-size:22px!important;color:#fff!important;text-shadow:none!important}
+#menu.scMenuV2 .scMenuQuick{grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr)!important}
+#menu.scMenuV2 .scMenuPrefs{grid-template-columns:54px minmax(0,1fr)!important}
+#menu.scMenuV2 #achb[data-sc-icon-only="1"]{min-width:54px!important;width:54px!important;min-height:46px!important;border-radius:13px!important}
+#menu.scMenuV2 #snd[data-sc-icon-only="1"]{min-width:54px!important;width:54px!important;min-height:34px!important;border-radius:12px!important}
+@media (orientation:portrait){
+  #menu.scMenuV2 .scMenuHub{margin-top:clamp(10px,1.8vh,18px)!important;gap:7px!important;padding:10px!important}
+  #menu.scMenuV2 #play{min-height:50px!important}
+  #menu.scMenuV2 .scMenuQuick .btn{min-height:46px!important}
+  #menu.scMenuV2 .scMenuSystems .btn{min-height:42px!important}
+}
+@media (orientation:landscape){
+  #menu.scMenuV2 .scMenuQuick{grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr)!important}
+  #menu.scMenuV2 .scMenuPrefs{grid-template-columns:48px minmax(0,1fr)!important}
+  #menu.scMenuV2 #achb[data-sc-icon-only="1"],#menu.scMenuV2 #snd[data-sc-icon-only="1"]{width:48px!important;min-width:48px!important}
+  #menu.scMenuV2 .scMenuHub{border-radius:16px!important}
+}
+`;
+    document.head.appendChild(st);
+  }
+
   function iconize(el,icon,label,iconOnly=false){
     if(!el)return;
     el.dataset.scMenuIcon=icon;
@@ -26,6 +55,7 @@ try{
   }
 
   function mount(){
+    injectIconStyles();
     const menu=byId('menu'),mb=menu&&menu.querySelector('.mb');
     if(!menu||!mb||mb.dataset.scHubReady)return false;
     const play=byId('play'),shop=byId('shopb'),ach=byId('achb'),hist=byId('histb'),snd=byId('snd'),trk=byId('trk');
