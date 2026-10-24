@@ -5,13 +5,13 @@ try{
   const NAME='Idiota com pouco cérebro';
   const DESC='Passe 60 segundos ignorando uma instrução que literalmente manda girar o celular.';
   const ROASTS=[
-    [0,'A instrução tem TRÊS palavras. Vamos descobrir se alguma delas entra aí.'],
-    [10,'10 segundos. Impressionante: você já perdeu para um desenho de celular girando.'],
-    [20,'20 segundos. Até o acelerômetro do seu celular está com vergonha de você.'],
-    [30,'30 segundos. QI estimado: insuficiente para operar um retângulo com tela.'],
-    [40,'40 segundos. A tela disse “GIRE O CELULAR”. Você respondeu com absoluto nada. Gênio.'],
-    [50,'50 segundos. Nesse ponto não é distração. É dedicação profissional à burrice.'],
-    [60,'1 minuto. Parabéns: você foi oficialmente derrotado por uma instrução de três palavras. A conquista de idiota agora é sua.']
+    [0,'Gira a porra do celular. É literalmente só isso.'],
+    [10,'10 segundos. Você é burro ou tá treinando? Deita o celular.'],
+    [20,'20 segundos. Caralho, até agora? Seu QI deve estar brigando pra chegar nos dois dígitos.'],
+    [30,'30 segundos. Meia porra de minuto e você ainda não girou. Parabéns, imbecil.'],
+    [40,'40 segundos. Se girar um celular exige tutorial, talvez esse jogo seja avançado demais pra você.'],
+    [50,'50 segundos. Você não tá distraído. Você só é extremamente dedicado a fazer merda.'],
+    [60,'1 minuto. Você é oficialmente burro demais pra seguir uma instrução de três palavras. Toma sua conquista, campeão.']
   ];
   let enteredAt=0,lastStep=-1,registered=false,unlockedThisSession=false;
 
