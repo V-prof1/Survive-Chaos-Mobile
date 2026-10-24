@@ -14,6 +14,7 @@ try{
   window.SCDifficulty={version:'3.0',profiles:PROFILES,get:()=>PROFILES[CF.m]||PROFILES[1]};
 
   const state={assist:0,eliteAt:0,ruptureAt:0,lastM:-1};
+  const allowsThreatEvents=()=>CF.g!==2&&CF.g!==5;
   function resetThreat(){
     state.assist=0;state.lastM=CF.m;
     state.eliteAt=CF.m===2?95:CF.m===3?58:1e9;
@@ -45,15 +46,15 @@ try{
     diffNotice('FÔLEGO EXTRA · proteção de emergência');
   }
   function hardHunter(){
-    if(CF.m!==2||T<state.eliteAt||bossE)return;
+    if(CF.m!==2||!allowsThreatEvents()||T<state.eliteAt||bossE)return;
     state.eliteAt=T+78+R()*18;elite(T>720?2:1);diffNotice('DIFÍCIL · CAÇADOR DE ELITE');
   }
   function nightmareHunter(){
-    if(CF.m!==3||T<state.eliteAt)return;
+    if(CF.m!==3||!allowsThreatEvents()||T<state.eliteAt)return;
     state.eliteAt=T+46+R()*13;elite(T>540?2:1);if(T>900&&R()<.35)elite(1);diffNotice('PESADELO · ELITE À CAÇA');
   }
   function nightmareRupture(){
-    if(CF.m!==3||T<state.ruptureAt)return;
+    if(CF.m!==3||!allowsThreatEvents()||T<state.ruptureAt)return;
     state.ruptureAt=T+102+R()*24;
     const amount=Math.min(22,10+Math.floor(T/240)*2);
     try{hazard()}catch(_){}
