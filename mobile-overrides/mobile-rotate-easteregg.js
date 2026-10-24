@@ -61,6 +61,44 @@ try{
 #scRotateAchievement b{font:900 14px/1.15 var(--bd,system-ui);color:#fff5cf}
 @keyframes scEggPop{from{opacity:0;transform:scale(.92) translateY(8px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){#scRotateAchievement.on{animation:none!important}}
+
+/* Landscape menu balance: keep the dashboard composition, only normalize scale. */
+@media (orientation:landscape){
+  #menu.scMenuV2 #play{
+    height:50px!important;
+    min-height:50px!important;
+    max-height:50px!important;
+    padding:7px 12px!important;
+    font-size:13px!important;
+  }
+  #menu.scMenuV2 .scMenuSystems{
+    grid-template-rows:auto 48px 48px 48px!important;
+    align-content:start!important;
+  }
+  #menu.scMenuV2 .scMenuSystems .btn,
+  #menu.scMenuV2 #scOnlineBtn{
+    height:48px!important;
+    min-height:48px!important;
+    max-height:48px!important;
+    padding:6px 8px!important;
+    font-size:8px!important;
+    box-sizing:border-box!important;
+  }
+}
+@media (orientation:landscape) and (max-height:390px){
+  #menu.scMenuV2 #play{
+    height:46px!important;
+    min-height:46px!important;
+    max-height:46px!important;
+  }
+  #menu.scMenuV2 .scMenuSystems{grid-template-rows:auto 42px 42px 42px!important}
+  #menu.scMenuV2 .scMenuSystems .btn,
+  #menu.scMenuV2 #scOnlineBtn{
+    height:42px!important;
+    min-height:42px!important;
+    max-height:42px!important;
+  }
+}
 `;
       document.head.appendChild(st);
     }
