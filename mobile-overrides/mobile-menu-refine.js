@@ -98,39 +98,3 @@ try{
   console.log('[Mobile] Menu controls refined and pause settings enabled · touch-loop fix 1.2.');
 }catch(err){console.warn('[Mobile Menu Refine]',err)}
 })();
-
-/* Main Menu 2.0 — move the real buttons, preserving their original handlers. */
-(() => {
-'use strict';
-try{
-  const byId=id=>document.getElementById(id);
-  let queued=0;
-  function iconize(el,icon){if(el)el.dataset.scMenuIcon=icon}
-  function mountMainMenu(){
-    const menu=byId('menu'),mb=menu&&menu.querySelector('.mb');
-    if(!menu||!mb||mb.dataset.scHubReady)return !!(mb&&mb.dataset.scHubReady);
-    const play=byId('play'),shop=byId('shopb'),ach=byId('achb'),hist=byId('histb'),snd=byId('snd'),trk=byId('trk');
-    const online=byId('scOnlineBtn'),econ=byId('econBtn'),legacy=byId('legacyBtn');
-    if(!play||!shop||!ach||!hist||!snd||!trk||!online||!econ||!legacy)return false;
-
-    const prof=mb.querySelector('.prof'),stats=mb.querySelector('.row2'),ft=mb.querySelector('.ft');
-    mb.dataset.scHubReady='1';mb.classList.add('scMenuHub');menu.classList.add('scMenuV2');
-
-    const account=document.createElement('section');account.className='scMenuAccount';if(prof)account.appendChild(prof);if(stats)account.appendChild(stats);
-    const primary=document.createElement('section');primary.className='scMenuPrimary';primary.appendChild(play);
-    const quick=document.createElement('section');quick.className='scMenuQuick';iconize(shop,'◈');iconize(ach,'★');iconize(hist,'↺');quick.append(shop,ach,hist);
-    const systems=document.createElement('section');systems.className='scMenuSystems';iconize(online,'◎');iconize(econ,'◇');iconize(legacy,'⚔');systems.append(online,econ,legacy);
-    const prefs=document.createElement('section');prefs.className='scMenuPrefs';iconize(snd,'♪');iconize(trk,'♫');prefs.append(snd,trk);
-
-    mb.replaceChildren(account,primary,quick,systems,prefs);
-    if(ft)mb.appendChild(ft);
-    console.log('[Mobile] Main Menu 2.0 compact hub mounted.');
-    return true;
-  }
-  function schedule(){if(queued)return;queued=requestAnimationFrame(()=>{queued=0;if(!mountMainMenu())setTimeout(schedule,120)})}
-  schedule();
-  const obs=new MutationObserver(()=>{const mb=document.querySelector('#menu .mb');if(mb&&!mb.dataset.scHubReady)schedule()});
-  obs.observe(document.body,{childList:true,subtree:true});
-  window.SCMainMenu={version:'2.0',mount:mountMainMenu};
-}catch(err){console.warn('[Mobile Main Menu]',err)}
-})();
