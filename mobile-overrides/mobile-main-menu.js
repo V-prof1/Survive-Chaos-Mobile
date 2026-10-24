@@ -22,18 +22,68 @@ try{
 #menu.scMenuV2 .scMenuSystems{grid-template-columns:1fr!important;gap:7px!important}
 #menu.scMenuV2 .scMenuSystems .btn{min-height:43px!important;font-size:9px!important;border-radius:11px!important}
 #menu.scMenuV2 #scOnlineBtn{grid-column:auto!important}
+
 @media (orientation:portrait){
-  #menu.scMenuV2 .scMenuHub{margin-top:clamp(8px,1.4vh,14px)!important;gap:7px!important;padding:9px!important}
-  #menu.scMenuV2 #play{min-height:49px!important}
+  #menu.scMenuV2{
+    justify-content:flex-start!important;
+    padding-top:max(18px,env(safe-area-inset-top))!important;
+    padding-bottom:max(18px,env(safe-area-inset-bottom))!important;
+  }
+  #menu.scMenuV2 .mt{margin-top:0!important;gap:5px!important}
+  #menu.scMenuV2 .logo-e img{width:clamp(31px,6.8vw,43px)!important}
+  #menu.scMenuV2 h1{font-size:clamp(42px,9.6vw,61px)!important}
+  #menu.scMenuV2 .mt .sub{font-size:11px!important;max-width:300px!important}
+  #menu.scMenuV2 .scMenuHub{
+    width:min(470px,94vw)!important;
+    min-height:clamp(560px,56dvh,760px)!important;
+    margin-top:clamp(10px,1.7vh,18px)!important;
+    padding:11px!important;
+    gap:10px!important;
+    display:grid!important;
+    grid-template-rows:auto auto auto minmax(170px,1fr) auto!important;
+    align-content:stretch!important;
+    border-radius:22px!important;
+  }
+  #menu.scMenuV2 .scMenuAccount{align-self:start!important}
+  #menu.scMenuV2 .scMenuPrimary{align-self:start!important}
+  #menu.scMenuV2 #play{min-height:50px!important}
+  #menu.scMenuV2 .scMenuQuick{align-self:start!important}
   #menu.scMenuV2 .scMenuQuick .btn[data-sc-icon-only="1"]{min-height:48px!important}
-  #menu.scMenuV2 .scMenuSystems{grid-template-columns:1fr 1fr!important}
-  #menu.scMenuV2 #scOnlineBtn{grid-column:1/-1!important}
+  #menu.scMenuV2 .scMenuSystems{
+    grid-template-columns:1fr!important;
+    grid-template-rows:auto repeat(3,minmax(42px,1fr))!important;
+    align-self:stretch!important;
+    align-content:stretch!important;
+    gap:9px!important;
+  }
+  #menu.scMenuV2 .scMenuSystems::before{grid-column:auto!important;margin-bottom:-2px!important}
+  #menu.scMenuV2 .scMenuSystems .btn{min-height:44px!important;height:100%!important;padding:8px 10px!important;font-size:9px!important}
+  #menu.scMenuV2 #scOnlineBtn{grid-column:auto!important}
+  #menu.scMenuV2 .ft{align-self:end!important;padding-top:2px!important;font-size:7px!important;opacity:.78}
 }
+
+@media (orientation:portrait) and (min-height:900px){
+  #menu.scMenuV2 .scMenuHub{min-height:60dvh!important}
+  #menu.scMenuV2 .scMenuSystems{gap:11px!important}
+  #menu.scMenuV2 .scMenuSystems .btn{min-height:48px!important}
+}
+
 @media (orientation:portrait) and (max-width:380px){
+  #menu.scMenuV2 .scMenuHub{width:96vw!important;min-height:55dvh!important;padding:9px!important;gap:8px!important}
   #menu.scMenuV2 .scMenuQuick{gap:4px!important;padding:6px!important}
   #menu.scMenuV2 .scMenuQuick .btn[data-sc-icon-only="1"]{min-height:44px!important}
   #menu.scMenuV2 .scMenuQuick .btn[data-sc-icon-only="1"]::before{font-size:21px!important}
+  #menu.scMenuV2 .scMenuSystems{gap:7px!important}
 }
+
+@media (orientation:portrait) and (max-height:760px){
+  #menu.scMenuV2 .logo-e{display:none!important}
+  #menu.scMenuV2 h1{font-size:42px!important}
+  #menu.scMenuV2 .mt .sub{display:none!important}
+  #menu.scMenuV2 .scMenuHub{min-height:auto!important;margin-top:8px!important;grid-template-rows:auto auto auto auto auto!important}
+  #menu.scMenuV2 .scMenuSystems .btn{height:auto!important;min-height:40px!important}
+}
+
 @media (orientation:landscape){
   #menu.scMenuV2 .scMenuHub{border-radius:16px!important;grid-template-areas:'account account' 'primary systems' 'quick systems' 'foot foot'!important}
   #menu.scMenuV2 .scMenuQuick{align-self:end!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;padding:6px!important}
@@ -104,7 +154,7 @@ try{
   const mo=new MutationObserver(()=>{if(!byId('menu')?.querySelector('.mb')?.dataset.scHubReady)schedule();else syncStateIcons()});
   mo.observe(document.body,{childList:true,subtree:true});
   document.addEventListener('visibilitychange',()=>setTimeout(syncStateIcons,40));
-  window.SCMainMenu={version:'2.1',mount,syncStateIcons};
-  console.log('[Mobile] Main menu 2.1 enabled: five-icon shortcut dock + portrait/landscape layouts.');
+  window.SCMainMenu={version:'2.2',mount,syncStateIcons};
+  console.log('[Mobile] Main menu 2.2 enabled: tall portrait command deck + preserved landscape dashboard.');
 }catch(err){console.warn('[Mobile Main Menu]',err)}
 })();
