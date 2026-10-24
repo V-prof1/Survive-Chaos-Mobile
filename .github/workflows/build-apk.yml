@@ -55,9 +55,12 @@ jobs:
           node --check mobile/www/mobile-admin-plus.js
           node --check mobile/www/mobile-arsenal-skins.js
           node --check mobile/www/mobile-rebalance.js
+          node --check mobile/www/mobile-difficulty-plus.js
+          node --check mobile/www/mobile-menu-refine.js
           node --check mobile/www/mobile-hud-responsive.js
           node --check mobile/www/mobile-online-config.js
           node --check mobile/www/mobile-online.js
+          node --check mobile/www/mobile-skin-ults.js
           grep -q 'mobile-pro.css' mobile/www/index.html
           grep -q 'mobile-economy.js' mobile/www/index.html
           grep -q 'mobile-content.js' mobile/www/index.html
@@ -66,14 +69,21 @@ jobs:
           grep -q 'mobile-admin-plus.js' mobile/www/index.html
           grep -q 'mobile-arsenal-skins.js' mobile/www/index.html
           grep -q 'mobile-rebalance.js' mobile/www/index.html
+          grep -q 'mobile-difficulty-plus.js' mobile/www/index.html
+          grep -q 'mobile-menu-refine.js' mobile/www/index.html
+          grep -q 'mobile-menu-refine.css' mobile/www/index.html
           grep -q 'mobile-hud-responsive.js' mobile/www/index.html
           grep -q 'mobile-online-config.js' mobile/www/index.html
           grep -q 'mobile-online.js' mobile/www/index.html
           grep -q 'mobile-online.css' mobile/www/index.html
+          grep -q 'mobile-skin-ults.js' mobile/www/index.html
           grep -q 'Dar moedas' mobile/www/mobile-admin-plus.js
           grep -q 'Skin Arsenal enabled' mobile/www/mobile-arsenal-skins.js
           grep -q 'Rebalance 2.0 enabled' mobile/www/mobile-rebalance.js
+          grep -q 'Difficulty 3.0 enabled' mobile/www/mobile-difficulty-plus.js
+          grep -q 'Menu controls refined' mobile/www/mobile-menu-refine.js
           grep -q 'sc.online.v1' mobile/www/mobile-online.js
+          grep -q 'sc.ult.v1' mobile/www/mobile-skin-ults.js
           grep -q 'survivechaos://auth/callback' mobile/www/mobile-online-config.js
           ! grep -q 'service_role' mobile/www/mobile-online-config.js
           ! grep -q 'mobile-kaneki.js' mobile/www/index.html
