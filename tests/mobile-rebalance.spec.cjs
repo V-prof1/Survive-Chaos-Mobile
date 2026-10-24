@@ -9,6 +9,8 @@ const balance=read('www/mobile-rebalance.js');
 const difficulty=read('www/mobile-difficulty-plus.js');
 const menuRefine=read('www/mobile-menu-refine.js');
 const menuRefineCss=read('www/mobile-menu-refine.css');
+const hudEditor=read('www/mobile-hud-editor.js');
+const hudEditorCss=read('www/mobile-hud-editor.css');
 const admin=read('www/mobile-admin-plus.js');
 const adminCss=read('www/mobile-admin-plus.css');
 const hud=read('www/mobile-hud-responsive.js');
@@ -22,6 +24,7 @@ const ultsCss=read('www/mobile-skin-ults.css');
 cp.execFileSync(process.execPath,['--check','www/mobile-skin-ults.js'],{stdio:'inherit'});
 cp.execFileSync(process.execPath,['--check','www/mobile-difficulty-plus.js'],{stdio:'inherit'});
 cp.execFileSync(process.execPath,['--check','www/mobile-menu-refine.js'],{stdio:'inherit'});
+cp.execFileSync(process.execPath,['--check','www/mobile-hud-editor.js'],{stdio:'inherit'});
 
 assert(!index.includes('mobile-kaneki.js'),'Kaneki runtime JS must not be injected');
 assert(!index.includes('mobile-kaneki-v2.js'),'Kaneki V2 runtime JS must not be injected');
@@ -31,6 +34,8 @@ assert(index.includes('mobile-rebalance.js'),'Rebalance layer missing');
 assert(index.includes('mobile-difficulty-plus.js'),'Difficulty 3.0 layer missing');
 assert(index.includes('mobile-menu-refine.js'),'Menu refinement JS missing');
 assert(index.includes('mobile-menu-refine.css'),'Menu refinement CSS missing');
+assert(index.includes('mobile-hud-editor.js'),'HUD editor JS missing');
+assert(index.includes('mobile-hud-editor.css'),'HUD editor CSS missing');
 assert(index.includes('mobile-admin-plus.js'),'Admin command center layer missing');
 assert(index.includes('mobile-hud-responsive.js'),'Responsive portrait HUD JS missing');
 assert(index.includes('mobile-hud-responsive.css'),'Responsive portrait HUD CSS missing');
@@ -68,6 +73,20 @@ assert(menuRefineCss.includes('#pause .scPausePanel'),'Refined pause panel style
 assert(menuRefineCss.includes('.scPauseGrid'),'Pause settings grid styles missing');
 assert(menuRefineCss.includes('#scDifficultyBrief'),'Difficulty briefing styles missing');
 assert(menuRefineCss.includes(':not(#dash):not(#ult):not(#dash1):not(#ult1):not(#run):not(#run1)'),'Combat button exclusion missing');
+
+assert(hudEditor.includes("const PROFILE_KEY='hudLayoutV2'"),'HUD layout save key missing');
+assert(hudEditor.includes('portrait:{xp:['),'Portrait HUD defaults missing');
+assert(hudEditor.includes('landscape:{xp:['),'Landscape HUD defaults missing');
+assert(hudEditor.includes("label:'Dash',sel:'#dash'"),'Dash layout target missing');
+assert(hudEditor.includes("label:'ULT',sel:'#ult'"),'ULT layout target missing');
+assert(hudEditor.includes("label:'Run',sel:'#run'"),'Run layout target missing');
+assert(hudEditor.includes('safePlacement'),'HUD safe-area clamping missing');
+assert(hudEditor.includes('RESETAR'),'HUD emergency reset button missing');
+assert(hudEditor.includes('RESTAURAR ITEM'),'Per-item reset missing');
+assert(hudEditor.includes("window.SCHudEditor={version:'2.0'"),'HUD editor public API missing');
+assert(hudEditorCss.includes('.scHudCustom'),'Custom HUD positioning styles missing');
+assert(hudEditorCss.includes('#scSetHudEditor'),'Pause Adjust HUD entry styles missing');
+assert(hudEditorCss.includes('body.scHudEditing .scHudSelected'),'HUD drag selection style missing');
 
 assert(ults.includes("protocol:'sc.ult.v1'"),'ULT protocol contract missing');
 assert(ults.includes('SYSTEM // OVERRIDE'),'ADMIN apex ULT missing');
@@ -123,4 +142,4 @@ assert(onlineSocket.includes("socket.emit('sc:request'"),'Socket request transpo
 assert(onlineSocket.includes("transports:['websocket','polling']"),'Socket transport fallback missing');
 assert(onlineSocket.includes('session.access_token'),'Authenticated socket token missing');
 assert(onlineCss.includes('.scOnlinePanel'),'Online mobile UI styles missing');
-console.log('Mobile arsenal/rebalance/difficulty/menu/pause/admin/HUD/online/ULT static regression checks passed.');
+console.log('Mobile arsenal/rebalance/difficulty/menu/pause/HUD editor/admin/HUD/online/ULT static regression checks passed.');
