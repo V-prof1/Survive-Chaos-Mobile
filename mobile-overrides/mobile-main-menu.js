@@ -154,7 +154,7 @@ try{
   const mo=new MutationObserver(()=>{if(!byId('menu')?.querySelector('.mb')?.dataset.scHubReady)schedule();else syncStateIcons()});
   mo.observe(document.body,{childList:true,subtree:true});
   document.addEventListener('visibilitychange',()=>setTimeout(syncStateIcons,40));
-  window.SCMainMenu={version:'2.2',mount,syncStateIcons};
-  console.log('[Mobile] Main menu 2.2 enabled: tall portrait command deck + preserved landscape dashboard.');
+  window.SCMainMenu={version:'2.1',mount,syncStateIcons};
+  console.log('[Mobile] Main menu 2.1 portrait redesign enabled: tall command deck + preserved landscape dashboard.');
 }catch(err){console.warn('[Mobile Main Menu]',err)}
 })();
