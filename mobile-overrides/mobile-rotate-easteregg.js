@@ -3,13 +3,15 @@
 try{
   const ID='s_rotate_brain';
   const NAME='Idiota com pouco cérebro';
-  const DESC='Passe 60 segundos ignorando o aviso para girar o celular.';
+  const DESC='Passe 60 segundos ignorando uma instrução que literalmente manda girar o celular.';
   const ROASTS=[
-    [0,'Teste de QI em andamento: descubra como girar um retângulo.'],
-    [15,'15 segundos. Seu celular já entendeu a instrução. Seu QI ainda está carregando.'],
-    [30,'30 segundos. QI estimado: o modo horizontal continua sendo o chefão mais difícil.'],
-    [45,'45 segundos. A ciência pediu para não usar este resultado no cálculo da média humana.'],
-    [60,'1 minuto. Parabéns: você perdeu para a instrução “Gire o celular”.']
+    [0,'A instrução tem TRÊS palavras. Vamos descobrir se alguma delas entra aí.'],
+    [10,'10 segundos. Impressionante: você já perdeu para um desenho de celular girando.'],
+    [20,'20 segundos. Até o acelerômetro do seu celular está com vergonha de você.'],
+    [30,'30 segundos. QI estimado: insuficiente para operar um retângulo com tela.'],
+    [40,'40 segundos. A tela disse “GIRE O CELULAR”. Você respondeu com absoluto nada. Gênio.'],
+    [50,'50 segundos. Nesse ponto não é distração. É dedicação profissional à burrice.'],
+    [60,'1 minuto. Parabéns: você foi oficialmente derrotado por uma instrução de três palavras. A conquista de idiota agora é sua.']
   ];
   let enteredAt=0,lastStep=-1,registered=false,unlockedThisSession=false;
 
