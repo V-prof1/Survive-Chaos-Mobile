@@ -31,7 +31,7 @@ try{
     try{const mode=typeof MN!=='undefined'?MN[CF.g||0].replace(/^\S+\s/,''):'Partida',dif=typeof MD!=='undefined'?MD[CF.m||0][0]:'Médio',bio=typeof BI!=='undefined'?BI[bi||0][0]:'Bioma';return mode+' · '+dif+' · '+bio}catch(_){return'Partida em andamento'}
   }
   function makeSetting(icon,title,id,action){
-    const b=document.createElement('button');b.type='button';b.className='scPauseSetting';b.id=id;b.innerHTML='<span class="scSetIcon">'+icon+'</span><span class="scSetCopy"><small>'+title+'</small><b></b></span><i></i>';b.onclick=()=>{haptic();action()};return b
+    const b=document.createElement('button');b.type='button';b.className='scPauseSetting';b.id=id;b.dataset.scButtonRefined='1';b.innerHTML='<span class="scSetIcon">'+icon+'</span><span class="scSetCopy"><small>'+title+'</small><b></b></span><i></i>';b.onclick=()=>{haptic();action()};return b
   }
   let nodes={};
   function mountPause(){
