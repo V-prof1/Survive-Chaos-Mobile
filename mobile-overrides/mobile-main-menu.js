@@ -21,8 +21,6 @@ try{
     mb.classList.add('scMenuHub');
 
     const prof=mb.querySelector('.prof'),stats=mb.querySelector('.row2'),ft=mb.querySelector('.ft');
-    const oldStack=mb.querySelector('.stack'),oldRow=mb.querySelector('.row');
-
     const account=document.createElement('section');account.className='scMenuAccount';
     if(prof)account.appendChild(prof);
     if(stats)account.appendChild(stats);
@@ -40,23 +38,21 @@ try{
     const prefs=document.createElement('section');prefs.className='scMenuPrefs';
     iconize(snd,'♪','SOM');iconize(trk,'♫','MÚSICA');prefs.append(snd,trk);
 
-    mb.innerHTML='';
-    mb.append(account,primary,quick,systems,prefs);
+    mb.replaceChildren(account,primary,quick,systems,prefs);
     if(ft)mb.appendChild(ft);
-    if(oldStack)oldStack.remove();if(oldRow)oldRow.remove();
-
-    // Text is still managed by the original game; CSS adds compact labels/icons.
     menu.classList.add('scMenuV2');
+    menu.dataset.scMenuLayout='responsive';
     return true;
   }
 
   function schedule(){
-    if(queued)return;queued=requestAnimationFrame(()=>{queued=0;if(!mount())setTimeout(schedule,120)});
+    if(queued)return;
+    queued=requestAnimationFrame(()=>{queued=0;if(!mount())setTimeout(schedule,120)});
   }
   schedule();
   const mo=new MutationObserver(()=>{if(!byId('menu')?.querySelector('.mb')?.dataset.scHubReady)schedule()});
   mo.observe(document.body,{childList:true,subtree:true});
-  window.SCMainMenu={version:'2.0',mount};
-  console.log('[Mobile] Main menu 2.0 compact hub enabled.');
+  window.SCMainMenu={version:'2.1',mount};
+  console.log('[Mobile] Main menu 2.1 enabled: portrait hub + landscape dashboard.');
 }catch(err){console.warn('[Mobile Main Menu]',err)}
 })();
