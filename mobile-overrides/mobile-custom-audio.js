@@ -2,7 +2,7 @@
 'use strict';
 try{
   if(typeof S==='undefined')return;
-  const VERSION='13.0',DB_NAME='survive-chaos-custom-audio',STORE='audio',DB_VER=1,MAX_FILE=25*1024*1024;
+  const VERSION='13.1',DB_NAME='survive-chaos-custom-audio',STORE='audio',DB_VER=1,MAX_FILE=25*1024*1024;
   const LS_KEY='sc_custom_audio_settings_v1';
   const MUSIC=[
     ['music:musica_jogo','🎵','Música da partida','Menu e combate normal','musica_jogo'],
@@ -33,6 +33,7 @@ try{
   const saveSettings=()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(settings))}catch(_){}};
   const human=n=>n>=1024*1024?(n/1024/1024).toFixed(1)+' MB':(n/1024).toFixed(0)+' KB';
   const safeName=n=>String(n||'arquivo').replace(/[\r\n\t]/g,' ').slice(0,80);
+  const setText=(el,v)=>{const s=String(v);if(el&&el.textContent!==s)el.textContent=s};
 
   function openDb(){return new Promise((resolve,reject)=>{
     const r=indexedDB.open(DB_NAME,DB_VER);
@@ -47,7 +48,7 @@ try{
 
   function revoke(slot){const u=urls.get(slot);if(u)try{URL.revokeObjectURL(u)}catch(_){}urls.delete(slot);const pool=pools.get(slot)||[];pool.forEach(a=>{try{a.pause();a.src=''}catch(_){}});pools.delete(slot)}
   function makeUrl(slot,blob){revoke(slot);const u=URL.createObjectURL(blob);urls.set(slot,u);return u}
-  function toast(t){let n=document.getElementById('scAudioToast');if(!n){n=document.createElement('div');n.id='scAudioToast';document.body.appendChild(n)}n.textContent=t;n.classList.remove('on');void n.offsetWidth;n.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>n.classList.remove('on'),2100)}
+  function toast(t){let n=document.getElementById('scAudioToast');if(!n){n=document.createElement('div');n.id='scAudioToast';document.body.appendChild(n)}setText(n,t);n.classList.remove('on');void n.offsetWidth;n.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>n.classList.remove('on'),2100)}
 
   const origSfx=typeof sfx==='function'?sfx:null;
   const origVol=typeof vol==='function'?vol:null;
@@ -106,7 +107,7 @@ try{
     root.querySelectorAll('.scAudTab').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
     const mv=document.getElementById('scAudMusicVol'),svv=document.getElementById('scAudSfxVol');
     mv.value=Math.round(settings.music*100);svv.value=Math.round(settings.sfx*100);
-    const onRange=()=>{settings.music=Number(mv.value)/100;settings.sfx=Number(svv.value)/100;saveSettings();applyGains();renderSummary();document.getElementById('scAudMusicOut').textContent=mv.value+'%';document.getElementById('scAudSfxOut').textContent=svv.value+'%'};
+    const onRange=()=>{settings.music=Number(mv.value)/100;settings.sfx=Number(svv.value)/100;saveSettings();applyGains();renderSummary();setText(document.getElementById('scAudMusicOut'),mv.value+'%');setText(document.getElementById('scAudSfxOut'),svv.value+'%')};
     mv.addEventListener('input',onRange);svv.addEventListener('input',onRange);onRange();
     renderAll();
   }
@@ -119,7 +120,14 @@ try{
   }
   function renderGroup(id,data){const g=document.getElementById(id);if(!g)return;g.replaceChildren(...data.map(buildCard))}
   function renderAll(){renderGroup('scAudMusic',MUSIC);renderGroup('scAudSpecial',SPECIAL);renderGroup('scAudSfx',SFX);renderSummary();syncEntryPoints()}
-  function renderSummary(){const c=document.getElementById('scAudCount'),s=document.getElementById('scAudStorage');if(c)c.textContent=countCustom()+' / '+ALL.length;if(s){let n=0;records.forEach(r=>n+=Number(r.size)||0);s.textContent=(n/1024/1024).toFixed(1)+' MB'}const a=document.getElementById('scSetCustomAudio');if(a){const b=a.querySelector('.scSetCopy b');if(b)b.textContent=countCustom()?countCustom()+' CUSTOM':'PADRÃO';a.classList.toggle('on',countCustom()>0)}const m=document.getElementById('scCustomAudioMenu');if(m)m.dataset.scAudioCount=countCustom()}
+  function renderSummary(){
+    const c=document.getElementById('scAudCount'),s=document.getElementById('scAudStorage');
+    setText(c,countCustom()+' / '+ALL.length);
+    if(s){let n=0;records.forEach(r=>n+=Number(r.size)||0);setText(s,(n/1024/1024).toFixed(1)+' MB')}
+    const a=document.getElementById('scSetCustomAudio');
+    if(a){const b=a.querySelector('.scSetCopy b');setText(b,countCustom()?countCustom()+' CUSTOM':'PADRÃO');a.classList.toggle('on',countCustom()>0)}
+    const m=document.getElementById('scCustomAudioMenu');if(m&&m.dataset.scAudioCount!==String(countCustom()))m.dataset.scAudioCount=String(countCustom());
+  }
   function choose(slot){pendingSlot=slot;const f=document.getElementById('scAudioCustomFile');if(f)f.click()}
   async function importFile(slot,file){
     if(!meta.has(slot))return;
@@ -141,12 +149,24 @@ try{
     renderSummary();
   }
 
-  async function init(){
-    try{db=await openDb();const rows=await getAll();for(const r of rows){if(r&&meta.has(r.slot)&&r.blob){records.set(r.slot,r);makeUrl(r.slot,r.blob)}}applyGains();MUSIC.forEach(r=>{if(records.has(r[0]))resetMusic(r[4])});mount();syncEntryPoints();console.log('[Mobile] Custom Audio '+VERSION+' ready · '+records.size+' custom slots loaded.')}catch(e){console.warn('[Mobile Custom Audio]',e);mount();toast('Armazenamento de áudio indisponível')}
+  let entryTimer=0,entryTries=0;
+  function scheduleEntrySync(delay=0){
+    clearTimeout(entryTimer);
+    entryTimer=setTimeout(()=>{
+      if(opened)return;
+      syncEntryPoints();
+      entryTries++;
+      const done=document.getElementById('scSetCustomAudio')&&document.getElementById('scCustomAudioMenu');
+      if(!done&&entryTries<12)scheduleEntrySync(Math.min(900,80+entryTries*90));
+    },delay);
   }
-  const mo=new MutationObserver(()=>{if(!opened)syncEntryPoints()});mo.observe(document.body,{childList:true,subtree:true});
+
+  async function init(){
+    try{db=await openDb();const rows=await getAll();for(const r of rows){if(r&&meta.has(r.slot)&&r.blob){records.set(r.slot,r);makeUrl(r.slot,r.blob)}}applyGains();MUSIC.forEach(r=>{if(records.has(r[0]))resetMusic(r[4])});mount();syncEntryPoints();scheduleEntrySync(120);console.log('[Mobile] Custom Audio '+VERSION+' ready · '+records.size+' custom slots loaded.')}catch(e){console.warn('[Mobile Custom Audio]',e);mount();toast('Armazenamento de áudio indisponível');scheduleEntrySync(120)}
+  }
+  addEventListener('pageshow',()=>{entryTries=0;scheduleEntrySync(80)},{passive:true});
   addEventListener('keydown',e=>{if(opened&&e.key==='Escape'){e.preventDefault();close()}},{capture:true});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopPreview()});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopPreview();else{entryTries=0;scheduleEntrySync(60)}});
   window.SCCustomAudio={version:VERSION,open,close,slots:ALL.map(v=>v[0]),restore,restoreAll,get customCount(){return records.size},get settings(){return Object.assign({},settings)}};
   init();
 }catch(err){console.warn('[Mobile Custom Audio fatal]',err)}
