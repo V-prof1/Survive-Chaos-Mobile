@@ -15,6 +15,7 @@ try{
   const enemyMap=new Map(ENEMY_NAMES.map((n,i)=>[norm(n),i]));
   const npcMap=new Map(NPC_NAMES.map((n,i)=>[norm(n),i]));
   const ROW=16,BLOCK=64,NPC_Y=1600,NPC_H=22,FRAMES=6;
+
   function resolveEnemy(e){
     if(!e)return -1;
     if(e.scPack3Name&&enemyMap.has(norm(e.scPack3Name)))return enemyMap.get(norm(e.scPack3Name));
@@ -47,12 +48,13 @@ try{
       c.beginPath();c.arc(0,0,e.r*(bossish?1.65:1.4),0,Math.PI*2);c.fill();
       c.globalAlpha=1;
     }
-    if(flip){c.scale(-1,1)}
+    if(flip)c.scale(-1,1);
     c.imageSmoothingEnabled=false;
     c.drawImage(img,sx,sy,ROW,ROW,-w/2,gy-h,w,h);
     c.restore();
     return true;
   }
+
   if(typeof SPR!=='undefined'&&SPR){
     const oldEnemy=SPR.enemy.bind(SPR);
     SPR.enemy=function(c,e){
@@ -81,64 +83,87 @@ try{
       return out;
     };
   }
+
   const css=document.createElement('style');
   css.textContent=`
-    #scNpcPortrait{display:none;width:88px;height:118px;image-rendering:pixelated;image-rendering:crisp-edges;margin:2px auto 10px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:radial-gradient(circle at 50% 70%,rgba(255,45,65,.14),rgba(10,10,12,.96) 70%);box-shadow:0 12px 30px rgba(0,0,0,.38)}
+    #scNpcPortrait{display:none;width:88px;height:118px;image-rendering:pixelated;image-rendering:crisp-edges;margin:2px auto 10px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:radial-gradient(circle at 50% 70%,rgba(255,45,65,.14),rgba(10,10,12,.96) 70%);box-shadow:0 12px 30px rgba(0,0,0,.38);pointer-events:none}
     #scNpcPortrait.on{display:block}
-    .scExtraIdxPortrait{width:54px;height:54px;image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:0 auto 5px;filter:drop-shadow(0 5px 6px rgba(0,0,0,.45))}
-    .scIdxCard.open:has(.scExtraIdxPortrait) .scIdxIcon{display:none}
-    .scExtraSpriteBadge{position:absolute;right:7px;top:7px;font-size:9px;letter-spacing:.08em;color:#aaa}
+    .scExtraIdxPortrait{width:54px;height:54px;image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:0 auto 5px;filter:drop-shadow(0 5px 6px rgba(0,0,0,.45));pointer-events:none}
   `;
   document.head.appendChild(css);
 
   function drawNpcCanvas(canvas,idx,t){
     if(!ready||!canvas||idx<0)return;
     const f=Math.floor(t/150)%6;
-    canvas.width=144;canvas.height=192;
+    if(canvas.width!==144)canvas.width=144;
+    if(canvas.height!==192)canvas.height=192;
     const q=canvas.getContext('2d');q.imageSmoothingEnabled=false;q.clearRect(0,0,144,192);
     q.drawImage(img,f*16,NPC_Y+idx*NPC_H,16,22,0,0,144,192);
   }
   function ensureNpcPortrait(){
-    const panel=document.querySelector('#scWorldEvent .scWorldPanel');if(!panel)return null;
+    const root=document.getElementById('scWorldEvent');
+    if(!root||!root.classList.contains('on'))return null;
+    const panel=root.querySelector('.scWorldPanel');if(!panel)return null;
     let c=document.getElementById('scNpcPortrait');
-    if(!c){c=document.createElement('canvas');c.id='scNpcPortrait';const h=panel.querySelector('h2');panel.insertBefore(c,h||panel.firstChild)}
+    if(!c){c=document.createElement('canvas');c.id='scNpcPortrait';c.style.pointerEvents='none';const h=panel.querySelector('h2');panel.insertBefore(c,h||panel.firstChild)}
     return c;
   }
-  function syncNpcPortrait(t=performance.now()){
+  function syncNpcPortrait(t=Date.now()){
+    const root=document.getElementById('scWorldEvent');
+    if(!root||!root.classList.contains('on'))return;
     const c=ensureNpcPortrait();if(!c)return;
     const tag=document.getElementById('scEventTag'),title=document.getElementById('scEventTitle');
     const isNpc=tag&&/NPC RARO/i.test(tag.textContent||'');
-    let idx=-1;if(isNpc&&title){const nt=norm(title.textContent);for(const [k,v] of npcMap)if(nt.includes(k)){idx=v;break}}
-    c.classList.toggle('on',idx>=0);
-    if(idx>=0)drawNpcCanvas(c,idx,t);
+    let idx=-1;
+    if(isNpc&&title){const nt=norm(title.textContent);for(const [k,v] of npcMap)if(nt.includes(k)){idx=v;break}}
+    if(idx<0){c.classList.remove('on');return}
+    c.classList.add('on');drawNpcCanvas(c,idx,t);
+  }
+  function indexIsOpen(){
+    const screen=document.getElementById('scEnemyIndex');
+    return !!(screen&&screen.classList.contains('on'));
+  }
+  function makeIndexPortrait(idx,size){
+    const cv=document.createElement('canvas');cv.className='scExtraIdxPortrait';cv.width=size;cv.height=size;cv.dataset.scExtraIdx=String(idx);cv.style.pointerEvents='none';
+    const q=cv.getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(img,0,idx*BLOCK,16,16,0,0,size,size);return cv;
   }
   function addIndexPortraits(){
-    const grid=document.getElementById('scIdxGrid');if(!grid||!ready)return;
+    if(!ready||!indexIsOpen())return;
+    const grid=document.getElementById('scIdxGrid');if(!grid)return;
     grid.querySelectorAll('.scIdxCard.open').forEach(card=>{
-      if(card.querySelector('.scExtraIdxPortrait'))return;
       const b=card.querySelector('b');if(!b)return;
-      let n=norm(b.textContent).replace(/^ELITE /,'');
-      let idx=enemyMap.get(n);
+      let n=norm(b.textContent).replace(/^ELITE /,'');let idx=enemyMap.get(n);
       if(idx===undefined&&n.startsWith('NEMESIS'))idx=21;
       if(idx===undefined)return;
-      const cv=document.createElement('canvas');cv.className='scExtraIdxPortrait';cv.width=96;cv.height=96;
-      const q=cv.getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(img,0,idx*BLOCK,16,16,0,0,96,96);
-      const icon=card.querySelector('.scIdxIcon');card.insertBefore(cv,icon||card.firstChild);
+      let cv=card.querySelector('.scExtraIdxPortrait');
+      if(!cv){cv=makeIndexPortrait(idx,96);const icon=card.querySelector('.scIdxIcon');if(icon)icon.style.display='none';card.insertBefore(cv,icon||card.firstChild)}
     });
     const detail=document.getElementById('scIdxDetailBody');
     if(detail){
       const h=detail.querySelector('h2'),big=detail.querySelector('.scIdxBig');
-      if(h&&big&&!detail.querySelector('.scExtraIdxPortrait')){
-        let n=norm(h.textContent).replace(/^ELITE /,'');let idx=enemyMap.get(n);if(idx===undefined&&n.startsWith('NEMESIS'))idx=21;
-        if(idx!==undefined){const cv=document.createElement('canvas');cv.className='scExtraIdxPortrait';cv.width=120;cv.height=120;const q=cv.getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(img,0,idx*BLOCK,16,16,0,0,120,120);big.replaceChildren(cv)}
+      if(h&&big){
+        let n=norm(h.textContent).replace(/^ELITE /,'');let idx=enemyMap.get(n);
+        if(idx===undefined&&n.startsWith('NEMESIS'))idx=21;
+        if(idx!==undefined){
+          let cv=big.querySelector('.scExtraIdxPortrait');
+          if(!cv||cv.dataset.scExtraIdx!==String(idx)){big.textContent='';cv=makeIndexPortrait(idx,120);big.appendChild(cv)}
+        }
       }
     }
   }
-  const mo=new MutationObserver(()=>{try{syncNpcPortrait();addIndexPortraits()}catch(_){}});
-  mo.observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});
-  function raf(t){try{syncNpcPortrait(t);if((t|0)%500<17)addIndexPortraits()}catch(_){}requestAnimationFrame(raf)}
-  requestAnimationFrame(raf);
-  window.SCExtraCharacters={version:'18.0',image:img,ready:()=>ready,enemies:ENEMY_NAMES,npcs:NPC_NAMES,resolveEnemy};
-  console.log('[Mobile] Extra Characters 18.0 enabled: 25 missing enemy/threat sprites + 5 animated Worldshift NPC portraits.');
-}catch(err){console.warn('[Extra Characters 18.0]',err)}
+
+  // Hotfix 18.1: never observe the full document and never run a permanent RAF loop.
+  // UI portraits are refreshed only while their own screens are actually open.
+  const uiTimer=setInterval(()=>{
+    try{
+      const world=document.getElementById('scWorldEvent');
+      if(world&&world.classList.contains('on'))syncNpcPortrait(Date.now());
+      if(indexIsOpen())addIndexPortraits();
+    }catch(_){ }
+  },180);
+  addEventListener('pagehide',()=>clearInterval(uiTimer),{once:true});
+
+  window.SCExtraCharacters={version:'18.1',image:img,ready:()=>ready,enemies:ENEMY_NAMES,npcs:NPC_NAMES,resolveEnemy};
+  console.log('[Mobile] Extra Characters 18.1 hotfix enabled: animated sprites retained without global DOM observers.');
+}catch(err){console.warn('[Extra Characters 18.1]',err)}
 })();
