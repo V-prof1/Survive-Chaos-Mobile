@@ -28,15 +28,17 @@ const extras=[
   'mobile-reality-break.js',
   'mobile-uiux-overhaul.css',
   'mobile-uiux-overhaul.js',
-  'mobile-uiux-red-theme.css'
+  'mobile-uiux-red-theme.css',
+  'mobile-custom-audio.css',
+  'mobile-custom-audio.js'
 ];
 for(const file of extras)fs.copyFileSync('mobile-overrides/'+file,'www/'+file);
 
-// Crimson theme is intentionally LAST: it recolors the full UI/UX design system without changing gameplay.
-for(const css of ['mobile-hud-editor-fix.css','mobile-activities-pack.css','mobile-modes-pack2.css','mobile-replay-pack.css','mobile-uiux-overhaul.css','mobile-uiux-red-theme.css']){
+// Crimson is the main visual identity; Custom Audio CSS comes last because its modal is self-contained.
+for(const css of ['mobile-hud-editor-fix.css','mobile-activities-pack.css','mobile-modes-pack2.css','mobile-replay-pack.css','mobile-uiux-overhaul.css','mobile-uiux-red-theme.css','mobile-custom-audio.css']){
   if(!html.includes(css))html=html.replace('</head>','<link rel="stylesheet" href="'+css+'"></head>');
 }
-for(const js of ['mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-modes-pack2.js','mobile-replay-pack-v2.js','mobile-squad-ai.js','mobile-defense-mobility.js','mobile-reality-break.js','mobile-uiux-overhaul.js']){
+for(const js of ['mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-modes-pack2.js','mobile-replay-pack-v2.js','mobile-squad-ai.js','mobile-defense-mobility.js','mobile-reality-break.js','mobile-uiux-overhaul.js','mobile-custom-audio.js']){
   if(!html.includes(js))html=html.replace('</body>','<script src="'+js+'"></script></body>');
 }
 fs.writeFileSync(indexPath,html);
@@ -54,3 +56,4 @@ console.log('Defense & Mobility 9.0 enabled: shield cap/recharge reset plus skil
 console.log('Reality Break 10.0 enabled: five biome reality events, 20 unique boss gimmicks, DEV recompilation attacks and a full side-scroller Master Core fight.');
 console.log('UI/UX Overhaul 11.0 enabled: unified design system, cleaner HUD, responsive menus, readable upgrades, cinematic boss UI and tactile/accessibility polish.');
 console.log('Crimson Theme 12.0 enabled: black/white/red visual identity with gold reserved for exceptional rarity.');
+console.log('Custom Audio 13.0 enabled: 21 offline replaceable music/SFX slots persisted in IndexedDB with no server dependency.');
