@@ -23,14 +23,15 @@ const extras=[
   'mobile-modes-pack2.css',
   'mobile-replay-pack-v2.js',
   'mobile-replay-pack.css',
-  'mobile-squad-ai.js'
+  'mobile-squad-ai.js',
+  'mobile-defense-mobility.js'
 ];
 for(const file of extras)fs.copyFileSync('mobile-overrides/'+file,'www/'+file);
 
 for(const css of ['mobile-hud-editor-fix.css','mobile-activities-pack.css','mobile-modes-pack2.css','mobile-replay-pack.css']){
   if(!html.includes(css))html=html.replace('</head>','<link rel="stylesheet" href="'+css+'"></head>');
 }
-for(const js of ['mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-modes-pack2.js','mobile-replay-pack-v2.js','mobile-squad-ai.js']){
+for(const js of ['mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-modes-pack2.js','mobile-replay-pack-v2.js','mobile-squad-ai.js','mobile-defense-mobility.js']){
   if(!html.includes(js))html=html.replace('</body>','<script src="'+js+'"></script></body>');
 }
 fs.writeFileSync(indexPath,html);
@@ -44,3 +45,4 @@ console.log('Activities Pack 5.0 enabled: endless contracts, field operations, c
 console.log('Modes Pack 6.0 enabled: Boss Rush, Bounty Hunt, Chaos Cycle, King of the Arena, Blitz, Ascension, Core Defense, Special Roulette and Chaos Encounters.');
 console.log('Replay Pack 7.0 enabled: run routes, optional trials, boon drafts, Chaos Archive, weapon feats and end-of-run awards.');
 console.log('Squad AI 8.0 enabled: coordinated plans, squad roles, predictive interception, attack staggering and adaptive tactical budgets.');
+console.log('Defense & Mobility 9.0 enabled: shield cap/recharge reset plus skill-based Perfect Dash cooldown reset and stamina refund.');
