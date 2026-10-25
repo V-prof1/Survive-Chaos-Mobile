@@ -69,6 +69,16 @@ replaceRequired("for(const b of B){const bk=", "for(const b of B){if(window.SCAr
 replaceRequired("const a=q.oa+i/q.orb*PI*2;x.fillStyle='#d8e4ff';",
   "const a=q.oa+i/q.orb*PI*2;if(window.SCArsenal&&SCArsenal.orbital(x,q,a))continue;x.fillStyle='#d8e4ff';");
 
+// ===== AI Director hooks =====
+replaceRequired(
+  "function bossAI(e,dt){if(e.dv){devAI(e,dt);return}",
+  "function bossAI(e,dt){if(window.SCAIDirector&&window.SCAIDirector.boss&&window.SCAIDirector.boss(e,dt,P))return;if(e.dv){devAI(e,dt);return}"
+);
+replaceRequired(
+  "const ddx=P.x-e.x,ddy=P.y-e.y,d=Math.hypot(ddx,ddy)||1,ux=ddx/d,uy=ddy/d;let v=e.sp*rm,ai=e.ai;",
+  "const ddx=P.x-e.x,ddy=P.y-e.y,d=Math.hypot(ddx,ddy)||1,ux=ddx/d,uy=ddy/d;let v=e.sp*rm,ai=e.ai;if(window.SCAIDirector&&window.SCAIDirector.enemy&&window.SCAIDirector.enemy(e,dt,P,d,ux,uy,rm))continue;"
+);
+
 fs.writeFileSync(path, s);
 
 // DEV used to grant 25,000 raw coins on top of the normal end-of-run economy.
@@ -95,7 +105,8 @@ for (const file of [
   'mobile-menu-refine.js','mobile-menu-refine.css',
   'mobile-hud-editor.js','mobile-hud-editor.css',
   'mobile-main-menu.js','mobile-main-menu.css',
-  'mobile-rotate-easteregg.js'
+  'mobile-rotate-easteregg.js',
+  'mobile-ai-director.js'
 ]) fs.copyFileSync(`mobile-overrides/${file}`, `www/${file}`);
 
 const indexPath = 'www/index.html';
@@ -106,7 +117,7 @@ for (const css of [
 ]) if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
 for (const js of [
   'mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js','mobile-upgrade-icons.js',
-  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js','mobile-difficulty-plus.js','mobile-hud-responsive.js','mobile-online-config.js','mobile-online.js','mobile-online-socket.js','mobile-skin-ults.js','mobile-menu-refine.js','mobile-hud-editor.js','mobile-main-menu.js','mobile-rotate-easteregg.js'
+  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js','mobile-difficulty-plus.js','mobile-hud-responsive.js','mobile-online-config.js','mobile-online.js','mobile-online-socket.js','mobile-skin-ults.js','mobile-menu-refine.js','mobile-hud-editor.js','mobile-main-menu.js','mobile-rotate-easteregg.js','mobile-ai-director.js'
 ]) if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
 fs.writeFileSync(indexPath, html);
 
@@ -122,6 +133,7 @@ console.log('Menu refinement enabled: polished menu buttons and in-run pause set
 console.log('HUD Editor 2.0 enabled: independent portrait/landscape positions and sizes with safe reset.');
 console.log('Main Menu 2.1 enabled: landscape-only gameplay with portrait rotation lock.');
 console.log('Rotate easter egg enabled: secret IQ achievement after 60 seconds in portrait.');
+console.log('AI Director 1.0 enabled: tactical enemy states, elite mini-boss mutations, boss combos and paced DEV patterns.');
 console.log('DEV raw reward reduced from 25,000 to 2,500 coins.');
 console.log('Responsive portrait HUD enabled: split kills/score chips and isolated combo lane.');
 console.log('Online foundation enabled: account/cloud-save UI, PKCE callback and Socket.IO lobby transport are backend-disabled by default.');
