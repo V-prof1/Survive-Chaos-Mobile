@@ -1,4 +1,5 @@
 const fs=require('fs');
+const cp=require('child_process');
 require('./apply-mobile-patches-core.js');
 
 // Keep the currently approved base-skin redesign untouched.
@@ -36,6 +37,7 @@ const extras=[
   'mobile-endgame-fix.js',
   'mobile-economy-guard.js'
 ];
+for(const file of ['mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js'])cp.execFileSync(process.execPath,['--check','mobile-overrides/'+file],{stdio:'inherit'});
 for(const file of extras)fs.copyFileSync('mobile-overrides/'+file,'www/'+file);
 
 // Crimson remains the main identity. Endgame UI and Custom Audio are self-contained final layers.
