@@ -35,16 +35,20 @@ const extras=[
   'mobile-endgame-pack.css',
   'mobile-endgame-pack.js',
   'mobile-endgame-fix.js',
-  'mobile-economy-guard.js'
+  'mobile-economy-guard.js',
+  'mobile-worldshift-pack.css',
+  'mobile-worldshift-core.js',
+  'mobile-worldshift-modes.js',
+  'mobile-worldshift-threats.js'
 ];
-for(const file of ['mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js'])cp.execFileSync(process.execPath,['--check','mobile-overrides/'+file],{stdio:'inherit'});
+for(const file of ['mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js','mobile-worldshift-core.js','mobile-worldshift-modes.js','mobile-worldshift-threats.js'])cp.execFileSync(process.execPath,['--check','mobile-overrides/'+file],{stdio:'inherit'});
 for(const file of extras)fs.copyFileSync('mobile-overrides/'+file,'www/'+file);
 
-// Crimson remains the main identity. Endgame UI and Custom Audio are self-contained final layers.
-for(const css of ['mobile-hud-editor-fix.css','mobile-activities-pack.css','mobile-modes-pack2.css','mobile-replay-pack.css','mobile-uiux-overhaul.css','mobile-uiux-red-theme.css','mobile-custom-audio.css','mobile-endgame-pack.css']){
+// Crimson remains the main identity. Endgame/Worldshift UI and Custom Audio are final self-contained layers.
+for(const css of ['mobile-hud-editor-fix.css','mobile-activities-pack.css','mobile-modes-pack2.css','mobile-replay-pack.css','mobile-uiux-overhaul.css','mobile-uiux-red-theme.css','mobile-custom-audio.css','mobile-endgame-pack.css','mobile-worldshift-pack.css']){
   if(!html.includes(css))html=html.replace('</head>','<link rel="stylesheet" href="'+css+'"></head>');
 }
-for(const js of ['mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-modes-pack2.js','mobile-replay-pack-v2.js','mobile-squad-ai.js','mobile-defense-mobility.js','mobile-reality-break.js','mobile-uiux-overhaul.js','mobile-custom-audio.js','mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js']){
+for(const js of ['mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-modes-pack2.js','mobile-replay-pack-v2.js','mobile-squad-ai.js','mobile-defense-mobility.js','mobile-reality-break.js','mobile-uiux-overhaul.js','mobile-custom-audio.js','mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js','mobile-worldshift-core.js','mobile-worldshift-modes.js','mobile-worldshift-threats.js']){
   if(!html.includes(js))html=html.replace('</body>','<script src="'+js+'"></script></body>');
 }
 fs.writeFileSync(indexPath,html);
@@ -65,3 +69,4 @@ console.log('Crimson Theme 12.0 enabled: black/white/red visual identity with go
 console.log('Custom Audio 13.0 enabled: 21 offline replaceable music/SFX slots persisted in IndexedDB with no server dependency.');
 console.log('Endgame Expansion 14.0 enabled: mastery, weapon evolutions, relic fusion, Nemesis, anomalies, secret rifts, EX bosses, Heat, skill trials, Codex, Hall, Chaos Absolute, finishers, chained secrets, build discovery, Flow, Boss Lab and Ascendant Chaos.');
 console.log('Economy Guard 15.0 enabled: run payouts are controlled by duration/difficulty and cannot be duplicated by Ascendant Chaos.');
+console.log('Worldshift Expansion 16.0 enabled: sectors, hybrid/corrupted biomes, gameplay weather, NPC choices, allies, interactive scenery, temporary weapons, mods, evolving hub, shareable seeds, adaptive threats, legendary hunts, boss variants and genre-shifting modes.');
