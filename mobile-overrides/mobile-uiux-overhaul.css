@@ -1,0 +1,277 @@
+/* Survive Chaos Mobile — UI/UX Overhaul 11.0
+   Final visual layer. Loaded last on purpose to unify legacy/mobile UI without touching gameplay. */
+:root{
+  --ux-bg:#080711;--ux-surface:#131126;--ux-surface2:#1b1737;--ux-surface3:#27204f;
+  --ux-line:rgba(154,132,255,.28);--ux-line2:rgba(255,255,255,.07);
+  --ux-text:#fff8e9;--ux-muted:#aaa2ca;--ux-dim:#746c96;
+  --ux-gold:#ffd34d;--ux-gold2:#f2a91e;--ux-cyan:#47ead2;--ux-red:#ff5668;--ux-violet:#8d73ff;
+  --ux-radius:16px;--ux-radius-sm:11px;--ux-shadow:0 18px 55px rgba(0,0,0,.46);
+}
+html,body{background:var(--ux-bg)}
+body.scUIUX{font-kerning:normal;text-rendering:optimizeLegibility}
+body.scUIUX *{scrollbar-width:thin;scrollbar-color:#5b4fb0 #0c0a1a}
+body.scUIUX ::-webkit-scrollbar{width:6px;height:6px}
+body.scUIUX ::-webkit-scrollbar-track{background:#0c0a1a;border-radius:99px}
+body.scUIUX ::-webkit-scrollbar-thumb{background:#5b4fb0;border-radius:99px}
+
+/* ===== SCREEN LANGUAGE ===== */
+body.scUIUX .scr{
+  gap:12px;
+  padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));
+  background:
+    radial-gradient(circle at 15% 12%,rgba(101,77,220,.17),transparent 31%),
+    radial-gradient(circle at 88% 82%,rgba(71,234,210,.08),transparent 28%),
+    linear-gradient(180deg,rgba(8,7,17,.90),rgba(8,7,17,.97));
+  backdrop-filter:blur(8px);
+}
+body.scUIUX .scr.on{animation:scUxFade .18s ease-out both}
+@keyframes scUxFade{from{opacity:0;transform:scale(.995)}to{opacity:1;transform:none}}
+body.scUIUX h1,body.scUIUX h2{letter-spacing:.025em}
+body.scUIUX h2{font-size:clamp(22px,4.2vmin,30px);color:#ffe48b;text-shadow:0 2px 0 #090713,0 0 20px rgba(255,211,77,.12)}
+body.scUIUX .sub{color:var(--ux-muted);line-height:1.42}
+
+body.scUIUX .panel,
+body.scUIUX .console{
+  border:1px solid var(--ux-line)!important;
+  border-radius:var(--ux-radius)!important;
+  background:linear-gradient(180deg,rgba(28,23,57,.97),rgba(15,13,32,.98))!important;
+  box-shadow:inset 0 1px 0 var(--ux-line2),var(--ux-shadow)!important;
+}
+body.scUIUX .panel{padding:clamp(16px,3vmin,24px)!important}
+body.scUIUX .panel::before{
+  content:'';position:absolute;left:18px;right:18px;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,221,112,.55),transparent);opacity:.65
+}
+
+/* ===== BUTTON SYSTEM ===== */
+body.scUIUX .scr .btn,
+body.scUIUX .scr .opt,
+body.scUIUX .scr .tog,
+body.scUIUX #pz,
+body.scUIUX #qa{
+  -webkit-tap-highlight-color:transparent;
+  outline:none;
+  transition:transform .09s ease,filter .12s ease,box-shadow .12s ease,border-color .12s ease!important;
+}
+body.scUIUX .scr .btn{
+  border:1px solid rgba(255,213,80,.72)!important;
+  border-radius:12px!important;
+  min-height:50px;
+  padding:12px 16px!important;
+  color:#211706!important;
+  background:linear-gradient(180deg,#fff08a 0%,#ffd34d 45%,#eba61f 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -3px 0 rgba(137,78,0,.27),0 6px 16px rgba(0,0,0,.28)!important;
+}
+body.scUIUX .scr .btn.g{
+  color:#f4efff!important;border-color:rgba(141,115,255,.42)!important;
+  background:linear-gradient(180deg,#30285e 0%,#211b46 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 0 0 1px rgba(130,108,229,.22),0 5px 14px rgba(0,0,0,.24)!important;
+}
+body.scUIUX .scr .btn:not(:disabled):active,
+body.scUIUX .scr .btn.scPressed,
+body.scUIUX .scr .opt:not(:disabled):active,
+body.scUIUX .scr .opt.scPressed{transform:translateY(2px) scale(.985)!important;filter:brightness(.97)!important}
+body.scUIUX .scr .btn:focus-visible,body.scUIUX .scr .opt:focus-visible{outline:2px solid var(--ux-cyan)!important;outline-offset:2px}
+body.scUIUX .scr button:disabled{opacity:.38!important;filter:saturate(.45)!important}
+body.scUIUX .scr .btn.s{min-height:38px!important;padding:8px 11px!important}
+
+body.scUIUX .scr .opt{
+  min-height:48px;border:1px solid rgba(141,115,255,.34)!important;border-radius:11px!important;
+  background:linear-gradient(180deg,#27204e,#191530)!important;color:#eee9ff!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 4px 10px rgba(0,0,0,.18)!important;
+}
+body.scUIUX .scr .opt.on{
+  border-color:rgba(255,211,77,.9)!important;color:#211706!important;
+  background:linear-gradient(180deg,#fff18a,#ffd34d 58%,#e5a11d)!important;
+  box-shadow:inset 0 1px 0 #fff8c9,0 0 0 2px rgba(255,211,77,.12),0 6px 15px rgba(0,0,0,.24)!important;
+}
+body.scUIUX .scr .opt.on::after{right:8px;top:7px;color:#664000;opacity:.85}
+
+/* Inputs/selects */
+body.scUIUX input,body.scUIUX select,body.scUIUX textarea{
+  border-radius:10px!important;border:1px solid rgba(141,115,255,.34)!important;
+  background:rgba(10,8,25,.82)!important;color:var(--ux-text)!important;
+}
+body.scUIUX input:focus,body.scUIUX select:focus,body.scUIUX textarea:focus{border-color:var(--ux-cyan)!important;box-shadow:0 0 0 2px rgba(71,234,210,.10)!important}
+
+/* ===== MAIN MENU ===== */
+body.scUIUX #menu.scMenuV2{
+  background:
+    radial-gradient(circle at 20% 18%,rgba(119,83,255,.24),transparent 26%),
+    linear-gradient(90deg,rgba(8,7,17,.97),rgba(8,7,17,.76) 50%,rgba(8,7,17,.94))!important;
+}
+body.scUIUX #menu.scMenuV2 .mt{position:relative}
+body.scUIUX #menu.scMenuV2 .mt::after{
+  content:'MOBILE BETA';display:inline-flex;align-items:center;margin-top:7px;padding:5px 8px;border-radius:999px;
+  border:1px solid rgba(71,234,210,.22);background:rgba(9,22,27,.62);color:#7af4df;font:8px var(--px);letter-spacing:.14em
+}
+body.scUIUX #menu.scMenuV2 h1{
+  color:#ffe169!important;text-shadow:0 3px 0 #8e5014,0 8px 24px rgba(0,0,0,.54)!important;
+}
+body.scUIUX #menu.scMenuV2 .scMenuHub{
+  border:1px solid rgba(141,115,255,.28)!important;border-radius:20px!important;
+  background:linear-gradient(180deg,rgba(24,20,49,.90),rgba(11,9,26,.95))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 24px 65px rgba(0,0,0,.40)!important;
+  backdrop-filter:blur(14px)!important;
+}
+body.scUIUX #menu.scMenuV2 .scMenuAccount{
+  border:1px solid rgba(141,115,255,.18)!important;background:rgba(10,8,28,.48)!important;border-radius:13px!important
+}
+body.scUIUX #menu.scMenuV2 .prof{background:rgba(8,7,22,.86)!important;border:1px solid rgba(141,115,255,.28)!important}
+body.scUIUX #menu.scMenuV2 #play{
+  position:relative;overflow:hidden;border-color:#ffe27a!important;
+  box-shadow:inset 0 1px 0 #fffbd2,inset 0 -4px 0 rgba(143,82,0,.32),0 7px 0 rgba(74,39,0,.75),0 15px 28px rgba(0,0,0,.34)!important
+}
+body.scUIUX #menu.scMenuV2 #play::after{
+  content:'›';position:absolute;right:15px;top:50%;transform:translateY(-52%);font-size:26px;opacity:.65
+}
+body.scUIUX #menu.scMenuV2 .scMenuQuick .btn,
+body.scUIUX #menu.scMenuV2 .scMenuSystems .btn,
+body.scUIUX #menu.scMenuV2 .scMenuPrefs .btn{
+  border-color:rgba(141,115,255,.25)!important;background:linear-gradient(180deg,rgba(47,39,91,.92),rgba(26,21,54,.96))!important;
+}
+body.scUIUX #menu.scMenuV2 .scMenuQuick .btn::before{font-size:18px!important}
+body.scUIUX #menu.scMenuV2 .scMenuQuick .btn:active,
+body.scUIUX #menu.scMenuV2 .scMenuSystems .btn:active{border-color:rgba(255,211,77,.48)!important}
+body.scUIUX #menu.scMenuV2 .coin{background:rgba(8,7,22,.8)!important;border-color:rgba(255,211,77,.34)!important;color:#ffe17b!important}
+
+/* ===== SETUP / MODE SELECTION ===== */
+body.scUIUX #setup{justify-content:flex-start!important;padding-top:max(16px,env(safe-area-inset-top))!important}
+body.scUIUX #setup .panel.setup{width:min(820px,97vw)!important;max-height:calc(100vh - 24px)!important;gap:13px!important}
+body.scUIUX #setup .row,body.scUIUX #setup .tabs{gap:8px!important}
+body.scUIUX #setup .opt{position:relative;overflow:hidden}
+body.scUIUX #setup .opt.on{transform:none!important}
+body.scUIUX #setup .opt.on::before{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:#fff0a0}
+body.scUIUX #scDifficultyBrief{border:1px solid rgba(141,115,255,.26)!important;border-radius:13px!important;background:rgba(9,8,24,.72)!important}
+body.scUIUX .scThreat i{height:19px!important;border-radius:99px!important}
+body.scUIUX .scDiffStats span{border:1px solid rgba(141,115,255,.16);border-radius:8px!important;background:rgba(6,5,18,.6)!important}
+
+/* ===== HUD ===== */
+body.scUIUX #hud{font-feature-settings:'tnum' 1}
+body.scUIUX #xpb{height:5px!important;border:0!important;background:rgba(5,4,13,.75)!important;box-shadow:0 1px 0 rgba(255,255,255,.06)}
+body.scUIUX #xpf{background:linear-gradient(90deg,#38d9c3,#78ffe5)!important;box-shadow:0 0 10px rgba(71,234,210,.45)}
+body.scUIUX #hud .top{top:calc(12px + env(safe-area-inset-top,0))!important}
+body.scUIUX #hud .hp{
+  height:24px!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:999px!important;
+  background:rgba(10,7,18,.78)!important;box-shadow:inset 0 0 0 2px rgba(0,0,0,.25),0 4px 14px rgba(0,0,0,.22)!important
+}
+body.scUIUX #hud #hpf{border-radius:999px;background:linear-gradient(90deg,#d93b50,#ff5f68,#ff815e)!important}
+body.scUIUX #hud #hpf::after,body.scUIUX #hud #hpf2::after{display:none!important}
+body.scUIUX #hud #hpt,body.scUIUX #hud #hpt2{font-weight:800!important;font-size:11px!important;letter-spacing:.025em}
+body.scUIUX #hud .lvl{
+  border:1px solid rgba(255,211,77,.36)!important;border-radius:999px!important;padding:3px 9px!important;
+  background:rgba(17,12,27,.84)!important;color:#ffe17b!important;box-shadow:0 3px 10px rgba(0,0,0,.18)
+}
+body.scUIUX #hud .mid{top:calc(10px + env(safe-area-inset-top,0))!important}
+body.scUIUX #hud #tm{
+  border:1px solid rgba(141,115,255,.26)!important;border-radius:10px!important;padding:5px 12px!important;
+  background:rgba(8,7,20,.78)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 5px 16px rgba(0,0,0,.20)!important;
+  color:#fff7df!important;letter-spacing:.04em
+}
+body.scUIUX #hud #pz{
+  width:39px!important;height:39px!important;border:1px solid rgba(141,115,255,.30)!important;border-radius:11px!important;
+  background:rgba(24,20,52,.86)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 5px 13px rgba(0,0,0,.22)!important
+}
+body.scUIUX #hud #ms{
+  top:calc(53px + env(safe-area-inset-top,0))!important;border:1px solid rgba(71,234,210,.21)!important;border-radius:999px!important;
+  background:rgba(7,13,20,.76)!important;color:#76f2df!important;padding:4px 9px!important;font-size:11px!important;letter-spacing:.03em
+}
+body.scUIUX #hud #boss{
+  top:calc(83px + env(safe-area-inset-top,0))!important;width:min(68vw,560px)!important;
+  padding:8px 11px 10px;border:1px solid rgba(255,86,104,.24);border-radius:12px;background:rgba(8,6,17,.72);
+  box-shadow:0 12px 28px rgba(0,0,0,.28);backdrop-filter:blur(5px)
+}
+body.scUIUX #hud #boss span{display:block;color:#fff0df!important;font-size:14px!important;letter-spacing:.055em;text-transform:uppercase}
+body.scUIUX #hud #boss div{height:10px!important;margin-top:5px!important;border:0!important;border-radius:999px!important;background:#211322!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)!important;overflow:hidden}
+body.scUIUX #hud #boss b{border-radius:999px;background:linear-gradient(90deg,#a72564,#e94770,#ff7d64)!important;box-shadow:0 0 12px rgba(255,75,103,.32)}
+body.scUIUX #hud #dvb{filter:drop-shadow(0 10px 18px rgba(0,0,0,.32))}
+
+/* Combat controls: readable states, still movable by HUD editor */
+body.scUIUX #dash,body.scUIUX #ult,body.scUIUX #dash1,body.scUIUX #ult1{
+  width:76px;height:76px;border:1px solid rgba(255,255,255,.13)!important;border-radius:50%!important;
+  background:radial-gradient(circle at 50% 35%,rgba(53,45,91,.96),rgba(16,13,34,.97) 72%)!important;
+  box-shadow:inset 0 0 0 3px rgba(71,234,210,.30),inset 0 1px 0 rgba(255,255,255,.13),0 8px 20px rgba(0,0,0,.35)!important;
+}
+body.scUIUX #ult,body.scUIUX #ult1{box-shadow:inset 0 0 0 3px rgba(255,211,77,.34),inset 0 1px 0 rgba(255,255,255,.13),0 8px 20px rgba(0,0,0,.35)!important}
+body.scUIUX #dash small,body.scUIUX #ult small,body.scUIUX #dash1 small,body.scUIUX #ult1 small{font-size:8px!important;letter-spacing:.09em;color:#d9d3ef}
+body.scUIUX #dash i,body.scUIUX #ult i{background:rgba(5,4,14,.72)!important}
+body.scUIUX #ult.rdy,body.scUIUX #ult1.rdy{animation:scUltReady .85s ease-in-out infinite!important}
+@keyframes scUltReady{50%{box-shadow:inset 0 0 0 3px rgba(255,225,92,.85),0 0 24px rgba(255,211,77,.42),0 8px 20px rgba(0,0,0,.35)}}
+body.scUIUX #dash.scPressed,body.scUIUX #ult.scPressed{transform:scale(.94)!important}
+
+/* ===== LEVEL-UP CARDS ===== */
+body.scUIUX #cards{background:radial-gradient(circle at 50% 40%,rgba(93,67,197,.20),transparent 38%),rgba(6,5,15,.95)!important}
+body.scUIUX #cards>h2::before{content:'▲ ';color:#7af2df}
+body.scUIUX .cards{gap:11px!important;align-items:stretch}
+body.scUIUX .card{
+  width:min(220px,82vw)!important;padding:18px 14px 14px!important;border:1px solid rgba(141,115,255,.30)!important;border-radius:15px!important;
+  background:linear-gradient(180deg,#201a43,#121027)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 12px 30px rgba(0,0,0,.32)!important;
+}
+body.scUIUX .card::before{top:10px;left:10px;border-radius:7px;background:#0b091c!important;color:#8e85b5!important}
+body.scUIUX .card .ic{width:64px!important;height:64px!important;border:1px solid rgba(141,115,255,.25)!important;border-radius:14px!important;background:linear-gradient(180deg,#30285f,#1c173b)!important}
+body.scUIUX .card b{font-size:17px!important;color:#fff5dc}
+body.scUIUX .card p{font-size:13px!important;line-height:1.35!important;color:#aaa2c5!important}
+body.scUIUX .card small{display:inline-block;margin-top:4px;padding:4px 7px;border-radius:999px;background:rgba(71,234,210,.08);color:#72efd9!important}
+body.scUIUX .card:hover,body.scUIUX .card:active,body.scUIUX .card.sel{transform:translateY(-4px)!important;border-color:#ffd34d!important;box-shadow:inset 0 0 0 1px rgba(255,211,77,.45),0 16px 34px rgba(0,0,0,.38)!important}
+body.scUIUX .card.sup{background:linear-gradient(180deg,#3c2e13,#1d160d)!important;border-color:rgba(255,211,77,.56)!important}
+
+/* ===== SHOP / COLLECTION / LISTS ===== */
+body.scUIUX #shop,body.scUIUX #ach,body.scUIUX #hist,body.scUIUX #cls{justify-content:flex-start!important}
+body.scUIUX #shop .grid,body.scUIUX #sg{gap:10px!important;padding:4px}
+body.scUIUX #shop .skin,body.scUIUX #sg>*{border-radius:13px!important}
+body.scUIUX .lstb{gap:8px!important;padding:3px 5px 8px 1px!important}
+body.scUIUX #ach .prog{border-radius:999px;overflow:hidden;background:#0d0a21!important}
+body.scUIUX #ach .tabs{gap:6px!important}
+
+/* ===== PAUSE ===== */
+body.scUIUX #pause{background:rgba(5,4,12,.78)!important;backdrop-filter:blur(10px)!important}
+body.scUIUX #pause .scPausePanel{border:1px solid rgba(141,115,255,.30)!important;border-radius:18px!important;background:linear-gradient(180deg,#201a43,#121027)!important;box-shadow:var(--ux-shadow)!important}
+body.scUIUX .scPauseHead{border-bottom:1px solid rgba(141,115,255,.18)!important}
+body.scUIUX .scPauseSec{border:1px solid rgba(141,115,255,.18)!important;border-radius:12px!important;background:rgba(8,7,21,.52)!important}
+body.scUIUX .scPauseSetting{border:1px solid rgba(141,115,255,.20)!important;border-radius:11px!important;background:linear-gradient(180deg,#292151,#191535)!important;box-shadow:none!important}
+body.scUIUX .scPauseSetting.on{border-color:rgba(71,234,210,.48)!important;background:linear-gradient(180deg,#263f48,#172d35)!important}
+body.scUIUX .scPauseFoot .scQuit{border-color:rgba(255,86,104,.26)!important;background:linear-gradient(180deg,#55263a,#2b1522)!important;box-shadow:none!important}
+
+/* ===== RESULTS ===== */
+body.scUIUX #over .panel{width:min(590px,96vw)!important;gap:11px!important}
+body.scUIUX #over #skl{filter:drop-shadow(0 10px 14px rgba(0,0,0,.38))}
+body.scUIUX #over #os{padding:10px;border:1px solid rgba(141,115,255,.18);border-radius:12px;background:rgba(7,6,19,.55)}
+body.scUIUX #over .dm{padding:6px 10px;border-radius:999px;background:rgba(255,211,77,.08);color:#ffe07b}
+
+/* ===== TOAST / BANNERS ===== */
+body.scUIUX #toast{pointer-events:none}
+body.scUIUX #toast>*{border-radius:12px!important;border:1px solid rgba(141,115,255,.28)!important;background:rgba(14,12,31,.94)!important;box-shadow:0 12px 30px rgba(0,0,0,.34)!important}
+body.scUIUX #ban{
+  top:29%!important;padding:0 16px;color:#fff5e7!important;font-size:clamp(18px,4.8vmin,34px)!important;
+  text-shadow:0 3px 0 #090711,0 0 18px rgba(255,255,255,.08)!important
+}
+body.scUIUX #ban.s{animation:scBanner 2.4s cubic-bezier(.16,.84,.3,1) both!important}
+@keyframes scBanner{0%{opacity:0;transform:translateY(14px) scale(.96)}10%{opacity:1;transform:none}76%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-8px) scale(.99)}}
+
+/* ===== HUD EDITOR ===== */
+body.scUIUX .scHudEditor,body.scUIUX #scHudEditor{--scEditGlow:rgba(71,234,210,.28)}
+body.scUIUX .scHudEditBar,body.scUIUX .scHudEditPanel{border-radius:13px!important;border:1px solid rgba(141,115,255,.30)!important;background:rgba(12,10,29,.94)!important;box-shadow:0 12px 30px rgba(0,0,0,.30)!important}
+body.scUIUX .scHudSelected{filter:drop-shadow(0 0 10px rgba(71,234,210,.48))!important}
+
+/* ===== RESPONSIVE ===== */
+@media (orientation:landscape){
+  body.scUIUX #cards{padding:10px 14px!important}
+  body.scUIUX #cards>h2{font-size:22px!important}
+  body.scUIUX #cards>.sub{font-size:12px!important}
+  body.scUIUX .cards{flex-wrap:nowrap!important;max-width:96vw}
+  body.scUIUX .card{width:min(28vw,220px)!important;min-height:210px}
+  body.scUIUX #setup .panel.setup{padding:14px 16px!important}
+}
+@media (orientation:landscape) and (max-height:420px){
+  body.scUIUX #menu.scMenuV2 .mt::after{display:none}
+  body.scUIUX #hud #boss{top:calc(70px + env(safe-area-inset-top,0))!important;padding:5px 9px 7px}
+  body.scUIUX .card{min-height:178px;padding:13px 11px 10px!important}
+  body.scUIUX .card .ic{width:52px!important;height:52px!important;margin-bottom:5px!important}
+  body.scUIUX .card p{font-size:11px!important;margin:3px 0!important}
+}
+@media (max-width:390px){
+  body.scUIUX .scr{padding-left:10px;padding-right:10px}
+  body.scUIUX #hud #boss{width:min(76vw,450px)!important}
+  body.scUIUX #dash,body.scUIUX #ult,body.scUIUX #dash1,body.scUIUX #ult1{width:70px;height:70px}
+}
+@media(prefers-reduced-motion:reduce){body.scUIUX *,body.scUIUX *::before,body.scUIUX *::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
