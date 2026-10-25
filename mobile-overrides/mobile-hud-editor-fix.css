@@ -1,0 +1,9 @@
+/* Survive Chaos Mobile — HUD Editor 2.1 unobstructed control editing */
+#scHudChromeToggle{min-width:74px!important;color:#bff8ee!important;border-color:#387d74!important;background:linear-gradient(#24594f,#173b38)!important}
+#scHudChromeMini{display:none;position:absolute;z-index:10;right:max(8px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));width:48px;height:48px;padding:3px;border:2px solid #5ce1ca;border-radius:12px;background:rgba(12,28,36,.94);color:#d9fff7;box-shadow:0 4px 0 #071019,0 8px 22px rgba(0,0,0,.45);pointer-events:auto;place-items:center;font-family:var(--bd);touch-action:manipulation}
+#scHudChromeMini b{font:10px var(--px);line-height:1;color:#ffe27a}#scHudChromeMini small{font-size:8px;line-height:1;color:#a6e9dc}
+#scHudEditor.scHudChromeHidden .scHudEditTop,#scHudEditor.scHudChromeHidden .scHudEditHint,#scHudEditor.scHudChromeHidden .scHudBottom{display:none!important}
+#scHudEditor.scHudChromeHidden #scHudChromeMini{display:grid!important}
+body.scHudEditing.scHudChromeHidden::before{background:rgba(3,3,12,.10)!important}
+body.scHudEditing.scHudChromeHidden .scHudSelected{z-index:10005!important}
+@media(orientation:landscape) and (max-height:520px){#scHudChromeMini{width:42px;height:42px;border-radius:10px}#scHudChromeMini b{font-size:9px}#scHudChromeMini small{font-size:7px}}
