@@ -102,6 +102,7 @@ for (const file of [
   'mobile-hud-responsive.js','mobile-hud-responsive.css',
   'mobile-online-config.js','mobile-online.js','mobile-online-socket.js','mobile-online.css',
   'mobile-skin-ults.js','mobile-skin-ults.css',
+  'mobile-kaneki-reborn.js',
   'mobile-menu-refine.js','mobile-menu-refine.css',
   'mobile-hud-editor.js','mobile-hud-editor.css',
   'mobile-main-menu.js','mobile-main-menu.css',
@@ -117,16 +118,16 @@ for (const css of [
 ]) if (!html.includes(css)) html = html.replace('</head>', `<link rel="stylesheet" href="${css}"></head>`);
 for (const js of [
   'mobile-pro.js','mobile-economy.js','mobile-content.js','mobile-legacy.js','mobile-saveguard.js','mobile-upgrade-icons.js',
-  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js','mobile-difficulty-plus.js','mobile-hud-responsive.js','mobile-online-config.js','mobile-online.js','mobile-online-socket.js','mobile-skin-ults.js','mobile-menu-refine.js','mobile-hud-editor.js','mobile-main-menu.js','mobile-rotate-easteregg.js','mobile-ai-director.js'
+  'mobile-admin-plus.js','mobile-arsenal-skins.js','mobile-rebalance.js','mobile-difficulty-plus.js','mobile-hud-responsive.js','mobile-online-config.js','mobile-online.js','mobile-online-socket.js','mobile-skin-ults.js','mobile-kaneki-reborn.js','mobile-menu-refine.js','mobile-hud-editor.js','mobile-main-menu.js','mobile-rotate-easteregg.js','mobile-ai-director.js'
 ]) if (!html.includes(js)) html = html.replace('</body>', `<script src="${js}"></script></body>`);
 fs.writeFileSync(indexPath, html);
 
 console.log('Survive Chaos Mobile patch applied.');
 console.log('Infinite horde formula retained with performance-aware enemy cap.');
 console.log('Combat 2.0, Economy, Content Expansion, Legacy and SaveGuard retained.');
-console.log('Kaneki removed from runtime; invalid Kaneki save slot is migrated/refunded once.');
+console.log('Kaneki Reborn enabled: redesigned round-body skin + original pixel finger-crack cut-in + multi-stage Rinkaku ultimate.');
 console.log('Skin Arsenal enabled: every base skin themes weapons/projectiles; Golden Reaper = gold, ADMIN = glitch.');
-console.log('Skin ULT v1 enabled: 21 unique animated ultimates; price scales power; ADMIN is apex.');
+console.log('Skin ULT v1 enabled: 21 base ultimates plus Kaneki custom Rinkaku ultimate; ADMIN remains apex.');
 console.log('Rebalance 2.0 enabled: difficulty/economy/score/upgrades/biomes/modes/bosses/DEV retuned.');
 console.log('Difficulty 3.0 enabled: Easy safety net, Hard elite hunters, Nightmare ruptures and stronger bosses.');
 console.log('Menu refinement enabled: polished menu buttons and in-run pause settings; combat controls untouched.');
