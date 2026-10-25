@@ -1,0 +1,155 @@
+/* Survive Chaos Mobile — Viewport Rescue 19.0
+   Final safety layer for Android WebView viewport/orientation mismatches. */
+:root{--sc-vvh:100dvh;--sc-vvw:100dvw}
+html,body{
+  width:100%!important;
+  height:var(--sc-vvh,100dvh)!important;
+  min-height:var(--sc-vvh,100dvh)!important;
+  max-height:var(--sc-vvh,100dvh)!important;
+  margin:0!important;
+  background:#07070b!important;
+}
+body{position:fixed!important;inset:0!important;overflow:hidden!important}
+#c,canvas{
+  width:var(--sc-vvw,100dvw)!important;
+  height:var(--sc-vvh,100dvh)!important;
+  max-width:100%!important;
+  max-height:100%!important;
+}
+.scr{
+  inset:0 auto auto 0!important;
+  width:var(--sc-vvw,100dvw)!important;
+  height:var(--sc-vvh,100dvh)!important;
+  min-height:var(--sc-vvh,100dvh)!important;
+  max-height:var(--sc-vvh,100dvh)!important;
+  box-sizing:border-box!important;
+}
+
+/* Never let a stale portrait-lock overlay eat touches after Android rotates. */
+html.scRuntimeLandscape #scRotateLock,
+body.scRuntimeLandscape #scRotateLock{
+  display:none!important;
+  pointer-events:none!important;
+  visibility:hidden!important;
+}
+
+/* Android sometimes reports the CSS orientation media feature incorrectly after an APK update/rotation.
+   The JS companion sets scRuntimeLandscape from the actual visual viewport dimensions. */
+html.scRuntimeLandscape #menu.scMenuV2{
+  flex-direction:row!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:clamp(20px,4vw,64px)!important;
+  width:var(--sc-vvw,100dvw)!important;
+  height:var(--sc-vvh,100dvh)!important;
+  min-height:var(--sc-vvh,100dvh)!important;
+  max-height:var(--sc-vvh,100dvh)!important;
+  padding:max(8px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  touch-action:pan-y!important;
+}
+html.scRuntimeLandscape #menu.scMenuV2 .mt{
+  width:min(31vw,350px)!important;
+  flex:0 0 auto!important;
+  margin:0!important;
+  align-items:flex-start!important;
+  text-align:left!important;
+}
+html.scRuntimeLandscape #menu.scMenuV2 .logo-e{display:flex!important;justify-content:flex-start!important}
+html.scRuntimeLandscape #menu.scMenuV2 h1{
+  font-size:clamp(38px,5.6vw,66px)!important;
+  text-align:left!important;
+  line-height:1!important;
+}
+html.scRuntimeLandscape #menu.scMenuV2 .mt .sub{
+  display:block!important;
+  max-width:310px!important;
+  font-size:11px!important;
+  text-align:left!important;
+}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuHub{
+  width:min(62vw,720px)!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:calc(var(--sc-vvh,100dvh) - 18px)!important;
+  margin:0!important;
+  padding:9px!important;
+  gap:6px 8px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  touch-action:pan-y!important;
+  display:grid!important;
+  grid-template-columns:minmax(185px,.9fr) minmax(245px,1.1fr)!important;
+  grid-template-areas:
+    'account account'
+    'primary systems'
+    'quick systems'
+    'foot foot'!important;
+  align-content:center!important;
+}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuAccount{
+  grid-area:account!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:7px!important;
+  padding:6px!important;
+}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuAccount .row2{width:auto!important;min-width:160px!important;gap:6px!important}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuPrimary{grid-area:primary!important;align-self:center!important;display:flex!important;align-items:center!important}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuQuick{
+  grid-area:quick!important;
+  align-self:end!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:5px!important;
+  padding:5px!important;
+}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuQuick::before{display:none!important}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuSystems{
+  grid-area:systems!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:auto repeat(4,minmax(38px,auto))!important;
+  align-content:stretch!important;
+  gap:6px!important;
+}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuPrefs{display:none!important}
+html.scRuntimeLandscape #menu.scMenuV2 .ft{grid-area:foot!important;display:none!important}
+html.scRuntimeLandscape #menu.scMenuV2 .prof{min-height:34px!important}
+html.scRuntimeLandscape #menu.scMenuV2 #nick{font-size:13px!important}
+html.scRuntimeLandscape #menu.scMenuV2 #play{height:52px!important;min-height:52px!important;padding:8px 12px!important;font-size:14px!important}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuQuick .btn{min-height:38px!important;padding:4px 2px!important}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuQuick .btn[data-sc-icon-only="1"]{min-height:38px!important}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuSystems::before{font-size:7px!important;margin-bottom:-2px!important}
+html.scRuntimeLandscape #menu.scMenuV2 .scMenuSystems .btn,
+html.scRuntimeLandscape #menu.scMenuV2 #scOnlineBtn,
+html.scRuntimeLandscape #menu.scMenuV2 #scCustomAudioMenu{
+  width:100%!important;
+  height:auto!important;
+  min-height:38px!important;
+  padding:6px 8px!important;
+  font-size:8px!important;
+}
+
+/* Setup and list screens must use the same real WebView height, not stale 100vh. */
+#setup .panel.setup,
+body.scUIUX #setup .panel.setup,
+.panel.lst{
+  max-height:calc(var(--sc-vvh,100dvh) - 20px)!important;
+}
+
+@media (max-height:430px){
+  html.scRuntimeLandscape #menu.scMenuV2{gap:14px!important;padding-top:5px!important;padding-bottom:5px!important}
+  html.scRuntimeLandscape #menu.scMenuV2 .mt .sub{display:none!important}
+  html.scRuntimeLandscape #menu.scMenuV2 .logo-e img{width:30px!important}
+  html.scRuntimeLandscape #menu.scMenuV2 h1{font-size:39px!important}
+  html.scRuntimeLandscape #menu.scMenuV2 .scMenuHub{max-height:calc(var(--sc-vvh,100dvh) - 10px)!important;padding:7px!important;gap:4px 6px!important}
+  html.scRuntimeLandscape #menu.scMenuV2 #play{height:46px!important;min-height:46px!important}
+  html.scRuntimeLandscape #menu.scMenuV2 .scMenuQuick .btn,
+  html.scRuntimeLandscape #menu.scMenuV2 .scMenuQuick .btn[data-sc-icon-only="1"]{min-height:34px!important}
+  html.scRuntimeLandscape #menu.scMenuV2 .scMenuSystems .btn,
+  html.scRuntimeLandscape #menu.scMenuV2 #scOnlineBtn,
+  html.scRuntimeLandscape #menu.scMenuV2 #scCustomAudioMenu{min-height:34px!important;padding:4px 7px!important}
+}
