@@ -1,0 +1,298 @@
+/* Survive Chaos Mobile — Crimson UI Theme 12.0
+   Final visual theme. Loaded AFTER UI/UX Overhaul 11.0.
+   Palette: charcoal black + ice white + vivid red. Gold is reserved for exceptional rarity/rewards. */
+:root{
+  --ux-bg:#050506;
+  --ux-surface:#0d0d10;
+  --ux-surface2:#151519;
+  --ux-surface3:#202026;
+  --ux-line:rgba(255,255,255,.12);
+  --ux-line2:rgba(255,255,255,.055);
+  --ux-text:#f7f7f8;
+  --ux-muted:#aaaab2;
+  --ux-dim:#696970;
+  --ux-gold:#f4c451;
+  --ux-gold2:#bd8a25;
+  --ux-cyan:#ffffff;
+  --ux-red:#ff3347;
+  --ux-violet:#ff3347;
+  --sc-crimson:#ff3347;
+  --sc-crimson2:#c8172b;
+  --sc-crimson3:#760b17;
+  --sc-black:#050506;
+  --sc-panel:#101014;
+  --sc-panel2:#18181d;
+  --sc-white:#f7f7f8;
+}
+
+html,body{background:#050506!important;color:#f7f7f8}
+body.scUIUX *{scrollbar-color:#9b1f2d #08080a}
+body.scUIUX ::-webkit-scrollbar-track{background:#08080a!important}
+body.scUIUX ::-webkit-scrollbar-thumb{background:#9b1f2d!important}
+
+/* ===== GLOBAL SCREEN / PANEL LANGUAGE ===== */
+body.scUIUX .scr{
+  background:
+    radial-gradient(circle at 12% 10%,rgba(255,51,71,.13),transparent 28%),
+    radial-gradient(circle at 88% 90%,rgba(255,255,255,.025),transparent 25%),
+    linear-gradient(180deg,rgba(5,5,6,.91),rgba(5,5,6,.985))!important;
+}
+body.scUIUX h1{color:#fff!important;text-shadow:0 3px 0 #760b17,0 8px 24px rgba(0,0,0,.62)!important}
+body.scUIUX h2{color:#fff!important;text-shadow:0 2px 0 #080809,0 0 22px rgba(255,51,71,.10)!important}
+body.scUIUX .sub{color:#aaaab2!important}
+body.scUIUX .panel,
+body.scUIUX .console{
+  border-color:rgba(255,255,255,.13)!important;
+  background:linear-gradient(180deg,rgba(22,22,27,.98),rgba(9,9,12,.99))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 22px 65px rgba(0,0,0,.58)!important;
+}
+body.scUIUX .panel::before{
+  background:linear-gradient(90deg,transparent,rgba(255,51,71,.72),transparent)!important;
+}
+
+/* ===== BUTTONS ===== */
+body.scUIUX .scr .btn{
+  color:#fff!important;
+  border-color:#ff5364!important;
+  background:linear-gradient(180deg,#ff4a5d 0%,#e8253b 54%,#b90f25 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -3px 0 rgba(73,0,10,.42),0 6px 16px rgba(0,0,0,.34),0 0 0 1px rgba(255,51,71,.08)!important;
+  text-shadow:0 1px 0 rgba(0,0,0,.4)!important;
+}
+body.scUIUX .scr .btn.g{
+  color:#eeeef1!important;
+  border-color:rgba(255,255,255,.13)!important;
+  background:linear-gradient(180deg,#26262c 0%,#151519 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),inset 0 0 0 1px rgba(255,255,255,.025),0 5px 14px rgba(0,0,0,.34)!important;
+}
+body.scUIUX .scr .btn.g:active,
+body.scUIUX .scr .btn.g.scPressed{border-color:rgba(255,51,71,.55)!important}
+body.scUIUX .scr .btn:focus-visible,
+body.scUIUX .scr .opt:focus-visible,
+body.scUIUX .scr .tog:focus-visible{outline-color:#fff!important}
+body.scUIUX .scr .opt{
+  border-color:rgba(255,255,255,.12)!important;
+  background:linear-gradient(180deg,#1d1d22,#101014)!important;
+  color:#dedee3!important;
+}
+body.scUIUX .scr .opt.on{
+  color:#fff!important;
+  border-color:#ff5364!important;
+  background:linear-gradient(180deg,#ff4558,#dd1e35 62%,#a60b1e)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.27),0 0 0 2px rgba(255,51,71,.12),0 7px 18px rgba(0,0,0,.32)!important;
+}
+body.scUIUX .scr .opt.on::after{color:#fff!important}
+body.scUIUX input,body.scUIUX select,body.scUIUX textarea{
+  border-color:rgba(255,255,255,.13)!important;
+  background:rgba(6,6,8,.88)!important;
+  color:#f7f7f8!important;
+}
+body.scUIUX input:focus,body.scUIUX select:focus,body.scUIUX textarea:focus{
+  border-color:#ff4558!important;
+  box-shadow:0 0 0 2px rgba(255,51,71,.12)!important;
+}
+
+/* ===== MAIN MENU ===== */
+body.scUIUX #menu.scMenuV2{
+  background:
+    radial-gradient(circle at 16% 16%,rgba(255,38,59,.20),transparent 28%),
+    radial-gradient(circle at 72% 44%,rgba(255,255,255,.025),transparent 30%),
+    linear-gradient(90deg,rgba(5,5,6,.985),rgba(8,8,10,.79) 50%,rgba(5,5,6,.97))!important;
+}
+body.scUIUX #menu.scMenuV2 h1{
+  color:#fff!important;
+  text-shadow:0 3px 0 #9a1022,0 8px 28px rgba(0,0,0,.68)!important;
+}
+body.scUIUX #menu.scMenuV2 .mt::after{
+  border-color:rgba(255,51,71,.32)!important;
+  background:rgba(49,5,12,.62)!important;
+  color:#ff7381!important;
+}
+body.scUIUX #menu.scMenuV2 .scMenuHub{
+  border-color:rgba(255,255,255,.12)!important;
+  background:linear-gradient(180deg,rgba(20,20,25,.93),rgba(7,7,10,.97))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 26px 70px rgba(0,0,0,.56)!important;
+}
+body.scUIUX #menu.scMenuV2 .scMenuAccount{
+  border-color:rgba(255,255,255,.09)!important;
+  background:rgba(8,8,11,.56)!important;
+}
+body.scUIUX #menu.scMenuV2 .prof{
+  background:rgba(5,5,7,.90)!important;
+  border-color:rgba(255,255,255,.11)!important;
+}
+body.scUIUX #menu.scMenuV2 .prof:focus-within{border-color:rgba(255,51,71,.68)!important}
+body.scUIUX #menu.scMenuV2 #play{
+  border-color:#ff6574!important;
+  background:linear-gradient(180deg,#ff5667,#e3263c 55%,#ae0d21)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 -4px 0 rgba(77,0,12,.40),0 7px 0 #590712,0 16px 30px rgba(0,0,0,.45)!important;
+}
+body.scUIUX #menu.scMenuV2 .scMenuQuick .btn,
+body.scUIUX #menu.scMenuV2 .scMenuSystems .btn,
+body.scUIUX #menu.scMenuV2 .scMenuPrefs .btn{
+  color:#eeeeef!important;
+  border-color:rgba(255,255,255,.10)!important;
+  background:linear-gradient(180deg,rgba(35,35,41,.96),rgba(17,17,21,.98))!important;
+}
+body.scUIUX #menu.scMenuV2 .scMenuQuick .btn::before,
+body.scUIUX #menu.scMenuV2 .scMenuSystems .btn::before,
+body.scUIUX #menu.scMenuV2 .scMenuPrefs .btn::before{color:#ff5667!important}
+body.scUIUX #menu.scMenuV2 .scMenuQuick .btn:active,
+body.scUIUX #menu.scMenuV2 .scMenuSystems .btn:active{border-color:rgba(255,51,71,.55)!important}
+body.scUIUX #menu.scMenuV2 .coin{
+  background:rgba(5,5,7,.86)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#f3f3f5!important;
+}
+body.scUIUX #menu.scMenuV2 #bst{color:#94949d!important}
+
+/* ===== SETUP / MODE SELECTION ===== */
+body.scUIUX #scDifficultyBrief{
+  border-color:rgba(255,255,255,.11)!important;
+  background:rgba(7,7,9,.80)!important;
+}
+body.scUIUX .scDiffHead b{color:#fff!important}
+body.scUIUX .scThreat i{background:#24242a!important;border-color:#424249!important}
+body.scUIUX .scThreat i.on{
+  background:linear-gradient(#ff6372,#d91830)!important;
+  border-color:#ff8994!important;
+  box-shadow:0 0 10px rgba(255,51,71,.32)!important;
+}
+body.scUIUX .scDiffStats span{
+  border-color:rgba(255,255,255,.09)!important;
+  background:rgba(5,5,7,.70)!important;
+  color:#92929b!important;
+}
+body.scUIUX .scDiffStats b{color:#f7f7f8!important}
+body.scUIUX #setup .opt.on::before{background:#fff!important}
+
+/* ===== COMBAT HUD ===== */
+body.scUIUX #xpb{background:rgba(0,0,0,.72)!important;box-shadow:0 1px 0 rgba(255,255,255,.08)!important}
+body.scUIUX #xpf{
+  background:linear-gradient(90deg,#a90d21,#ef263e,#ff5a68)!important;
+  box-shadow:0 0 10px rgba(255,51,71,.40)!important;
+}
+body.scUIUX #hud .hp{
+  border-color:rgba(255,255,255,.11)!important;
+  background:rgba(5,5,7,.80)!important;
+}
+body.scUIUX #hud #hpf{background:linear-gradient(90deg,#b50e25,#e8233c,#ff5968)!important}
+body.scUIUX #hud .lvl{
+  border-color:rgba(255,255,255,.14)!important;
+  background:rgba(8,8,10,.86)!important;
+  color:#fff!important;
+}
+body.scUIUX #hud #tm{
+  border-color:rgba(255,255,255,.12)!important;
+  background:rgba(5,5,7,.82)!important;
+  color:#fff!important;
+}
+body.scUIUX #hud #pz{
+  border-color:rgba(255,255,255,.13)!important;
+  background:rgba(19,19,23,.90)!important;
+}
+body.scUIUX #hud #ms{
+  border-color:rgba(255,51,71,.22)!important;
+  background:rgba(20,5,8,.78)!important;
+  color:#ff8290!important;
+}
+body.scUIUX #hud #boss{
+  border-color:rgba(255,51,71,.28)!important;
+  background:rgba(5,5,7,.80)!important;
+}
+body.scUIUX #hud #boss span{color:#fff!important}
+body.scUIUX #hud #boss div{
+  border-color:rgba(255,255,255,.09)!important;
+  background:#09090b!important;
+}
+body.scUIUX #hud #boss b{background:linear-gradient(90deg,#8d0718,#df1730,#ff4458)!important;box-shadow:0 0 12px rgba(255,51,71,.32)!important}
+
+/* Combat buttons: white outlines + red identity. */
+body.scUIUX #dash,body.scUIUX #dash1{
+  border-color:rgba(255,255,255,.20)!important;
+  background:linear-gradient(180deg,rgba(30,30,35,.94),rgba(8,8,11,.96))!important;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.12),0 8px 20px rgba(0,0,0,.34)!important;
+}
+body.scUIUX #ult,body.scUIUX #ult1{
+  border-color:rgba(255,72,90,.58)!important;
+  background:linear-gradient(180deg,rgba(65,12,20,.96),rgba(14,7,10,.98))!important;
+  box-shadow:inset 0 0 0 2px rgba(255,51,71,.30),0 8px 20px rgba(0,0,0,.36)!important;
+}
+body.scUIUX #ult.rdy,body.scUIUX #ult1.rdy{
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.28),0 0 0 3px rgba(255,51,71,.20),0 0 28px rgba(255,51,71,.48),0 8px 22px rgba(0,0,0,.42)!important;
+}
+body.scUIUX.scLowHP #hud .hp{border-color:rgba(255,51,71,.62)!important;box-shadow:0 0 0 2px rgba(255,51,71,.10),0 6px 18px rgba(0,0,0,.32)!important}
+
+/* ===== LEVEL-UP CARDS ===== */
+body.scUIUX #cards{background:rgba(3,3,4,.94)!important}
+body.scUIUX #cards .card{
+  border-color:rgba(255,255,255,.13)!important;
+  background:linear-gradient(180deg,#1a1a1f,#0d0d10)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 14px 34px rgba(0,0,0,.48)!important;
+}
+body.scUIUX #cards .card:hover,body.scUIUX #cards .card:active,body.scUIUX #cards .card.sel{
+  border-color:#ff4a5d!important;
+  box-shadow:inset 0 0 0 1px rgba(255,51,71,.30),0 0 0 2px rgba(255,51,71,.10),0 18px 42px rgba(0,0,0,.56)!important;
+}
+body.scUIUX #cards .card .ic{background:#09090b!important;border-color:rgba(255,255,255,.11)!important}
+body.scUIUX #cards .card small{color:#ff7381!important}
+/* Gold remains only for truly exceptional/supreme choices. */
+body.scUIUX #cards .card.sup{
+  border-color:rgba(244,196,81,.62)!important;
+  background:linear-gradient(180deg,#211b0e,#100e09)!important;
+  box-shadow:inset 0 0 0 1px rgba(244,196,81,.20),0 14px 36px rgba(0,0,0,.50)!important;
+}
+body.scUIUX #cards .card.sup small,body.scUIUX #cards .card.sup b{color:#f7d36f!important}
+
+/* ===== PAUSE / SETTINGS ===== */
+body.scUIUX #pause{background:rgba(2,2,3,.86)!important}
+body.scUIUX #pause .scPausePanel{
+  border-color:rgba(255,255,255,.13)!important;
+  background:linear-gradient(180deg,#17171c,#0a0a0d)!important;
+}
+body.scUIUX .scPauseSec{background:#0a0a0d!important;border-color:rgba(255,255,255,.09)!important}
+body.scUIUX .scPauseSetting{
+  border-color:rgba(255,255,255,.10)!important;
+  background:linear-gradient(180deg,#202026,#121216)!important;
+}
+body.scUIUX .scPauseSetting.on{border-color:rgba(255,51,71,.55)!important;box-shadow:inset 0 0 0 1px rgba(255,51,71,.12),0 2px 0 #050506!important}
+body.scUIUX .scPauseSetting.on i{background:#ff3347!important;box-shadow:0 0 8px rgba(255,51,71,.55)!important}
+body.scUIUX .scSetIcon{background:#08080a!important}
+body.scUIUX #pause .scPauseFoot .scQuit{
+  color:#fff!important;
+  background:linear-gradient(180deg,#60101e,#31080f)!important;
+  border-color:#8d1728!important;
+  box-shadow:inset 0 0 0 1px rgba(255,86,104,.20),inset 0 -4px 0 #1b0308,0 4px 0 #050506!important;
+}
+
+/* ===== SHOP / ACHIEVEMENTS / HISTORY / GENERIC GENERATED PANELS ===== */
+body.scUIUX #shop,body.scUIUX #ach,body.scUIUX #hist,body.scUIUX #cls,body.scUIUX #over,
+body.scUIUX [class*="scActivities"],body.scUIUX [class*="scReplay"],body.scUIUX [class*="scModes"],body.scUIUX [class*="scOperation"]{
+  --ln:#4b4b53;--pn:#111114;--pn2:#1b1b20;--c:#ff3347;--y:#f7f7f8;--mut:#9d9da5;
+}
+body.scUIUX .lstb>*,body.scUIUX .grid>*{
+  border-color:rgba(255,255,255,.09)!important;
+}
+body.scUIUX .tabs .opt.on{background:linear-gradient(180deg,#ff4558,#bf1025)!important;color:#fff!important}
+body.scUIUX .prog{background:#09090b!important;border-color:rgba(255,255,255,.10)!important}
+body.scUIUX .prog>div,body.scUIUX .prog b{background:linear-gradient(90deg,#b60e25,#ff3c50)!important}
+body.scUIUX #toast{
+  border-color:rgba(255,255,255,.12)!important;
+  background:rgba(10,10,13,.94)!important;
+  color:#fff!important;
+}
+body.scUIUX #ban{color:#fff!important;text-shadow:0 2px 0 #760b17,0 5px 18px rgba(0,0,0,.72)!important}
+
+/* DEV keeps its own red/black identity and becomes more coherent with the global theme. */
+body.scUIUX #devI{background:rgba(0,0,0,.88)!important}
+body.scUIUX #devI .dvk,body.scUIUX #devI .dvt{color:#ff3248!important;text-shadow:0 0 18px rgba(255,30,54,.45),3px 3px 0 #000!important}
+body.scUIUX #dvb{filter:saturate(.9) contrast(1.06)}
+
+/* ===== LANDSCAPE MOBILE REFINEMENT ===== */
+@media (orientation:landscape){
+  body.scUIUX #menu.scMenuV2 .scMenuHub{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 18px 52px rgba(0,0,0,.52)!important}
+  body.scUIUX #hud #boss{backdrop-filter:blur(7px)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  body.scUIUX #ult.rdy,body.scUIUX #ult1.rdy{animation:none!important}
+}
