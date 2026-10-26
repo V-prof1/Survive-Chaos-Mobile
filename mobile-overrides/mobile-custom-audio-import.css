@@ -1,0 +1,75 @@
+/* Survive Chaos Mobile — Custom Audio Import UX 13.2 */
+#scAudioCustom .scAudBody::before{
+  content:'📂 IMPORTAÇÃO LOCAL — toque em IMPORTAR ARQUIVO no som que deseja substituir. O seletor de arquivos do Android será aberto.';
+  display:block;
+  margin:0 0 10px;
+  padding:9px 11px;
+  border:1px solid rgba(255,196,52,.30);
+  border-radius:11px;
+  background:linear-gradient(180deg,rgba(82,55,9,.28),rgba(31,23,9,.22));
+  color:#ffd86a;
+  font-size:10px;
+  line-height:1.35;
+  font-weight:850;
+  letter-spacing:.015em;
+}
+
+/* Give every audio slot a dedicated full-width import row. */
+#scAudioCustom .scAudCard{
+  grid-template-columns:38px minmax(0,1fr)!important;
+  grid-template-rows:auto auto;
+}
+#scAudioCustom .scAudActions{
+  grid-column:1 / -1;
+  display:grid!important;
+  grid-template-columns:70px minmax(150px,1fr) 70px!important;
+  gap:6px!important;
+  width:100%;
+  margin-top:3px;
+}
+#scAudioCustom .scAudAct{
+  min-width:0;
+  height:38px!important;
+  border-radius:10px!important;
+  touch-action:manipulation;
+}
+#scAudioCustom .scAudAct:first-child::after{content:' TESTAR';font-size:9px;font-weight:900}
+#scAudioCustom .scAudAct.change{
+  width:100%;
+  min-width:150px;
+  padding:0 10px!important;
+  border-color:rgba(255,65,76,.60)!important;
+  background:linear-gradient(180deg,#64151d,#3a1015)!important;
+  color:transparent!important;
+  font-size:0!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 5px 16px rgba(255,25,40,.08);
+}
+#scAudioCustom .scAudAct.change::after{
+  content:'📂 IMPORTAR ARQUIVO';
+  color:#fff;
+  font-size:10px;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:.035em;
+  white-space:nowrap;
+}
+#scAudioCustom .scAudCard.custom .scAudAct.change::after{content:'📂 TROCAR ARQUIVO'}
+#scAudioCustom .scAudAct.reset::after{content:' PADRÃO';font-size:8px;font-weight:900}
+#scAudioCustom .scAudAct.reset{min-width:70px;padding:0 7px!important}
+
+/* The native picker input remains off-screen but is still programmatically clickable from a user gesture. */
+#scAudioCustomFile{display:block!important;position:fixed!important;left:-10000px!important;top:0!important;width:1px!important;height:1px!important;opacity:.001!important;pointer-events:none!important}
+
+@media(max-width:720px){
+  #scAudioCustom .scAudCard{grid-template-columns:34px minmax(0,1fr)!important}
+  #scAudioCustom .scAudActions{grid-template-columns:66px minmax(142px,1fr) 66px!important}
+  #scAudioCustom .scAudAct.change{min-width:142px!important}
+}
+@media(orientation:landscape) and (max-height:520px){
+  #scAudioCustom .scAudBody::before{margin-bottom:7px;padding:7px 9px;font-size:9px}
+  #scAudioCustom .scAudActions{grid-template-columns:62px minmax(132px,1fr) 62px!important;gap:5px!important}
+  #scAudioCustom .scAudAct{height:32px!important}
+  #scAudioCustom .scAudAct.change{min-width:132px!important}
+  #scAudioCustom .scAudAct.change::after{font-size:9px}
+  #scAudioCustom .scAudAct:first-child::after,#scAudioCustom .scAudAct.reset::after{font-size:8px}
+}
