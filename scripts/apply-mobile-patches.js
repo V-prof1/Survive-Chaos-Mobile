@@ -49,13 +49,14 @@ const extras=[
   'mobile-extra-sprite-data-3.js',
   'mobile-extra-characters.js',
   'mobile-viewport-rescue.css',
-  'mobile-viewport-rescue.js'
+  'mobile-viewport-rescue.js',
+  'mobile-gameplay-stability.js'
 ];
 for(const file of [
   'mobile-custom-audio.js','mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js',
   'mobile-worldshift-core.js','mobile-worldshift-modes.js','mobile-worldshift-threats.js','mobile-index-build.js',
   'mobile-index-achievements.js','mobile-extra-sprite-data-0.js','mobile-extra-sprite-data-1.js','mobile-extra-sprite-data-2.js',
-  'mobile-extra-sprite-data-3.js','mobile-extra-characters.js','mobile-viewport-rescue.js'
+  'mobile-extra-sprite-data-3.js','mobile-extra-characters.js','mobile-viewport-rescue.js','mobile-gameplay-stability.js'
 ])cp.execFileSync(process.execPath,['--check','mobile-overrides/'+file],{stdio:'inherit'});
 for(const file of extras)fs.copyFileSync('mobile-overrides/'+file,'www/'+file);
 
@@ -63,8 +64,8 @@ for(const file of extras)fs.copyFileSync('mobile-overrides/'+file,'www/'+file);
 for(const css of ['mobile-hud-editor-fix.css','mobile-activities-pack.css','mobile-modes-pack2.css','mobile-replay-pack.css','mobile-uiux-overhaul.css','mobile-uiux-red-theme.css','mobile-custom-audio.css','mobile-endgame-pack.css','mobile-worldshift-pack.css','mobile-index-build.css','mobile-viewport-rescue.css']){
   if(!html.includes(css))html=html.replace('</head>','<link rel="stylesheet" href="'+css+'"></head>');
 }
-// Viewport Rescue is also the final JS layer: it only repairs viewport/orientation and provides non-invasive menu fallbacks.
-for(const js of ['mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-modes-pack2.js','mobile-replay-pack-v2.js','mobile-squad-ai.js','mobile-defense-mobility.js','mobile-reality-break.js','mobile-uiux-overhaul.js','mobile-custom-audio.js','mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js','mobile-worldshift-core.js','mobile-worldshift-modes.js','mobile-worldshift-threats.js','mobile-index-build.js','mobile-index-achievements.js','mobile-extra-sprite-data-0.js','mobile-extra-sprite-data-1.js','mobile-extra-sprite-data-2.js','mobile-extra-sprite-data-3.js','mobile-extra-characters.js','mobile-viewport-rescue.js']){
+// Viewport Rescue repairs Android sizing first; Gameplay Stability runs last to govern every expansion's combat output.
+for(const js of ['mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-modes-pack2.js','mobile-replay-pack-v2.js','mobile-squad-ai.js','mobile-defense-mobility.js','mobile-reality-break.js','mobile-uiux-overhaul.js','mobile-custom-audio.js','mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js','mobile-worldshift-core.js','mobile-worldshift-modes.js','mobile-worldshift-threats.js','mobile-index-build.js','mobile-index-achievements.js','mobile-extra-sprite-data-0.js','mobile-extra-sprite-data-1.js','mobile-extra-sprite-data-2.js','mobile-extra-sprite-data-3.js','mobile-extra-characters.js','mobile-viewport-rescue.js','mobile-gameplay-stability.js']){
   if(!html.includes(js))html=html.replace('</body>','<script src="'+js+'"></script></body>');
 }
 fs.writeFileSync(indexPath,html);
@@ -89,3 +90,4 @@ console.log('Worldshift Expansion 16.0 enabled: sectors, hybrid/corrupted biomes
 console.log('Index & Build Identity 17.0 enabled: hidden kill-discovery encyclopedia, enemy rivalries, 8 upgrade-family slots and 2 Supreme slots.');
 console.log('Extra Characters 18.1 enabled: animated sprites without global DOM observers or UI animation loops.');
 console.log('Viewport Rescue 19.0 enabled: real Android visual-viewport sizing, runtime landscape layout and menu navigation fallback.');
+console.log('Gameplay Stability 20.0 enabled: difficulty-bound enemy/boss/projectile caps, rare-event UI without NPC body sprites and stable extra-enemy projectile art.');
