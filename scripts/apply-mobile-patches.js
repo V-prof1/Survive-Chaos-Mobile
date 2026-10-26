@@ -31,6 +31,7 @@ const extras=[
   'mobile-uiux-overhaul.js',
   'mobile-uiux-red-theme.css',
   'mobile-custom-audio.css',
+  'mobile-custom-audio-import.css',
   'mobile-custom-audio.js',
   'mobile-endgame-pack.css',
   'mobile-endgame-pack.js',
@@ -62,8 +63,9 @@ for(const file of [
 ])cp.execFileSync(process.execPath,['--check','mobile-overrides/'+file],{stdio:'inherit'});
 for(const file of extras)fs.copyFileSync('mobile-overrides/'+file,'www/'+file);
 
-// Viewport Rescue is deliberately the final CSS layer so stale vh/orientation rules cannot override it.
-for(const css of ['mobile-hud-editor-fix.css','mobile-activities-pack.css','mobile-modes-pack2.css','mobile-replay-pack.css','mobile-uiux-overhaul.css','mobile-uiux-red-theme.css','mobile-custom-audio.css','mobile-endgame-pack.css','mobile-worldshift-pack.css','mobile-index-build.css','mobile-viewport-rescue.css']){
+// Viewport Rescue is deliberately the final layout layer; Custom Audio Import is loaded after
+// the base audio CSS so the Android file-import controls are always visible and touch-friendly.
+for(const css of ['mobile-hud-editor-fix.css','mobile-activities-pack.css','mobile-modes-pack2.css','mobile-replay-pack.css','mobile-uiux-overhaul.css','mobile-uiux-red-theme.css','mobile-custom-audio.css','mobile-custom-audio-import.css','mobile-endgame-pack.css','mobile-worldshift-pack.css','mobile-index-build.css','mobile-viewport-rescue.css']){
   if(!html.includes(css))html=html.replace('</head>','<link rel="stylesheet" href="'+css+'"></head>');
 }
 // Gameplay Stability governs combat output; Refinement 21 is last so it can normalize every mode picker/build wrapper.
@@ -85,7 +87,7 @@ console.log('Defense & Mobility 9.0 enabled: shield cap/recharge reset plus skil
 console.log('Reality Break 10.0 enabled: five biome reality events, 20 unique boss gimmicks, DEV recompilation attacks and a full side-scroller Master Core fight.');
 console.log('UI/UX Overhaul 11.0 enabled: unified design system, cleaner HUD, responsive menus, readable upgrades, cinematic boss UI and tactile/accessibility polish.');
 console.log('Crimson Theme 12.0 enabled: black/white/red visual identity with gold reserved for exceptional rarity.');
-console.log('Custom Audio 13.1 enabled: 21 offline replaceable music/SFX slots with DOM-loop-safe entry syncing.');
+console.log('Custom Audio 13.2 enabled: 21 offline replaceable music/SFX slots with explicit Android file-import controls and DOM-loop-safe syncing.');
 console.log('Endgame Expansion 14.0 enabled: mastery, weapon evolutions, relic fusion, Nemesis, anomalies, secret rifts, EX bosses, Heat, skill trials, Codex, Hall, Chaos Absolute, finishers, chained secrets, build discovery, Flow, Boss Lab and Ascendant Chaos.');
 console.log('Economy Guard 15.0 enabled: run payouts are controlled by duration/difficulty and cannot be duplicated by Ascendant Chaos.');
 console.log('Worldshift Expansion 16.0 enabled: sectors, hybrid/corrupted biomes, gameplay weather, NPC choices, allies, interactive scenery, temporary weapons, mods, evolving hub, shareable seeds, adaptive threats, legendary hunts, boss variants and genre-shifting modes.');
