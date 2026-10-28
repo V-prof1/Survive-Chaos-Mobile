@@ -1,4 +1,4 @@
-/* Survive Chaos Mobile — Co-op World Modes parity 22.1 */
+/* Survive Chaos Mobile — Co-op World Modes parity 22.2 */
 (() => {
 'use strict';
 if(window.__SC_COOP_WORLDMODES_FIX__)return;window.__SC_COOP_WORLDMODES_FIX__=true;
@@ -12,6 +12,26 @@ try{
     const oldBan=ban;ban=function(t){const r=oldBan.apply(this,arguments);if(coop()&&typeof t==='string'&&t.includes('EXTRAÇÃO PERDIDA')){
       for(const q of live())if(q!==P)withP2(q,()=>hurt(Math.max(8,q.mhp*.12)));
     }return r};
+  }
+
+  // The base result card names only P1. Keep every stat/reward from end(), then relabel the duo.
+  if(typeof end==='function'){
+    const oldEnd=end;
+    end=function(win){
+      const wasCoop=!!(CF&&CF.co),n1=(S&&S.nick)||'P1',n2=(S&&S.nick2)||'P2';
+      const r=oldEnd.apply(this,arguments);
+      if(wasCoop){
+        try{
+          const w=document.querySelector('#os .who');
+          if(w){
+            const mode=(typeof MN!=='undefined'&&MN[CF.g])?MN[CF.g]:'';
+            const diff=(typeof MD!=='undefined'&&MD[CF.m])?MD[CF.m][0]:'';
+            w.textContent=n1+' + '+n2+(mode?' · '+mode:'')+(diff?' · '+diff:'');
+          }
+        }catch(_){}
+      }
+      return r;
+    };
   }
 
   let last=performance.now(),p2Hell=0;
@@ -34,6 +54,6 @@ try{
     }
   }
   requestAnimationFrame(loop);
-  console.log('[Mobile] Co-op World Modes parity 22.1 active');
-}catch(err){console.warn('[Mobile Co-op World Modes 22.1]',err)}
+  console.log('[Mobile] Co-op World Modes parity 22.2 active');
+}catch(err){console.warn('[Mobile Co-op World Modes 22.2]',err)}
 })();
