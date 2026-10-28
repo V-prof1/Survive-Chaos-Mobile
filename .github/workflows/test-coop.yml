@@ -1,0 +1,53 @@
+name: Test Mobile Local Co-op
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'mobile-overrides/mobile-coop-integrity.js'
+      - 'scripts/apply-mobile-patches.js'
+      - 'scripts/apply-mobile-patches-core.js'
+      - 'tests/coop-runtime.spec.cjs'
+      - '.github/workflows/test-coop.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  coop-mobile-browser:
+    name: Mobile local co-op runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Baixar repositório Mobile
+        uses: actions/checkout@v4
+        with:
+          path: mobile
+      - name: Baixar base Web fixada da build Mobile
+        uses: actions/checkout@v4
+        with:
+          repository: V-prof1/Survive-Chaos
+          ref: 17adf0a8c3422200fcd6021d39a14689b35ae2b2
+          path: browser
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Montar runtime Mobile
+        shell: bash
+        run: |
+          rm -rf mobile/www
+          cp -a browser/www mobile/www
+          cd mobile
+          node scripts/apply-mobile-patches.js
+          node --check www/mobile-coop-integrity.js
+          node --check tests/coop-runtime.spec.cjs
+          grep -q 'mobile-coop-integrity.js' www/index.html
+      - name: Instalar navegador de teste
+        working-directory: mobile
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Testar co-op local no runtime Mobile
+        working-directory: mobile
+        run: node tests/coop-runtime.spec.cjs www
