@@ -14,6 +14,12 @@ s=s.replace(
   "assert(await page.evaluate(()=>!SCActivities.run.op||SCActivities.run.op.got===1),'P2 cannot collect Activity supply cache');"
 );
 
+// Worldshift may remove a consumed scenery object from the array immediately.
+s=s.replace(
+  "assert(await page.evaluate(()=>SCWorldshift.state.objects[0].done&&ult>0),'P2 cannot activate Worldshift scenery');",
+  "assert(await page.evaluate(()=>ult>0&&(!SCWorldshift.state.objects[0]||SCWorldshift.state.objects[0].done)),'P2 cannot activate Worldshift scenery');"
+);
+
 // Explicitly exercise the Worldshift objectives that used to be P1-only.
 const marker="    await reset(1,2);let side=await page.evaluate(()=>{bi=4;E.length=0;boss(3);";
 const extra=`    if(await page.evaluate(()=>!!window.SCWorldModes&&!!window.SCWorldshift)){
