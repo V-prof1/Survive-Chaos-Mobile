@@ -2,6 +2,11 @@ const fs=require('fs');
 const cp=require('child_process');
 require('./apply-mobile-patches-core.js');
 
+// The pinned browser base still contains an old PC key interceptor where Q = Dash.
+// Current local co-op bindings live in game.js (WASD: Space dash, Q ULT; arrows: Enter dash, / ULT).
+// Rewrite only this legacy helper so Mobile keeps the intended bindings without pulling unrelated Web changes.
+fs.writeFileSync('www/pc-controls.js',`// Controles extras para PC.\n// Os atalhos de gameplay (WASD/Setas, dash e ULT) ficam centralizados em game.js.\n// Este arquivo apenas carrega sprint, stamina e efeitos da Beta 0.2.\n(() => {\n  if (document.querySelector('script[data-sc-beta02]')) return;\n  const beta = document.createElement('script');\n  beta.src = 'beta02.js';\n  beta.defer = true;\n  beta.dataset.scBeta02 = '1';\n  document.body.appendChild(beta);\n})();\n`);
+
 // Keep the currently approved base-skin redesign untouched.
 fs.copyFileSync('mobile-overrides/player-skins-redesign.png','www/player-skins-redesign.png');
 
