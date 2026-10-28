@@ -1,5 +1,6 @@
-/* Survive Chaos Mobile — Viewport Rescue 19.0
-   Final safety layer for Android WebView viewport/orientation mismatches. */
+/* Survive Chaos Mobile — Viewport Rescue 19.1
+   Final safety layer for Android WebView viewport/orientation mismatches.
+   19.1: viewport sizing is restricted to the main game canvas (#c) so UI preview canvases keep their own aspect ratio. */
 :root{--sc-vvh:100dvh;--sc-vvw:100dvw}
 html,body{
   width:100%!important;
@@ -10,7 +11,9 @@ html,body{
   background:#07070b!important;
 }
 body{position:fixed!important;inset:0!important;overflow:hidden!important}
-#c,canvas{
+/* IMPORTANT: only the main gameplay canvas may be forced to the Android visual viewport.
+   Skin previews and any other UI canvases must retain their intrinsic/card dimensions. */
+#c{
   width:var(--sc-vvw,100dvw)!important;
   height:var(--sc-vvh,100dvh)!important;
   max-width:100%!important;
