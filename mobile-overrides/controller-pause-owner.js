@@ -1,12 +1,12 @@
-/* Survive Chaos — Controller Pause Owner 2.5
-   Dedicated 20ms rising-edge Start scan. Legacy pad layers cannot double-toggle pause. */
+/* Survive Chaos — Controller Pause Owner 2.6
+   Dedicated 20ms rising-edge Start scan. Legacy Start paths cannot double-toggle pause. */
 (()=>{'use strict';
 if(window.__SC_CONTROLLER_PAUSE_OWNER__)return;window.__SC_CONTROLLER_PAUSE_OWNER__=1;
 try{
   const prev=new Map();
   const pressed=g=>!!g?.buttons?.[9]?.pressed;
   const anyStart=()=>{try{return[...navigator.getGamepads()].some(g=>g&&g.connected&&pressed(g))}catch(_){return false}};
-  document.addEventListener('click',e=>{if(e.target?.id==='pz'&&anyStart()&&!e.isTrusted){e.preventDefault();e.stopImmediatePropagation()}},true);
+  document.addEventListener('click',e=>{if((e.target?.id==='pz'||e.target?.id==='resume')&&anyStart()&&!e.isTrusted){e.preventDefault();e.stopImmediatePropagation()}},true);
   function trigger(){
     try{
       if(typeof st==='undefined')return;
@@ -19,7 +19,7 @@ try{
   }
   function scan(){let pads=[];try{pads=[...navigator.getGamepads()].filter(g=>g&&g.connected)}catch(_){}const seen=new Set();for(const g of pads){seen.add(g.index);const n=pressed(g),p=!!prev.get(g.index);if(n&&!p)trigger();prev.set(g.index,n)}for(const k of [...prev.keys()])if(!seen.has(k))prev.delete(k)}
   setInterval(scan,20);addEventListener('blur',()=>prev.clear());addEventListener('gamepaddisconnected',()=>setTimeout(scan,0));
-  window.SCControllerPauseOwner={version:'2.5',scan,trigger,reset:()=>prev.clear()};
-  console.log('[Controller] Pause owner 2.5 active');
+  window.SCControllerPauseOwner={version:'2.6',scan,trigger,reset:()=>prev.clear()};
+  console.log('[Controller] Pause owner 2.6 active');
 }catch(err){console.warn('[Controller Pause Owner]',err)}
 })();
