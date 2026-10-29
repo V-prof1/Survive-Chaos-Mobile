@@ -11,6 +11,7 @@ on:
       - 'mobile-overrides/controller-nav.css'
       - 'mobile-overrides/tutorial.js'
       - 'mobile-overrides/tutorial.css'
+      - 'mobile-overrides/tutorial-sandbox.js'
       - 'scripts/apply-mobile-patches.js'
       - 'scripts/apply-mobile-patches-core.js'
       - 'tests/coop-runtime.spec.cjs'
@@ -51,6 +52,7 @@ jobs:
           node --check www/mobile-coop-worldmodes-fix.js
           node --check www/controller-nav2.js
           node --check www/tutorial.js
+          node --check www/tutorial-sandbox.js
           node --check tests/coop-runtime.spec.cjs
           node --check tests/coop-runtime-v2.spec.cjs
           node --check tests/controller-tutorial.spec.cjs
@@ -58,6 +60,7 @@ jobs:
           grep -q 'mobile-coop-worldmodes-fix.js' www/index.html
           grep -q 'controller-nav2.js' www/index.html
           grep -q 'tutorial.js' www/index.html
+          grep -q 'tutorial-sandbox.js' www/index.html
       - name: Instalar navegador de teste
         working-directory: mobile
         run: |
