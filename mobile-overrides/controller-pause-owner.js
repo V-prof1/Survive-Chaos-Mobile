@@ -1,4 +1,4 @@
-/* Survive Chaos — Controller Pause Owner 2.1
+/* Survive Chaos — Controller Pause Owner 2.2
    Dedicated 20ms rising-edge Start scan; raw co-op padIn cannot also toggle pause. */
 (()=>{'use strict';
 if(window.__SC_CONTROLLER_PAUSE_OWNER__)return;window.__SC_CONTROLLER_PAUSE_OWNER__=1;
@@ -25,7 +25,7 @@ try{
   }
   function scan(){let pads=[];try{pads=[...navigator.getGamepads()].filter(g=>g&&g.connected)}catch(_){}const seen=new Set();for(const g of pads){seen.add(g.index);const n=pressed(g),p=!!prev.get(g.index);if(n&&!p)trigger();prev.set(g.index,n)}for(const k of [...prev.keys()])if(!seen.has(k))prev.delete(k)}
   setInterval(scan,20);addEventListener('blur',()=>prev.clear());addEventListener('gamepaddisconnected',()=>setTimeout(scan,0));
-  window.SCControllerPauseOwner={version:'2.1'};
-  console.log('[Controller] Pause owner 2.1 active');
+  window.SCControllerPauseOwner={version:'2.2',scan,trigger,reset:()=>prev.clear()};
+  console.log('[Controller] Pause owner 2.2 active');
 }catch(err){console.warn('[Controller Pause Owner]',err)}
 })();
