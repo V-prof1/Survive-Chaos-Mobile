@@ -91,5 +91,6 @@ jobs:
         working-directory: mobile
         run: node tests/controller-tutorial.spec.cjs www
       - name: Testar áudio personalizado no Mobile
+        if: always()
         working-directory: mobile
         run: node tests/custom-audio.spec.cjs www
