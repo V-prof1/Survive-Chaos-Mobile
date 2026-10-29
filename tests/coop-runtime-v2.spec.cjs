@@ -8,6 +8,12 @@ let s=fs.readFileSync(src,'utf8');
 // Match a real projectile shape so the background collision loop never sees a test-only incomplete bullet.
 s=s.replace("d:10,p:0,b:0}));const bullet=B[0]","d:10,p:0,b:0,h:[]}));const bullet=B[0]");
 
+// Pause/Resume is now owned centrally by controller navigation, not padIn.
+s=s.replace(
+  "await page.evaluate(()=>{st='play';CO.pb[1][2]=false;__scPads[1].buttons[9].pressed=true;P=PL[1];coIn(1)});assert.equal(await page.evaluate(()=>st),'pause','Start on P2 controller must pause');await page.evaluate(()=>{__scPads[1].buttons[9].pressed=false;document.getElementById('resume').click()});",
+  "await page.evaluate(()=>{__scPads[1].buttons[9].pressed=false;CO.pb[1][2]=false});"
+);
+
 // The last Activity cache completes the operation and intentionally clears run.op.
 s=s.replace(
   "assert(await page.evaluate(()=>SCActivities.run.op&&SCActivities.run.op.got===1),'P2 cannot collect Activity supply cache');",
