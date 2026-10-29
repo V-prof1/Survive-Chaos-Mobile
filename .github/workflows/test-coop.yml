@@ -18,6 +18,8 @@ on:
       - 'mobile-overrides/guided-tour-mobile-guard.js'
       - 'mobile-overrides/mobile-tutorial-shame-achievement.js'
       - 'mobile-overrides/mobile-fun-easter-eggs.js'
+      - 'mobile-overrides/mobile-lighting-shader.js'
+      - 'mobile-overrides/mobile-lighting-shader.css'
       - 'mobile-overrides/mobile-custom-audio.js'
       - 'mobile-overrides/mobile-custom-audio.css'
       - 'mobile-overrides/mobile-custom-audio-import.css'
@@ -29,6 +31,7 @@ on:
       - 'tests/custom-audio.spec.cjs'
       - 'tests/tutorial-shame-achievement.spec.cjs'
       - 'tests/fun-easter-eggs.spec.cjs'
+      - 'tests/lighting-shader.spec.cjs'
       - '.github/workflows/test-coop.yml'
 
 permissions:
@@ -70,6 +73,7 @@ jobs:
           node --check www/guided-tour-mobile-guard.js
           node --check www/mobile-tutorial-shame-achievement.js
           node --check www/mobile-fun-easter-eggs.js
+          node --check www/mobile-lighting-shader.js
           node --check www/mobile-custom-audio.js
           node --check tests/coop-runtime.spec.cjs
           node --check tests/coop-runtime-v2.spec.cjs
@@ -77,6 +81,7 @@ jobs:
           node --check tests/custom-audio.spec.cjs
           node --check tests/tutorial-shame-achievement.spec.cjs
           node --check tests/fun-easter-eggs.spec.cjs
+          node --check tests/lighting-shader.spec.cjs
           grep -q 'mobile-coop-integrity.js' www/index.html
           grep -q 'mobile-coop-worldmodes-fix.js' www/index.html
           grep -q 'controller-nav2.js' www/index.html
@@ -87,6 +92,8 @@ jobs:
           grep -q 'guided-tour-mobile-guard.js' www/index.html
           grep -q 'mobile-tutorial-shame-achievement.js' www/index.html
           grep -q 'mobile-fun-easter-eggs.js' www/index.html
+          grep -q 'mobile-lighting-shader.js' www/index.html
+          grep -q 'mobile-lighting-shader.css' www/index.html
           grep -q 'mobile-custom-audio.js' www/index.html
           grep -q 'mobile-custom-audio-import.css' www/index.html
       - name: Instalar navegador de teste
@@ -112,3 +119,7 @@ jobs:
         if: always()
         working-directory: mobile
         run: node tests/fun-easter-eggs.spec.cjs www
+      - name: Testar iluminação híbrida adaptativa
+        if: always()
+        working-directory: mobile
+        run: node tests/lighting-shader.spec.cjs www
