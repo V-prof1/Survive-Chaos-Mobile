@@ -30,6 +30,7 @@ jobs:
           fi
           git config user.name 'Vitor A.'
           git config user.email 'vitoragnus149@gmail.com'
-          git add mobile-overrides scripts index.html 2>/dev/null || true
+          git add mobile-overrides scripts
+          if [ -f index.html ]; then git add index.html; fi
           git commit -m 'Stamp creator credit across Mobile source'
           git push
