@@ -20,6 +20,7 @@ on:
       - 'mobile-overrides/mobile-fun-easter-eggs.js'
       - 'mobile-overrides/mobile-lighting-shader.js'
       - 'mobile-overrides/mobile-lighting-shader.css'
+      - 'mobile-overrides/mobile-combat-performance-fix.js'
       - 'mobile-overrides/mobile-custom-audio.js'
       - 'mobile-overrides/mobile-custom-audio.css'
       - 'mobile-overrides/mobile-custom-audio-import.css'
@@ -32,6 +33,7 @@ on:
       - 'tests/tutorial-shame-achievement.spec.cjs'
       - 'tests/fun-easter-eggs.spec.cjs'
       - 'tests/lighting-shader.spec.cjs'
+      - 'tests/combat-performance-fix.spec.cjs'
       - '.github/workflows/test-coop.yml'
 
 permissions:
@@ -74,6 +76,7 @@ jobs:
           node --check www/mobile-tutorial-shame-achievement.js
           node --check www/mobile-fun-easter-eggs.js
           node --check www/mobile-lighting-shader.js
+          node --check www/mobile-combat-performance-fix.js
           node --check www/mobile-custom-audio.js
           node --check tests/coop-runtime.spec.cjs
           node --check tests/coop-runtime-v2.spec.cjs
@@ -82,6 +85,7 @@ jobs:
           node --check tests/tutorial-shame-achievement.spec.cjs
           node --check tests/fun-easter-eggs.spec.cjs
           node --check tests/lighting-shader.spec.cjs
+          node --check tests/combat-performance-fix.spec.cjs
           grep -q 'mobile-coop-integrity.js' www/index.html
           grep -q 'mobile-coop-worldmodes-fix.js' www/index.html
           grep -q 'controller-nav2.js' www/index.html
@@ -94,6 +98,7 @@ jobs:
           grep -q 'mobile-fun-easter-eggs.js' www/index.html
           grep -q 'mobile-lighting-shader.js' www/index.html
           grep -q 'mobile-lighting-shader.css' www/index.html
+          grep -q 'mobile-combat-performance-fix.js' www/index.html
           grep -q 'mobile-custom-audio.js' www/index.html
           grep -q 'mobile-custom-audio-import.css' www/index.html
       - name: Instalar navegador de teste
@@ -123,3 +128,7 @@ jobs:
         if: always()
         working-directory: mobile
         run: node tests/lighting-shader.spec.cjs www
+      - name: Testar ataques de Boss, imortalidade e otimização
+        if: always()
+        working-directory: mobile
+        run: node tests/combat-performance-fix.spec.cjs www
