@@ -1,0 +1,35 @@
+name: Stamp Creator Credit Mobile
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/stamp-creator-credit.js'
+      - '.github/workflows/stamp-creator-credit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  stamp:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Aplicar créditos no código Mobile
+        run: node scripts/stamp-creator-credit.js
+      - name: Salvar comentários no repositório
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo 'Créditos já aplicados.'
+            exit 0
+          fi
+          git config user.name 'Vitor A.'
+          git config user.email 'vitoragnus149@gmail.com'
+          git add mobile-overrides scripts index.html 2>/dev/null || true
+          git commit -m 'Stamp creator credit across Mobile source'
+          git push
