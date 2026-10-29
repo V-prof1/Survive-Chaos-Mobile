@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 #scRotateLock{display:none;position:fixed;inset:0;z-index:2147483646;align-items:center;justify-content:center;padding:max(24px,env(safe-area-inset-top)) max(22px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(22px,env(safe-area-inset-left));background:radial-gradient(circle at 50% 20%,rgba(53,43,112,.97),rgba(12,9,31,.995) 55%,#080618 100%);color:#fff;text-align:center;touch-action:none;overscroll-behavior:none}
 .scPortraitLocked #scRotateLock{display:flex!important}
 .scPortraitLocked body{overflow:hidden!important}

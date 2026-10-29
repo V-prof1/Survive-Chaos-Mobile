@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Survive Chaos Mobile · Worldshift Expansion 16.0 */
 #scWorldHud{position:fixed;left:50%;top:54px;transform:translateX(-50%);z-index:42;display:none;min-width:260px;max-width:min(74vw,680px);padding:7px 12px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:linear-gradient(180deg,rgba(18,18,22,.88),rgba(5,5,8,.78));backdrop-filter:blur(8px);box-shadow:0 10px 30px #0008;font:600 11px/1.2 system-ui;color:#fff;text-align:center;pointer-events:none}
 #scWorldHud.on{display:block}#scWorldHud b{color:#ff394f;font-size:12px;letter-spacing:.08em}#scWorldHud span{opacity:.72;margin-left:8px}#scWorldHud i{display:block;font-style:normal;color:#ddd;margin-top:3px;font-size:10px}

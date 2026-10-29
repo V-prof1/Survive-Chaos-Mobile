@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 (() => {
 'use strict';
 const $l=id=>document.getElementById(id), clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), fmtL=n=>Math.floor(n||0).toLocaleString('pt-BR');

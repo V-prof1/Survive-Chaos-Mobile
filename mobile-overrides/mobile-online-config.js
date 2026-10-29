@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 (() => {
   'use strict';
   // Public client configuration only. NEVER put private server credentials or database passwords here.

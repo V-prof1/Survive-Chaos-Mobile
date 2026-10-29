@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 (() => {
   'use strict';
   const PRO={active:false,lastT:0,comboTier:0,nextBreak:200,nearChain:0,nearT:0,nearTotal:0,perfectDash:0,secondWind:false,boss:null,nextDirector:80,lastAssist:-999,timers:[],scan:0,announceTimer:0};

@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Survive Chaos Mobile — Guided Interface Tour 4.0 */
 (()=>{'use strict';
 if(window.__SC_GUIDED_TOUR4__)return;window.__SC_GUIDED_TOUR4__=1;

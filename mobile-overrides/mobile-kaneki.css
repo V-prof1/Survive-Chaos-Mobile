@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Survive Chaos Mobile — Kaneki premium skin */
 #kanekiUltCutin{position:fixed;inset:0;z-index:99999;display:none;pointer-events:none;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(130,0,25,.30),rgba(5,3,10,.92) 68%);backdrop-filter:blur(2px)}
 #kanekiUltCutin.on{display:grid;place-items:center;animation:kanekiCut .95s steps(6,end) both}

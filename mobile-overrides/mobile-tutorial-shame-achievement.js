@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Survive Chaos Mobile — Tutorial Shame Achievement 25.0 */
 (()=>{'use strict';
 if(window.__SC_TUTORIAL_SHAME_ACH__)return;window.__SC_TUTORIAL_SHAME_ACH__=1;

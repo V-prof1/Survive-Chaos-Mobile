@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Kaneki V2 visual rework: native pixel grid, bounded Canvas geometry, no gameplay timers. */
 (() => {
 'use strict';

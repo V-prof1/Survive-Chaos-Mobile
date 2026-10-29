@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 const fs=require('fs');
 for(const file of ['mobile-skin-ults.js','mobile-skin-ults.css']){
   const src=`mobile-overrides/${file}`,dst=`www/${file}`;

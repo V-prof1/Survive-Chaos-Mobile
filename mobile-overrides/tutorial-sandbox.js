@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Survive Chaos Mobile — ECHO tutorial save sandbox 1.3 */
 (()=>{'use strict';if(window.__SC_TUTORIAL_SANDBOX__)return;window.__SC_TUTORIAL_SANDBOX__=1;let snap=null,armed=false,wasActive=false,wasGuideEcho=false,compatDone=false,lastRouted=null;
 const clone=v=>{try{return JSON.parse(JSON.stringify(v))}catch(_){return null}};

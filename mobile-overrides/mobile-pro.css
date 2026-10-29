@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Survive Chaos Mobile — Combat 2.0 */
 #proCombat{position:fixed;z-index:28;left:50%;top:calc(env(safe-area-inset-top,0px) + 72px);width:min(330px,62vw);transform:translate(-50%,-8px) scale(.96);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;filter:drop-shadow(0 8px 20px rgba(0,0,0,.45))}
 #proCombat.on{opacity:1;transform:translate(-50%,0) scale(1)}

@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 #scCreatorSplash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,#1b1d27 0,#08090d 46%,#020204 100%);color:#fff;overflow:hidden;pointer-events:all;opacity:1;transition:opacity .28s ease}
 #scCreatorSplash.sc-out{opacity:0;pointer-events:none}
 #scCreatorSplash::before{content:"";position:absolute;inset:-35%;background:repeating-linear-gradient(115deg,transparent 0 34px,rgba(255,35,58,.028) 35px 36px);animation:scBootDrift 8s linear infinite}

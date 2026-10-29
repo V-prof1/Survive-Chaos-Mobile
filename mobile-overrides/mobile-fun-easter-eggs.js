@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Survive Chaos Mobile — Rare References & Funny Easter Eggs 27.0 */
 (()=>{'use strict';
 if(window.__SC_FUN_EGGS__)return;window.__SC_FUN_EGGS__=1;

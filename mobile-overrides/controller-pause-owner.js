@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Survive Chaos — Controller Pause Owner 2.6
    Dedicated 20ms rising-edge Start scan. Legacy Start paths cannot double-toggle pause. */
 (()=>{'use strict';

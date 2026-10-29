@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Survive Chaos Mobile — Custom Audio 13.0 */
 #scAudioCustom{position:fixed;inset:0;z-index:2147482500;display:none;align-items:stretch;justify-content:center;padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));background:rgba(3,3,5,.88);backdrop-filter:blur(12px);color:#f7f7f8;font-family:var(--bd,system-ui,sans-serif)}
 #scAudioCustom.on{display:flex;animation:scAudIn .16s ease-out both}@keyframes scAudIn{from{opacity:0;transform:scale(.992)}to{opacity:1;transform:none}}

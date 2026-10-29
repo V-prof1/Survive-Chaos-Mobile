@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 const fs = require('fs');
 const path = 'www/game.js';
 let s = fs.readFileSync(path, 'utf8');

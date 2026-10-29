@@ -1,3 +1,6 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
 /* Survive Chaos — Controller Navigation 2.4
    Full menu navigation, modal focus scope, scroll support and gameplay guard. Start/Pause is owned by controller-pause-owner.js. */
 (()=>{'use strict';
