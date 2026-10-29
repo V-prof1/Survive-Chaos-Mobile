@@ -18,70 +18,28 @@ html=html.replace(/<script src="mobile-kaneki-reborn\.js"><\/script>/g,'');
 try{fs.rmSync('www/mobile-kaneki-reborn.js',{force:true})}catch(_){}
 
 const extras=[
-  'mobile-kaneki-removal.js',
-  'mobile-xp-balance.js',
-  'mobile-hud-editor-fix.js',
-  'mobile-hud-editor-fix.css',
-  'mobile-dev-baby-intro.js',
-  'mobile-activities-pack.js',
-  'mobile-activities-pack.css',
-  'mobile-modes-pack2.js',
-  'mobile-modes-pack2.css',
-  'mobile-replay-pack-v2.js',
-  'mobile-replay-pack.css',
-  'mobile-squad-ai.js',
-  'mobile-defense-mobility.js',
-  'mobile-reality-break.js',
-  'mobile-uiux-overhaul.css',
-  'mobile-uiux-overhaul.js',
-  'mobile-uiux-red-theme.css',
-  'mobile-custom-audio.css',
-  'mobile-custom-audio-import.css',
-  'mobile-custom-audio.js',
-  'mobile-endgame-pack.css',
-  'mobile-endgame-pack.js',
-  'mobile-endgame-fix.js',
-  'mobile-economy-guard.js',
-  'mobile-worldshift-pack.css',
-  'mobile-worldshift-core.js',
-  'mobile-worldshift-modes.js',
-  'mobile-worldshift-threats.js',
-  'mobile-index-build.css',
-  'mobile-index-build.js',
-  'mobile-index-achievements.js',
-  'mobile-extra-sprite-data-0.js',
-  'mobile-extra-sprite-data-1.js',
-  'mobile-extra-sprite-data-2.js',
-  'mobile-extra-sprite-data-3.js',
-  'mobile-extra-characters.js',
-  'mobile-viewport-rescue.css',
-  'mobile-viewport-rescue.js',
-  'mobile-gameplay-stability.js',
-  'mobile-refinement-21.js',
-  'mobile-coop-integrity.js',
-  'mobile-coop-worldmodes-fix.js',
-  'controller-nav.css',
-  'controller-nav2.js',
-  'tutorial.css',
-  'tutorial.js'
+  'mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-hud-editor-fix.css',
+  'mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-activities-pack.css','mobile-modes-pack2.js','mobile-modes-pack2.css',
+  'mobile-replay-pack-v2.js','mobile-replay-pack.css','mobile-squad-ai.js','mobile-defense-mobility.js','mobile-reality-break.js',
+  'mobile-uiux-overhaul.css','mobile-uiux-overhaul.js','mobile-uiux-red-theme.css','mobile-custom-audio.css','mobile-custom-audio-import.css','mobile-custom-audio.js',
+  'mobile-endgame-pack.css','mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js','mobile-worldshift-pack.css','mobile-worldshift-core.js',
+  'mobile-worldshift-modes.js','mobile-worldshift-threats.js','mobile-index-build.css','mobile-index-build.js','mobile-index-achievements.js',
+  'mobile-extra-sprite-data-0.js','mobile-extra-sprite-data-1.js','mobile-extra-sprite-data-2.js','mobile-extra-sprite-data-3.js','mobile-extra-characters.js',
+  'mobile-viewport-rescue.css','mobile-viewport-rescue.js','mobile-gameplay-stability.js','mobile-refinement-21.js','mobile-coop-integrity.js','mobile-coop-worldmodes-fix.js',
+  'controller-nav.css','controller-nav2.js','tutorial.css','tutorial.js','tutorial-sandbox.js'
 ];
 for(const file of [
-  'mobile-custom-audio.js','mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js',
-  'mobile-worldshift-core.js','mobile-worldshift-modes.js','mobile-worldshift-threats.js','mobile-index-build.js',
-  'mobile-index-achievements.js','mobile-extra-sprite-data-0.js','mobile-extra-sprite-data-1.js','mobile-extra-sprite-data-2.js',
-  'mobile-extra-sprite-data-3.js','mobile-extra-characters.js','mobile-viewport-rescue.js','mobile-gameplay-stability.js',
-  'mobile-refinement-21.js','mobile-coop-integrity.js','mobile-coop-worldmodes-fix.js','controller-nav2.js','tutorial.js'
+  'mobile-custom-audio.js','mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js','mobile-worldshift-core.js','mobile-worldshift-modes.js',
+  'mobile-worldshift-threats.js','mobile-index-build.js','mobile-index-achievements.js','mobile-extra-sprite-data-0.js','mobile-extra-sprite-data-1.js',
+  'mobile-extra-sprite-data-2.js','mobile-extra-sprite-data-3.js','mobile-extra-characters.js','mobile-viewport-rescue.js','mobile-gameplay-stability.js',
+  'mobile-refinement-21.js','mobile-coop-integrity.js','mobile-coop-worldmodes-fix.js','controller-nav2.js','tutorial.js','tutorial-sandbox.js'
 ])cp.execFileSync(process.execPath,['--check','mobile-overrides/'+file],{stdio:'inherit'});
 for(const file of extras)fs.copyFileSync('mobile-overrides/'+file,'www/'+file);
 
-// Viewport Rescue remains the final base layout layer. Controller/tutorial CSS is added after it
-// so focus rings, the virtual keyboard and the onboarding overlay cannot be hidden by older UI rules.
 for(const css of ['mobile-hud-editor-fix.css','mobile-activities-pack.css','mobile-modes-pack2.css','mobile-replay-pack.css','mobile-uiux-overhaul.css','mobile-uiux-red-theme.css','mobile-custom-audio.css','mobile-custom-audio-import.css','mobile-endgame-pack.css','mobile-worldshift-pack.css','mobile-index-build.css','mobile-viewport-rescue.css','controller-nav.css','tutorial.css']){
   if(!html.includes(css))html=html.replace('</head>','<link rel="stylesheet" href="'+css+'"></head>');
 }
-// Co-op correctness loads before controller navigation/tutorial. The tutorial then sees the final
-// input and gameplay wrappers, while controller menu input is automatically disabled during play.
-for(const js of ['mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-modes-pack2.js','mobile-replay-pack-v2.js','mobile-squad-ai.js','mobile-defense-mobility.js','mobile-reality-break.js','mobile-uiux-overhaul.js','mobile-custom-audio.js','mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js','mobile-worldshift-core.js','mobile-worldshift-modes.js','mobile-worldshift-threats.js','mobile-index-build.js','mobile-index-achievements.js','mobile-extra-sprite-data-0.js','mobile-extra-sprite-data-1.js','mobile-extra-sprite-data-2.js','mobile-extra-sprite-data-3.js','mobile-extra-characters.js','mobile-viewport-rescue.js','mobile-gameplay-stability.js','mobile-refinement-21.js','mobile-coop-integrity.js','mobile-coop-worldmodes-fix.js','controller-nav2.js','tutorial.js']){
+for(const js of ['mobile-kaneki-removal.js','mobile-xp-balance.js','mobile-hud-editor-fix.js','mobile-dev-baby-intro.js','mobile-activities-pack.js','mobile-modes-pack2.js','mobile-replay-pack-v2.js','mobile-squad-ai.js','mobile-defense-mobility.js','mobile-reality-break.js','mobile-uiux-overhaul.js','mobile-custom-audio.js','mobile-endgame-pack.js','mobile-endgame-fix.js','mobile-economy-guard.js','mobile-worldshift-core.js','mobile-worldshift-modes.js','mobile-worldshift-threats.js','mobile-index-build.js','mobile-index-achievements.js','mobile-extra-sprite-data-0.js','mobile-extra-sprite-data-1.js','mobile-extra-sprite-data-2.js','mobile-extra-sprite-data-3.js','mobile-extra-characters.js','mobile-viewport-rescue.js','mobile-gameplay-stability.js','mobile-refinement-21.js','mobile-coop-integrity.js','mobile-coop-worldmodes-fix.js','controller-nav2.js','tutorial.js','tutorial-sandbox.js']){
   if(!html.includes(js))html=html.replace('</body>','<script src="'+js+'"></script></body>');
 }
 fs.writeFileSync(indexPath,html);
@@ -111,4 +69,4 @@ console.log('Refinement 21.0 enabled: difficulty-mode compatibility matrix plus 
 console.log('Local Co-op Integrity 22.0 enabled: stable mixed inputs, P2 damage ownership, team objectives, special modes and Reality Break side-scroller parity.');
 console.log('Co-op World Modes 22.2 enabled: Escape, Defense, Bullet Hell and Reality Roulette objectives accept either local player.');
 console.log('Controller Navigation 23.0 enabled: full D-pad/stick menu focus, A confirm, B back, Start pause and virtual keyboard.');
-console.log('First Run Tutorial 24.0 enabled: mandatory complete onboarding with ECHO local co-op training bot.');
+console.log('First Run Tutorial 24.1 enabled: mandatory complete onboarding with ECHO co-op bot and fully restored save sandbox.');
