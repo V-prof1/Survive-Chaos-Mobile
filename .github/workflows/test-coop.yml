@@ -21,6 +21,8 @@ on:
       - 'mobile-overrides/mobile-lighting-shader.js'
       - 'mobile-overrides/mobile-lighting-shader.css'
       - 'mobile-overrides/mobile-combat-performance-fix.js'
+      - 'mobile-overrides/mobile-creator-splash.js'
+      - 'mobile-overrides/mobile-creator-splash.css'
       - 'mobile-overrides/mobile-custom-audio.js'
       - 'mobile-overrides/mobile-custom-audio.css'
       - 'mobile-overrides/mobile-custom-audio-import.css'
@@ -34,6 +36,7 @@ on:
       - 'tests/fun-easter-eggs.spec.cjs'
       - 'tests/lighting-shader.spec.cjs'
       - 'tests/combat-performance-fix.spec.cjs'
+      - 'tests/creator-splash.spec.cjs'
       - '.github/workflows/test-coop.yml'
 
 permissions:
@@ -77,6 +80,7 @@ jobs:
           node --check www/mobile-fun-easter-eggs.js
           node --check www/mobile-lighting-shader.js
           node --check www/mobile-combat-performance-fix.js
+          node --check www/mobile-creator-splash.js
           node --check www/mobile-custom-audio.js
           node --check tests/coop-runtime.spec.cjs
           node --check tests/coop-runtime-v2.spec.cjs
@@ -86,6 +90,7 @@ jobs:
           node --check tests/fun-easter-eggs.spec.cjs
           node --check tests/lighting-shader.spec.cjs
           node --check tests/combat-performance-fix.spec.cjs
+          node --check tests/creator-splash.spec.cjs
           grep -q 'mobile-coop-integrity.js' www/index.html
           grep -q 'mobile-coop-worldmodes-fix.js' www/index.html
           grep -q 'controller-nav2.js' www/index.html
@@ -99,6 +104,9 @@ jobs:
           grep -q 'mobile-lighting-shader.js' www/index.html
           grep -q 'mobile-lighting-shader.css' www/index.html
           grep -q 'mobile-combat-performance-fix.js' www/index.html
+          grep -q 'mobile-creator-splash.js' www/index.html
+          grep -q 'mobile-creator-splash.css' www/index.html
+          grep -q 'Vitor Ag/Nyx' www/index.html
           grep -q 'mobile-custom-audio.js' www/index.html
           grep -q 'mobile-custom-audio-import.css' www/index.html
       - name: Instalar navegador de teste
@@ -132,3 +140,7 @@ jobs:
         if: always()
         working-directory: mobile
         run: node tests/combat-performance-fix.spec.cjs www
+      - name: Testar tela inicial e créditos do criador
+        if: always()
+        working-directory: mobile
+        run: node tests/creator-splash.spec.cjs www
