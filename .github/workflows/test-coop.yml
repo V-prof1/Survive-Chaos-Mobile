@@ -16,11 +16,15 @@ on:
       - 'mobile-overrides/guided-tour.js'
       - 'mobile-overrides/guided-tour.css'
       - 'mobile-overrides/guided-tour-mobile-guard.js'
+      - 'mobile-overrides/mobile-custom-audio.js'
+      - 'mobile-overrides/mobile-custom-audio.css'
+      - 'mobile-overrides/mobile-custom-audio-import.css'
       - 'scripts/apply-mobile-patches.js'
       - 'scripts/apply-mobile-patches-core.js'
       - 'tests/coop-runtime.spec.cjs'
       - 'tests/coop-runtime-v2.spec.cjs'
       - 'tests/controller-tutorial.spec.cjs'
+      - 'tests/custom-audio.spec.cjs'
       - '.github/workflows/test-coop.yml'
 
 permissions:
@@ -60,9 +64,11 @@ jobs:
           node --check www/tutorial-sandbox.js
           node --check www/guided-tour.js
           node --check www/guided-tour-mobile-guard.js
+          node --check www/mobile-custom-audio.js
           node --check tests/coop-runtime.spec.cjs
           node --check tests/coop-runtime-v2.spec.cjs
           node --check tests/controller-tutorial.spec.cjs
+          node --check tests/custom-audio.spec.cjs
           grep -q 'mobile-coop-integrity.js' www/index.html
           grep -q 'mobile-coop-worldmodes-fix.js' www/index.html
           grep -q 'controller-nav2.js' www/index.html
@@ -71,6 +77,8 @@ jobs:
           grep -q 'tutorial-sandbox.js' www/index.html
           grep -q 'guided-tour.js' www/index.html
           grep -q 'guided-tour-mobile-guard.js' www/index.html
+          grep -q 'mobile-custom-audio.js' www/index.html
+          grep -q 'mobile-custom-audio-import.css' www/index.html
       - name: Instalar navegador de teste
         working-directory: mobile
         run: |
@@ -82,3 +90,6 @@ jobs:
       - name: Testar tutorial e navegação por controle no Mobile
         working-directory: mobile
         run: node tests/controller-tutorial.spec.cjs www
+      - name: Testar áudio personalizado no Mobile
+        working-directory: mobile
+        run: node tests/custom-audio.spec.cjs www
