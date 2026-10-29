@@ -5,6 +5,13 @@ const cp=require('child_process');
 const src=path.join(__dirname,'coop-runtime.spec.cjs');
 let s=fs.readFileSync(src,'utf8');
 
+// Generic co-op gameplay tests must not enter the mandatory first-run onboarding.
+// The dedicated controller/tutorial suite covers the fresh-install guided tour separately.
+s=s.replace(
+  "await context.addInitScript(()=>{\n    const makePad=index=>",
+  "await context.addInitScript(()=>{\n    try{localStorage.setItem('sc_tutorial_complete_v3','1');localStorage.setItem('sc_guided_tutorial_complete_v4','1')}catch(_){}\n    const makePad=index=>"
+);
+
 // Match a real projectile shape so the background collision loop never sees a test-only incomplete bullet.
 s=s.replace("d:10,p:0,b:0}));const bullet=B[0]","d:10,p:0,b:0,h:[]}));const bullet=B[0]");
 
