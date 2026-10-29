@@ -13,6 +13,9 @@ on:
       - 'mobile-overrides/tutorial.js'
       - 'mobile-overrides/tutorial.css'
       - 'mobile-overrides/tutorial-sandbox.js'
+      - 'mobile-overrides/guided-tour.js'
+      - 'mobile-overrides/guided-tour.css'
+      - 'mobile-overrides/guided-tour-mobile-guard.js'
       - 'scripts/apply-mobile-patches.js'
       - 'scripts/apply-mobile-patches-core.js'
       - 'tests/coop-runtime.spec.cjs'
@@ -55,6 +58,8 @@ jobs:
           node --check www/controller-pause-owner.js
           node --check www/tutorial.js
           node --check www/tutorial-sandbox.js
+          node --check www/guided-tour.js
+          node --check www/guided-tour-mobile-guard.js
           node --check tests/coop-runtime.spec.cjs
           node --check tests/coop-runtime-v2.spec.cjs
           node --check tests/controller-tutorial.spec.cjs
@@ -64,6 +69,8 @@ jobs:
           grep -q 'controller-pause-owner.js' www/index.html
           grep -q 'tutorial.js' www/index.html
           grep -q 'tutorial-sandbox.js' www/index.html
+          grep -q 'guided-tour.js' www/index.html
+          grep -q 'guided-tour-mobile-guard.js' www/index.html
       - name: Instalar navegador de teste
         working-directory: mobile
         run: |
