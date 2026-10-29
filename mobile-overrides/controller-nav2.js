@@ -1,5 +1,5 @@
-/* Survive Chaos — Controller Navigation 2.1
-   Full menu navigation with gameplay guard. */
+/* Survive Chaos — Controller Navigation 2.2
+   Full menu navigation with gameplay guard and modal focus scope. */
 (()=>{'use strict';
 if(window.__SC_CONTROLLER_NAV2__)return;window.__SC_CONTROLLER_NAV2__=1;
 const Q='button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[role="button"],.card,.scWorldChoice';
@@ -8,7 +8,7 @@ const kbOpen=()=>document.getElementById('scPadKeyboard')?.classList.contains('o
 const tutOpen=()=>document.getElementById('scTutorial')?.classList.contains('on');
 const navActive=()=>kbOpen()||tutOpen()||typeof st==='undefined'||st!=='play';
 function visible(e){if(!e||!e.isConnected)return false;const scr=e.closest('.scr');if(scr&&!scr.classList.contains('on'))return false;const s=getComputedStyle(e),r=e.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&+s.opacity!==0&&r.width>3&&r.height>3&&!e.closest('[aria-hidden="true"]')}
-function list(){return[...document.querySelectorAll(Q)].filter(visible).filter(e=>!e.closest('#scPadKeyboard')||kbOpen())}
+function list(){const root=kbOpen()?document.getElementById('scPadKeyboard'):tutOpen()?document.getElementById('scTutorial'):document;return root?[...root.querySelectorAll(Q)].filter(visible):[]}
 function mark(e){cur?.classList.remove('sc-pad-focus');cur=e||null;if(!cur)return;if(!cur.hasAttribute('tabindex')&&!/^(BUTTON|INPUT|SELECT|TEXTAREA)$/.test(cur.tagName))cur.tabIndex=0;cur.classList.add('sc-pad-focus');try{cur.focus({preventScroll:true});cur.scrollIntoView({block:'nearest',inline:'nearest'})}catch(_){}}
 function first(){const a=list();if(!a.length)return mark(null);if(cur&&a.includes(cur))return;mark(a.includes(document.activeElement)?document.activeElement:a[0])}
 function pos(e){const r=e.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2}}
@@ -28,5 +28,5 @@ function clearFocus(){cur?.classList.remove('sc-pad-focus');cur=null;repeat=''}
 function poll(t){requestAnimationFrame(poll);let pads=[];try{pads=[...navigator.getGamepads()].filter(g=>g&&g.connected)}catch(_){}const was=connected;connected=!!pads.length;document.documentElement.classList.toggle('sc-gamepad',connected);if(!connected){if(was)clearFocus();return}const g=pads.find(p=>p.index===lastPad)||pads[0];lastPad=g.index;if(!was){hint();if(navActive())first()}if(edge(g,9))startKey();if(edge(g,3)&&kbOpen()&&kInput){kInput.value=kInput.value.slice(0,-1);kInput.dispatchEvent(new Event('input',{bubbles:true}));updateKB()}if(!navActive()){clearFocus();return}if(edge(g,0))click();if(edge(g,1))back();if(cur?.tagName==='SELECT'){if(edge(g,14))cycleSelect(cur,-1);if(edge(g,15))cycleSelect(cur,1)}const d=direction(g),key=d.x?'x'+d.x:d.y?'y'+d.y:'';if(key&&(key!==repeat||t>=nextRepeat)){move(d.x,d.y);nextRepeat=t+(key!==repeat?280:130);repeat=key}else if(!key)repeat=''}
 addEventListener('gamepadconnected',e=>{lastPad=e.gamepad?.index??lastPad;hint();setTimeout(()=>navActive()&&first(),80)});addEventListener('gamepaddisconnected',()=>setTimeout(first,50));
 document.addEventListener('pointerdown',clearFocus,{capture:true,passive:true});new MutationObserver(()=>{if(connected&&navActive())setTimeout(first,25)}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','disabled']});
-mountKeyboard();requestAnimationFrame(poll);window.SCControllerNav={version:'2.1',focus:first,mark,openKeyboard};console.log('[Controller] Navigation 2.1 active');
+mountKeyboard();requestAnimationFrame(poll);window.SCControllerNav={version:'2.2',focus:first,mark,openKeyboard};console.log('[Controller] Navigation 2.2 active');
 })();
