@@ -30,7 +30,7 @@ s=s.replace(
 const marker="    await reset(1,2);let side=await page.evaluate(()=>{bi=4;E.length=0;boss(3);";
 const extra=`    if(await page.evaluate(()=>!!window.SCWorldModes&&!!window.SCWorldshift)){
       await reset(1,2);await page.evaluate(()=>{SCWorldshift.state.active=true;const m=SCWorldModes.state;m.mode=2;m.escapeCount=0;m.checkpoint={x:PL[1].x,y:PL[1].y,end:T+30};PL[0].x=-500;PL[1].x=100;st='play'});await page.waitForTimeout(120);assert(await page.evaluate(()=>SCWorldModes.state.escapeCount>=1),'P2 cannot complete Worldshift Escape checkpoint');
-      await page.evaluate(()=>{const m=SCWorldModes.state;m.mode=3;m.core={x:PL[1].x,y:PL[1].y,hp:40,max:100};PL[0].x=-500;PL[1].x=100;st='play'});const whp=await page.evaluate(()=>SCWorldModes.state.core.hp);await page.waitForTimeout(120);assert(await page.evaluate(h=>SCWorldModes.state.core&&SCWorldModes.state.core.hp>h,whp),'P2 cannot repair Worldshift Defense core');
+      await page.evaluate(()=>{E.length=0;const m=SCWorldModes.state;m.mode=3;m.core={x:PL[1].x,y:PL[1].y,hp:40,max:100};PL[0].x=-500;PL[1].x=100;st='play'});const whp=await page.evaluate(()=>SCWorldModes.state.core.hp);await page.waitForTimeout(120);assert(await page.evaluate(h=>SCWorldModes.state.core&&SCWorldModes.state.core.hp>h,whp),'P2 cannot repair Worldshift Defense core');
       await page.evaluate(()=>{const m=SCWorldModes.state;m.mode=11;m.checkpoint={x:PL[1].x,y:PL[1].y,end:T+30};PL[0].x=-500;PL[1].x=100;st='play'});await page.waitForTimeout(120);assert(await page.evaluate(()=>SCWorldModes.state.checkpoint===null),'P2 cannot complete Reality Roulette micro-escape');
     }
 `;
