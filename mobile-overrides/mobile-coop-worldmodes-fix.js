@@ -1,10 +1,8 @@
-/* Survive Chaos Mobile — Co-op World Modes parity 22.3 */
+/* Survive Chaos Mobile — Co-op World Modes parity 22.4 */
 (() => {
 'use strict';
 if(window.__SC_COOP_WORLDMODES_FIX__)return;window.__SC_COOP_WORLDMODES_FIX__=true;
 try{
-  // CF.co is the authoritative match configuration. CO.on is an input-routing state and can
-  // briefly lag while modes/UI rebuild, so world objectives must not depend on it.
   const coop=()=>typeof CF!=='undefined'&&!!CF.co&&Array.isArray(PL)&&PL.length>1;
   const live=()=>PL.filter(q=>q&&!q.dead&&q.hp>0);
   const d=(a,b)=>Math.hypot((a?.x||0)-(b?.x||0),(a?.y||0)-(b?.y||0));
@@ -36,7 +34,9 @@ try{
   }
 
   let last=performance.now(),p2Hell=0;
-  function loop(now){requestAnimationFrame(loop);const raw=(now-last)/1000,dt=Math.min(.06,Math.max(1/120,Number.isFinite(raw)?raw:1/60));last=now;if(!coop()||st!=='play'||!window.SCWorldModes?.state)return;
+  function tick(){
+    const now=performance.now(),raw=(now-last)/1000,dt=Math.min(.06,Math.max(.02,Number.isFinite(raw)?raw:.02));last=now;
+    if(!coop()||st!=='play'||!window.SCWorldModes?.state)return;
     const m=SCWorldModes.state,p0=PL[0],p2=PL[1];if(!p2||p2.dead||p2.hp<=0)return;
 
     if(m.mode===2&&m.checkpoint&&d(p2,m.checkpoint)<58&&(!p0||p0.dead||p0.hp<=0||d(p0,m.checkpoint)>=58)){
@@ -46,11 +46,9 @@ try{
       else try{ban('🚪 EXTRAÇÃO '+m.escapeCount+'/7 · P2 alcançou o portal')}catch(_){}
     }
 
-    // Base Worldshift repairs with P1. This parity layer repairs with P2 whenever P1 is not
-    // already inside the repair radius, so one player contributes exactly one repair stream.
+    // Base Worldshift handles P1. This parity stream handles P2 only when P1 is not already repairing.
     if(m.mode===3&&m.core&&d(p2,m.core)<115&&(!p0||p0.dead||p0.hp<=0||d(p0,m.core)>=115)){
-      const max=Number(m.core.max)||100;
-      const hp=Number(m.core.hp)||0;
+      const max=Number(m.core.max)||100,hp=Number(m.core.hp)||0;
       m.core.hp=Math.min(max,hp+dt*.35);
     }
 
@@ -60,8 +58,8 @@ try{
       m.checkpoint=null;try{withP2(p2,()=>SCWorldshift.giveMod());ban('MICRO-ESCAPE CONCLUÍDO · P2');sfx('coin')}catch(_){}
     }
   }
-  requestAnimationFrame(loop);
-  window.SCCoopWorldModesParity={version:'22.3'};
-  console.log('[Mobile] Co-op World Modes parity 22.3 active');
-}catch(err){console.warn('[Mobile Co-op World Modes 22.3]',err)}
+  setInterval(tick,20);
+  window.SCCoopWorldModesParity={version:'22.4',tick};
+  console.log('[Mobile] Co-op World Modes parity 22.4 active');
+}catch(err){console.warn('[Mobile Co-op World Modes 22.4]',err)}
 })();
