@@ -1,4 +1,11 @@
-/* Survive Chaos Mobile — Custom Audio Import UX 13.2 */
+/* Survive Chaos Mobile — Custom Audio Import UX 13.3 */
+
+/* Critical visibility fix: the base selector has an ID, so the active selector must match/exceed its specificity. */
+#scAudioCustom .scAudSection{display:none!important}
+#scAudioCustom .scAudSection.on{display:block!important}
+#scAudioCustom .scAudGrid{display:grid!important}
+#scAudioCustom .scAudActions{visibility:visible!important;opacity:1!important}
+
 #scAudioCustom .scAudBody::before{
   content:'📂 IMPORTAÇÃO LOCAL — toque em IMPORTAR ARQUIVO no som que deseja substituir. O seletor de arquivos do Android será aberto.';
   display:block;
@@ -35,6 +42,9 @@
 }
 #scAudioCustom .scAudAct:first-child::after{content:' TESTAR';font-size:9px;font-weight:900}
 #scAudioCustom .scAudAct.change{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
   width:100%;
   min-width:150px;
   padding:0 10px!important;
