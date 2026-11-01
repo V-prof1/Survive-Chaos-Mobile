@@ -1,0 +1,75 @@
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* ©criado por Vitor Ag/Nyx - 2026 */
+/* Survive Chaos Mobile — Finados / Dia dos Mortos Event 31.0 */
+:root{
+  --fin-orange:#ff9d1f;
+  --fin-gold:#ffd45a;
+  --fin-magenta:#ff4fa3;
+  --fin-cyan:#4ee8e1;
+  --fin-violet:#8d58ff;
+  --fin-ink:#09050f;
+  --fin-panel:#160d20;
+}
+body.scFinados{background:#09050f!important;color:#fff7e6!important}
+body.scFinados .scr{
+  background:
+    radial-gradient(circle at 16% 12%,rgba(255,157,31,.17),transparent 26%),
+    radial-gradient(circle at 86% 18%,rgba(255,79,163,.13),transparent 28%),
+    radial-gradient(circle at 54% 92%,rgba(78,232,225,.08),transparent 28%),
+    linear-gradient(180deg,rgba(12,6,17,.94),rgba(6,4,10,.985))!important;
+}
+body.scFinados .panel,body.scFinados .console,body.scFinados .scMenuHub{
+  background:linear-gradient(180deg,rgba(30,16,39,.96),rgba(11,7,16,.985))!important;
+  border-color:rgba(255,157,31,.34)!important;
+  box-shadow:inset 0 1px 0 rgba(255,212,90,.09),0 22px 64px rgba(0,0,0,.62),0 0 28px rgba(141,88,255,.08)!important;
+}
+body.scFinados h1,body.scFinados h2,body.scFinados #logo{
+  color:#fff6df!important;
+  text-shadow:0 3px 0 #54225e,0 0 22px rgba(255,157,31,.26),0 8px 24px rgba(0,0,0,.7)!important;
+}
+body.scFinados #logo::after{content:'02 NOV · NOITE DAS MEMÓRIAS';display:block;margin-top:10px;font:900 11px/1.1 'Nunito',sans-serif;letter-spacing:.22em;color:#ffd45a;text-shadow:none}
+body.scFinados .sub,body.scFinados .ft{color:#d8c8df!important}
+body.scFinados .btn,body.scFinados .opt.on{
+  color:#211020!important;
+  border-color:#ffd45a!important;
+  background:linear-gradient(180deg,#ffd866,#ffad28 58%,#dc681e)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -3px 0 rgba(112,36,20,.35),0 7px 18px rgba(0,0,0,.36),0 0 18px rgba(255,157,31,.12)!important;
+  text-shadow:none!important;
+}
+body.scFinados .btn.g,body.scFinados .opt:not(.on){
+  color:#fff0dc!important;
+  border-color:rgba(255,79,163,.32)!important;
+  background:linear-gradient(180deg,rgba(54,26,65,.96),rgba(20,12,29,.98))!important;
+}
+body.scFinados input,body.scFinados select,body.scFinados textarea{
+  background:#0d0813!important;color:#fff3e2!important;border-color:rgba(78,232,225,.28)!important
+}
+body.scFinados #xpb{background:#130b1a!important}
+body.scFinados #xpf{background:linear-gradient(90deg,#8d58ff,#ff4fa3,#ff9d1f)!important;box-shadow:0 0 14px rgba(255,79,163,.35)!important}
+body.scFinados #hud .hp,body.scFinados #hud #tm,body.scFinados #hud .lvl,body.scFinados #hud #pz,body.scFinados #hud #boss{
+  background:rgba(17,9,24,.88)!important;border-color:rgba(255,212,90,.28)!important;color:#fff4e4!important
+}
+body.scFinados #hud #hpf{background:linear-gradient(90deg,#c9307d,#ff5a9d,#ff9d1f)!important}
+body.scFinados #hud #boss b{background:linear-gradient(90deg,#5e2ca8,#ff4fa3,#ff9d1f)!important;box-shadow:0 0 14px rgba(255,79,163,.38)!important}
+body.scFinados #dash,body.scFinados #dash1{border-color:rgba(78,232,225,.55)!important;background:linear-gradient(180deg,#18333a,#0b171d)!important}
+body.scFinados #ult,body.scFinados #ult1{border-color:rgba(255,79,163,.62)!important;background:linear-gradient(180deg,#48203c,#180c1b)!important}
+body.scFinados #cards .card{background:linear-gradient(180deg,#25162e,#100a16)!important;border-color:rgba(255,157,31,.24)!important}
+body.scFinados #cards .card small{color:#ffd45a!important}
+body.scFinados #toast .tt{border-color:rgba(255,212,90,.34)!important;background:linear-gradient(180deg,#281430,#100914)!important}
+body.scFinados #scCreatorSplash{background:radial-gradient(circle at 50% 40%,#3a173b 0,#13091b 45%,#050307 100%)!important}
+body.scFinados #scCreatorSplash::before{background:repeating-linear-gradient(120deg,transparent 0 38px,rgba(255,157,31,.045) 39px 40px)!important}
+body.scFinados #scCreatorSplash .scBootLogo span,body.scFinados #scCreatorSplash .scBootBar::after{color:#ff9d1f!important;background:#ff9d1f!important;box-shadow:0 0 16px rgba(255,157,31,.65)!important}
+body.scFinados #scCreatorSplash .scBootName{color:#fff4df!important;text-shadow:0 0 18px rgba(255,79,163,.3)!important}
+#scFinadosBadge{position:fixed;left:max(10px,env(safe-area-inset-left));bottom:max(10px,env(safe-area-inset-bottom));z-index:1200;display:none;align-items:center;gap:9px;padding:7px 11px 7px 8px;border:1px solid rgba(255,212,90,.36);border-radius:14px;background:linear-gradient(135deg,rgba(28,13,35,.94),rgba(10,7,15,.96));box-shadow:0 10px 26px rgba(0,0,0,.42),0 0 20px rgba(255,79,163,.08);pointer-events:none;backdrop-filter:blur(8px)}
+body.scFinados #scFinadosBadge{display:flex}
+#scFinadosBadge .scFinDate{display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#ffd45a,#ff9426);color:#2d1527;font:1000 11px/1 'Nunito',sans-serif;letter-spacing:.04em;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+#scFinadosBadge .scFinDate b{display:block;font-size:16px}
+#scFinadosBadge .scFinTxt{display:flex;flex-direction:column;line-height:1.05}
+#scFinadosBadge .scFinTxt b{font:1000 13px/1 'Nunito',sans-serif;letter-spacing:.12em;color:#fff5e4}
+#scFinadosBadge .scFinTxt small{margin-top:4px;font:800 9px/1 'Nunito',sans-serif;letter-spacing:.06em;color:#ffb6dc}
+#scFinadosBadge::after{content:'';width:7px;height:7px;border-radius:50%;background:#4ee8e1;box-shadow:0 0 10px #4ee8e1;animation:scFinPulse 1.8s ease-in-out infinite}
+@keyframes scFinPulse{50%{opacity:.28;transform:scale(.72)}}
+body.scFinados::after{content:'';position:fixed;inset:0;z-index:119;pointer-events:none;background:radial-gradient(circle at 50% 40%,transparent 48%,rgba(28,6,35,.12) 76%,rgba(6,2,9,.36) 100%);mix-blend-mode:multiply}
+@media(max-width:680px){#scFinadosBadge{transform:scale(.88);transform-origin:left bottom}body.scFinados #logo::after{font-size:9px;letter-spacing:.16em}}
+@media(prefers-reduced-motion:reduce){#scFinadosBadge::after{animation:none}}
