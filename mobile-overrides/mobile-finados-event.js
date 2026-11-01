@@ -52,7 +52,7 @@ try{
   }
 
   const baseSpawn=typeof spawn==='function'?spawn:null;
-  if(baseSpawn){spawn=function(k,px,py,el){const e=baseSpawn.apply(this,arguments);if(active&&!tut()&&e&&!e.boss){const ch=el?.18:.29;if(Math.random()<ch)seasonalize(e)}return e}}
+  if(baseSpawn){spawn=function(k,px,py,el){const e=baseSpawn.apply(this,arguments);if(active&&!tut()&&e&&!e.boss){const ch=el ? .18 : .29;if(Math.random()<ch)seasonalize(e)}return e}}
   const baseBoss=typeof boss==='function'?boss:null;
   if(baseBoss){boss=function(i){const out=baseBoss.apply(this,arguments);if(active&&!tut()&&!bossUsed&&bossE){bossUsed=true;seasonalBoss(bossE)}return out}}
 
