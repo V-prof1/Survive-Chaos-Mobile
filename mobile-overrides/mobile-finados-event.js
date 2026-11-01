@@ -75,9 +75,12 @@ try{
     const im=imgs[id];if(!im||!im.complete||!im.naturalWidth)return false;const t=TYPES[id];if(!t)return false;const bossish=id==='mictlan',w=Math.max(bossish?150:46,(e.r||12)*t.scale),h=w;
     c.save();c.globalAlpha*=alpha;c.imageSmoothingEnabled=false;const bob=Math.sin(((typeof T==='number'?T:0)*7)+(e.x||0)*.01)*(bossish?3:1.7);if(typeof P!=='undefined'&&P&&P.x<e.x)c.scale(-1,1);c.drawImage(im,-w/2,-h*.60+bob,w,h);if((e.fl||0)>0){c.globalCompositeOperation='lighter';c.globalAlpha=.38*alpha;c.drawImage(im,-w/2,-h*.60+bob,w,h)}c.restore();return true
   }
+  function drawDeathSprite(c,d){
+    if(!d?.scFinadosType)return false;c.save();c.translate(d.x||0,d.y||0);const ok=drawSprite(c,d,d.scFinadosType,Math.max(0,1-(d.t||0)/.7));c.restore();return ok
+  }
   if(typeof SPR!=='undefined'&&SPR){
     const oldEnemy=SPR.enemy.bind(SPR);SPR.enemy=function(c,e){if(active&&e?.scFinadosType&&drawSprite(c,e,e.scFinadosType))return 1;return oldEnemy(c,e)};
-    const oldDeath=SPR.death.bind(SPR);SPR.death=function(c,d){if(d?.scFinadosType&&drawSprite(c,d,d.scFinadosType,Math.max(0,1-(d.t||0)/.7)))return 1;return oldDeath(c,d)};
+    const oldDeath=SPR.death.bind(SPR);SPR.death=function(c,d){if(drawDeathSprite(c,d))return 1;return oldDeath(c,d)};
   }
   if(typeof kill==='function'){
     const baseKill=kill;kill=function(e){const before=Array.isArray(DS)?DS.length:0,type=e?.scFinadosType;const out=baseKill.apply(this,arguments);if(type&&Array.isArray(DS)&&DS.length>before){const d=DS[DS.length-1];d.scFinadosType=type;d.r=e.r;d.x=e.x;d.y=e.y}return out}
@@ -94,7 +97,7 @@ try{
     }catch(_){ }return out}
   }
 
-  syncDate();ensureBadge();const timer=setInterval(()=>syncDate(),30000);addEventListener('pagehide',()=>clearInterval(timer),{once:true});
+  syncDate();ensureBadge();const timer=setInterval(()=>syncDate(),5000);addEventListener('pagehide',()=>clearInterval(timer),{once:true});
   window.SCFinadosEvent={version:VERSION,isFinadosDate,sync:syncDate,get active(){return active},types:Object.values(TYPES).map(t=>({id:t.id,name:t.name,img:t.img})),seasonalize,seasonalBoss};
   console.log('[Mobile] Finados Event 31.0 ready: annual Nov 2 theme, map memorial details, seasonal enemies and Mictlán boss.');
 }catch(err){console.error('[Mobile Finados Event 31.0]',err)}
