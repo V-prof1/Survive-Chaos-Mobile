@@ -23,6 +23,9 @@ on:
       - 'mobile-overrides/mobile-combat-performance-fix.js'
       - 'mobile-overrides/mobile-creator-splash.js'
       - 'mobile-overrides/mobile-creator-splash.css'
+      - 'mobile-overrides/mobile-finados-event.js'
+      - 'mobile-overrides/mobile-finados-event.css'
+      - 'mobile-overrides/finados-*.svg'
       - 'mobile-overrides/mobile-custom-audio.js'
       - 'mobile-overrides/mobile-custom-audio.css'
       - 'mobile-overrides/mobile-custom-audio-import.css'
@@ -37,6 +40,7 @@ on:
       - 'tests/lighting-shader.spec.cjs'
       - 'tests/combat-performance-fix.spec.cjs'
       - 'tests/creator-splash.spec.cjs'
+      - 'tests/finados-event.spec.cjs'
       - '.github/workflows/test-coop.yml'
 
 permissions:
@@ -81,6 +85,7 @@ jobs:
           node --check www/mobile-lighting-shader.js
           node --check www/mobile-combat-performance-fix.js
           node --check www/mobile-creator-splash.js
+          node --check www/mobile-finados-event.js
           node --check www/mobile-custom-audio.js
           node --check tests/coop-runtime.spec.cjs
           node --check tests/coop-runtime-v2.spec.cjs
@@ -91,6 +96,7 @@ jobs:
           node --check tests/lighting-shader.spec.cjs
           node --check tests/combat-performance-fix.spec.cjs
           node --check tests/creator-splash.spec.cjs
+          node --check tests/finados-event.spec.cjs
           grep -q 'mobile-coop-integrity.js' www/index.html
           grep -q 'mobile-coop-worldmodes-fix.js' www/index.html
           grep -q 'controller-nav2.js' www/index.html
@@ -106,7 +112,13 @@ jobs:
           grep -q 'mobile-combat-performance-fix.js' www/index.html
           grep -q 'mobile-creator-splash.js' www/index.html
           grep -q 'mobile-creator-splash.css' www/index.html
+          grep -q 'mobile-finados-event.js' www/index.html
+          grep -q 'mobile-finados-event.css' www/index.html
           grep -q 'Vitor Ag/Nyx' www/index.html
+          test -f www/finados-caminhante.svg
+          test -f www/finados-catrina.svg
+          test -f www/finados-xolo.svg
+          test -f www/finados-mictlan-lord.svg
           grep -q 'mobile-custom-audio.js' www/index.html
           grep -q 'mobile-custom-audio-import.css' www/index.html
       - name: Instalar navegador de teste
@@ -144,3 +156,7 @@ jobs:
         if: always()
         working-directory: mobile
         run: node tests/creator-splash.spec.cjs www
+      - name: Testar evento anual de Finados
+        if: always()
+        working-directory: mobile
+        run: node tests/finados-event.spec.cjs www
