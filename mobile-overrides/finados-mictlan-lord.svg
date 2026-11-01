@@ -1,0 +1,23 @@
+<!-- ©criado por Vitor Ag/Nyx - 2026 -->
+<!-- ©criado por Vitor Ag/Nyx - 2026 -->
+<!-- ©criado por Vitor Ag/Nyx - 2026 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" shape-rendering="crispEdges">
+<rect width="96" height="96" fill="none"/>
+<g>
+<!-- feather crown -->
+<rect x="20" y="5" width="8" height="24" fill="#4ee8e1"/><rect x="30" y="2" width="8" height="27" fill="#8d58ff"/><rect x="40" y="0" width="8" height="29" fill="#ff9d1f"/><rect x="50" y="2" width="8" height="27" fill="#ff4fa3"/><rect x="60" y="5" width="8" height="24" fill="#ffd45a"/>
+<rect x="18" y="22" width="60" height="8" fill="#3d183f"/><rect x="26" y="18" width="44" height="7" fill="#7a2c72"/>
+<!-- skull head -->
+<rect x="24" y="29" width="48" height="31" fill="#eadcc0"/><rect x="30" y="35" width="12" height="11" fill="#120b17"/><rect x="54" y="35" width="12" height="11" fill="#120b17"/>
+<rect x="34" y="39" width="5" height="5" fill="#4ee8e1"/><rect x="57" y="39" width="5" height="5" fill="#ff4fa3"/>
+<rect x="44" y="47" width="8" height="7" fill="#6b315c"/><rect x="34" y="54" width="28" height="4" fill="#120b17"/>
+<rect x="37" y="58" width="4" height="5" fill="#120b17"/><rect x="44" y="58" width="4" height="5" fill="#120b17"/><rect x="51" y="58" width="4" height="5" fill="#120b17"/><rect x="58" y="58" width="4" height="5" fill="#120b17"/>
+<!-- body / mantle -->
+<rect x="25" y="62" width="46" height="24" fill="#24132f"/><rect x="31" y="65" width="34" height="18" fill="#4a2051"/><rect x="38" y="67" width="20" height="5" fill="#ff9d1f"/><rect x="41" y="74" width="14" height="4" fill="#4ee8e1"/>
+<!-- shoulders -->
+<rect x="16" y="65" width="12" height="14" fill="#32173d"/><rect x="68" y="65" width="12" height="14" fill="#32173d"/><rect x="12" y="70" width="8" height="18" fill="#eadcc0"/><rect x="76" y="70" width="8" height="18" fill="#eadcc0"/>
+<!-- flower ornaments -->
+<rect x="16" y="58" width="8" height="8" fill="#ff9d1f"/><rect x="20" y="54" width="8" height="8" fill="#ffd45a"/><rect x="72" y="57" width="8" height="8" fill="#ff4fa3"/><rect x="68" y="53" width="8" height="8" fill="#8d58ff"/>
+<!-- lower robe -->
+<rect x="29" y="84" width="38" height="9" fill="#120b17"/><rect x="34" y="88" width="8" height="8" fill="#35183c"/><rect x="54" y="88" width="8" height="8" fill="#35183c"/>
+</g></svg>
